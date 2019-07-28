@@ -1,0 +1,37 @@
+server:
+  port: 8082
+spring:
+  profiles:
+    #开发环境
+    active: dev
+    #测试环境
+#    active: devtools,common-test,database-test,redis-test,rabbitmq-test
+    #生产环境
+#    active: devtools,common-prod,database-prod,redis-prod,rabbitmq-prod
+  quartz:
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: ServerScheduler
+            instanceId: AUTO
+            skipUpdateCheck: true
+            jobFactory:
+              class: org.quartz.simpl.SimpleJobFactory
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 50
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    job-store-type: jdbc
+  thymeleaf:
+    mode: HTML
+    cache: false
+

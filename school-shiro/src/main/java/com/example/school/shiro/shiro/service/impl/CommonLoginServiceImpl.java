@@ -1,0 +1,82 @@
+package com.example.school.shiro.shiro.service.impl;
+
+import com.example.school.common.constant.CacheKeys;
+import com.example.school.common.constant.SysConst;
+import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.mysql.entity.User;
+import com.example.school.common.mysql.entity.UserRegistration;
+import com.example.school.common.mysql.service.UserRegistrationService;
+import com.example.school.common.redis.StringRedisService;
+import com.example.school.common.utils.JwtUtils;
+import com.example.school.common.utils.NetworkUtil;
+import com.example.school.shiro.shiro.service.CommonLoginService;
+import com.example.school.shiro.shiro.token.PasswordToken;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
+
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @author zhang tong
+ * date: 2019/1/17 17:49
+ * description:
+ */
+@AllArgsConstructor
+@Service
+@Transactional(rollbackOn = RuntimeException.class)
+public class CommonLoginServiceImpl implements CommonLoginService {
+
+    private final JwtUtils jwtUtils;
+
+    private final StringRedisService stringRedisService;
+
+    private final UserRegistrationService userRegistrationService;
+
+    @Override
+    public String login(PasswordToken token, String ip, String deviceInfo) throws OperationException {
+        return login(token, false, ip, deviceInfo, null);
+    }
+
+    @Override
+    public String login(PasswordToken token, Boolean rememberMe, String ip, String deviceInfo) throws OperationException {
+        return login(token, rememberMe, ip, deviceInfo, null);
+    }
+
+    @Override
+    public String login(PasswordToken token, String ip, String deviceInfo, String registrationId) throws OperationException {
+        return login(token, false, ip, deviceInfo, registrationId);
+    }
+
+    @Override
+    public String login(PasswordToken token, Boolean rememberMe, String ip, String deviceInfo, String registrationId) throws OperationException {
+        Long ipLong = NetworkUtil.ipToLong(ip);
+        SecurityUtils.getSubject().login(token);
+        User user = (User) SecurityUtils.getSubject().getPrincipal();
+        Long userId = user.getId();
+        String accessToken = jwtUtils.generateAccessToken(user, rememberMe);
+        String refreshToken = jwtUtils.generateRefreshToken(user, rememberMe);
+
+        //token 存储redis
+        stringRedisService.saveAccessToken(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong), accessToken, rememberMe);
+        stringRedisService.saveRefreshToken(CacheKeys.getJwtRefreshTokenKey(deviceInfo, userId, ipLong), refreshToken, rememberMe);
+
+        if (StringUtils.equals(deviceInfo, SysConst.DeviceInfo.MOBILE.getType())) {
+            UserRegistration userRegistration = new UserRegistration(userId, registrationId, accessToken);
+            userRegistrationService.save(userRegistration);
+        }
+
+        return accessToken;
+    }
+
+    @Override
+    public void logout(Long currentUserId, String ip, String deviceInfo) {
+        Long ipLong = NetworkUtil.ipToLong(ip);
+        stringRedisService.delete(CacheKeys.getJwtAccessTokenKey(deviceInfo, currentUserId, ipLong));
+        stringRedisService.delete(CacheKeys.getJwtRefreshTokenKey(deviceInfo, currentUserId, ipLong));
+        SecurityUtils.getSubject().logout();
+    }
+}

@@ -1,0 +1,97 @@
+spring:
+  datasource:
+    primary:
+      jdbc-url: jdbc:mysql://152.136.145.193:3306/free_school?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: School@2018
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP-primary
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    quartz-data:
+      jdbc-url: jdbc:mysql://152.136.145.193:3306/free_school_quartz?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+      username: root
+      password: School@2018
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP-quartz
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+    type: com.zaxxer.hikari.HikariDataSource
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 500MB
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        max-wait: 10s
+        min-idle: 0
+    timeout: 300s
+
+#自定义配置信息
+custom:
+  account:
+    first-error-account-lock-time: 3 #账户密码输入错误 锁定时间 单位：分钟
+    first-error-account-error-count: 5 #账户密码输入错误 最大次数
+    second-error-account-lock-time: 30 #账户密码输入错误 锁定时间 单位：分钟
+    second-error-account-error-count: 10 #账户密码输入错误 最大次数
+    third-error-account-lock-time: 3 #账户密码输入错误 锁定时间 单位：小时
+    third-error-account-error-count: 15 #账户密码输入错误 最大次数
+  verification-code:
+    code-len: 6 #验证码长度
+    code-expires: 10 #验证码失效时间  单位：分钟
+    code-requesting-party-lock-time: 24 #验证码请求方锁定时间 单位:小时
+    code-requesting-party-max-count: 100 #同一个请求最大的验证码数量
+  short-message: #短信配置信息
+    product: Dysmsapi
+    domain: dysmsapi.aliyuncs.com
+    access-key-id: LTAI4oETwsETtPLz
+    access-key-secret: mSKw9kfkvfnoWPrV3VOSaadioEtcir
+    default-connect-timeout: 10000
+    default-read-timeout: 10000
+    sign-name: 大学时光
+    login-template-code: SMS_167964255
+    register-template-code: SMS_167964266
+    forget-template-code: SMS_167964266
+    out-id:
+  jpush: #极光推送配置信息
+    app-key: 4a631dc333c6c09206632df8
+    master-secret: b83e3a36547dd1f7f7cf61eb
+    live-time: 0
+  jwt:
+    header: authorization
+    expiration: 2  #过期时间 单位 小时
+    refresh-expiration: 6 #刷新时间 单位 小时
+    remember-me-expiration: 30 #记住我-过期时间 单位 天
+    remember-me-refresh-expiration: 40 #记住我-刷新时间 单位 天
+    token-head: Bearer
+    secret: 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+
+
+server:
+  tomcat:
+    basedir: /home/file/temp
+management:
+  health:
+    mail:
+      enabled: false
+  server:
+    port: 54001
