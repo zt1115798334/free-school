@@ -101,7 +101,7 @@ public class RecordTimeControllerTest extends BaseAutoLoginTest {
     public void findRecordTimeCommentAndReply() {
         url += "findRecordTimeCommentAndReply";
         VoCommentPage voCommentPage = new VoCommentPage();
-        voCommentPage.setTopicId(1L);
+        voCommentPage.setTopicId(31L);
         voCommentPage.setPageNumber(1);
         voCommentPage.setPageSize(10);
         postJSONObject(url, voCommentPage);

@@ -129,7 +129,6 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public PageImpl<RoCommentStatus> findRoCommentAndReplyStatusPage(Comment comment, Long userId) {
-
         Page<Comment> commentPage = this.findPageByEntity(comment);
         List<Long> commentIdList = commentPage.stream().map(Comment::getId).collect(toList());
         List<RoCommentReplyStatus> roCommentReplyStatusList = commentReplyService.findRoCommentReplyStatusList(commentIdList);

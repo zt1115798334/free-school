@@ -51,7 +51,7 @@ public class RoChangeEntityUtils {
         Long commentId = comment.getId();
         Long commentUserId = comment.getUserId();
         return new RoCommentStatus(
-                topicCommentMap.getUserMap().getOrDefault(commentId, UserUtils.getDefaultRoUser()),
+                topicCommentMap.getUserMap().getOrDefault(commentUserId, UserUtils.getDefaultRoUser()),
                 comment.getState(),
                 Objects.equal(commentUserId, userId),
                 topicCommentMap.getZanStateMap().containsKey(commentId),
