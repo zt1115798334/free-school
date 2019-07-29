@@ -6,8 +6,8 @@ import com.example.school.common.mysql.service.UserRegistrationService;
 import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ import java.util.Optional;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
+@Transactional(rollbackFor = RuntimeException.class)
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private final UserRegistrationRepository userRegistrationRepository;

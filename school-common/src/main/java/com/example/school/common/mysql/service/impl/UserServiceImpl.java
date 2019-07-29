@@ -24,8 +24,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void updateLastLoginTime(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         userOptional.ifPresent(user -> {
@@ -150,7 +150,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public RoUser saveUser(User user) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Long userId = user.getId();
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void modifyPassword(String phone, String password) {
         this.validatePhoneByForget(phone);
         User user = this.findByPhoneUnDelete(phone);

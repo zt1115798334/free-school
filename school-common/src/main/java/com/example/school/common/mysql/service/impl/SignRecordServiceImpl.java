@@ -9,8 +9,8 @@ import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.NumberUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
+@Transactional(rollbackFor = RuntimeException.class)
 public class SignRecordServiceImpl implements SignRecordService {
 
 

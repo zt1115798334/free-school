@@ -42,7 +42,7 @@ public class RecordTimeControllerTest extends BaseAutoLoginTest {
     @Test
     public void findRecordTime() {
         url += "findRecordTime";
-        params.put("id", 11L);
+        params.put("id", 31L);
         postParams(url, params);
     }
 

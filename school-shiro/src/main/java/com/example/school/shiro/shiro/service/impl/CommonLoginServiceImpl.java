@@ -15,8 +15,8 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,7 +27,7 @@ import javax.transaction.Transactional;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
+@Transactional(rollbackFor = RuntimeException.class)
 public class CommonLoginServiceImpl implements CommonLoginService {
 
     private final JwtUtils jwtUtils;

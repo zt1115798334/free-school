@@ -13,8 +13,8 @@ import com.example.school.common.utils.UserUtils;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -45,16 +45,16 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public CommentReply saveCommentReplyToComment(Long topicId, Short topicType, Long commentId, Long replyId, String content, Long toUserId, Long fromUserId) {
-//        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
+        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
         return this.save(new CommentReply(commentId, SysConst.ReplyType.COMMENT.getCode(), replyId, content, toUserId, fromUserId));
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public CommentReply saveCommentReplyToReply(Long topicId, Short topicType, Long commentId, Long replyId, String content, Long toUserId, Long fromUserId) {
-//        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
+        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
         return this.save(new CommentReply(commentId, SysConst.ReplyType.REPLY.getCode(), replyId, content, toUserId, fromUserId));
     }
 

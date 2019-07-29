@@ -5,8 +5,8 @@ import com.example.school.common.mysql.entity.VerificationCodeLog;
 import com.example.school.common.mysql.repo.VerificationCodeLogRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 /**
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
+@Transactional(rollbackFor = RuntimeException.class)
 public class VerificationCodeLogServiceImpl implements VerificationCodeLogService {
 
     private final VerificationCodeLogRepository verificationCodeLogRepository;

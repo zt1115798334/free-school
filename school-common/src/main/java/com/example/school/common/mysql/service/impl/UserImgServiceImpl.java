@@ -11,18 +11,15 @@ import com.example.school.common.utils.module.UploadFile;
 import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.io.File;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,7 +30,6 @@ import static java.util.stream.Collectors.*;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class UserImgServiceImpl implements UserImgService {
 
     private final UserImgRepository userImgRepository;
@@ -50,7 +46,7 @@ public class UserImgServiceImpl implements UserImgService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public UserImg saveUserImg(HttpServletRequest request, Long userId) {
         String folderPath = FileUtils.getFolderPath(FOLDER_HEAD_PORTRAIT);
         UploadFile uploadFile = FileUtils.uploadFile(request, folderPath);
@@ -71,7 +67,7 @@ public class UserImgServiceImpl implements UserImgService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void modifyUserImg(Long userId, Long imgId) {
         List<UserImg> userImgList = userImgRepository.findByUserId(userId);
         List<UserImg> needSave = userImgList.stream().peek(userImg -> {

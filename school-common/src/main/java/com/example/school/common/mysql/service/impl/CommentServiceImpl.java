@@ -24,8 +24,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -84,14 +84,14 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public Comment saveComment(Long topicId, Short topicType, String content, Long toUserId, Long fromUserId) {
-//        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
+        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
         return this.save(new Comment(toUserId, topicId, topicType, content));
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void adoptComment(Long id, Long topicId, Short topicType) {
         Comment comment = this.findComment(id);
         if (Objects.equal(comment.getState(), SysConst.CommentState.ADOPT.getType())) {

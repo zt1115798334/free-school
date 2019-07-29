@@ -9,8 +9,8 @@ import com.example.school.common.tools.JPushTool;
 import com.example.school.common.utils.UserUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,13 +58,13 @@ public class ZanServiceImpl implements ZanService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void enableOnZan(Long topicId, Short topicType, Short zanType, Long toUserId, Long fromUserId) {
         Optional<Zan> zanOptional = zanRepository.findByUserIdAndTopicIdAndTopicTypeAndZanType(toUserId, topicId, topicType, zanType);
         Zan zan = zanOptional.orElse(new Zan(toUserId, topicId, topicType, zanType, ON));
         zan.setZanState(ON);
         zanRepository.save(zan);
-//        jPushTool.pushZanInfo(topicId, topicType, zanType, toUserId, fromUserId);
+        jPushTool.pushZanInfo(topicId, topicType, zanType, toUserId, fromUserId);
     }
 
     @Override

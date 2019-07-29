@@ -1,6 +1,5 @@
 package com.example.school.common.mysql.service.impl;
 
-import com.example.school.common.constant.SysConst;
 import com.example.school.common.mysql.entity.FileInfo;
 import com.example.school.common.mysql.entity.TopicImg;
 import com.example.school.common.mysql.repo.TopicImgRepository;
@@ -10,12 +9,9 @@ import com.example.school.common.utils.FileUtils;
 import com.example.school.common.utils.module.UploadFile;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
-import java.io.File;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +41,7 @@ public class TopicImgServiceImpl implements TopicImgService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void saveTopicImgFile(HttpServletRequest request, Long topicId, Short topicType) {
         String folderPath = FileUtils.getFolderPath(FOLDER_IMG);
         List<UploadFile> uploadFile = FileUtils.batchUploadFile(request, folderPath);

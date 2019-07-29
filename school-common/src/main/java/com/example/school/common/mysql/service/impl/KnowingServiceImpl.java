@@ -15,8 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,7 +90,7 @@ public class KnowingServiceImpl implements KnowingService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public RoKnowing saveKnowing(Knowing knowing, Long userId) {
         User user = userService.findByUserId(userId);
         Long integral = knowing.getIntegral();
@@ -104,7 +104,7 @@ public class KnowingServiceImpl implements KnowingService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteKnowing(Long id) {
         Knowing knowing = this.findKnowing(id);
         userService.increaseIntegral(knowing.getUserId(), knowing.getIntegral());
@@ -126,7 +126,7 @@ public class KnowingServiceImpl implements KnowingService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void adoptKnowingComment(Long id, Long userId, Long commentId, Long commentUserId) {
         Knowing knowing = this.findKnowing(id);
         commentService.adoptComment(commentId, id, TOPIC_TYPE_3);
@@ -136,7 +136,7 @@ public class KnowingServiceImpl implements KnowingService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
+    @Transactional(rollbackFor = RuntimeException.class)
     public void incrementKnowingBrowsingVolume(Long id) {
         knowingRepository.incrementBrowsingVolume(id);
     }
