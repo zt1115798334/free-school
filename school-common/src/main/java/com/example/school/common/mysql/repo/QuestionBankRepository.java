@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +29,6 @@ public interface QuestionBankRepository extends CrudRepository<QuestionBank, Lon
 
     @Modifying
     @Query(value = "update QuestionBank set browsingVolume = browsingVolume + 1 where id =:id")
+    @Transactional(rollbackFor = RuntimeException.class)
     void incrementBrowsingVolume(Long id);
 }

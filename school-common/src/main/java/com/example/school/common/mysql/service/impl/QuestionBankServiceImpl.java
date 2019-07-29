@@ -141,7 +141,6 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     }
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class)
     public void incrementQuestionBankBrowsingVolume(Long id) {
         questionBankRepository.incrementBrowsingVolume(id);
     }
