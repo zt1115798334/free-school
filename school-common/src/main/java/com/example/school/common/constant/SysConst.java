@@ -20,9 +20,13 @@ public class SysConst {
     public static final String ORIGINAL_IMAGE_FILE_URL = "/app/file/findOriginalImg?topicImgId=";
     public static final String COMPRESS_IMAGE_FILE_URL = "/app/file/findCompressImg?topicImgId=";
 
+    public static final String QUESTION_BANK_PDF_FILE_URL = "/app/file/findQuestionBankPdf?topicFileId=";
+
     public static final int DEFAULT_BATCH_SIZE = 200;
     public static final String DEFAULT_SORT_NAME = "createdTime";
 
+    public static final String DEFAULT_USERNAME = "时光";
+    public static final Long DEFAULT_INTEGRAL = 100L;
     public static final String DEFAULT_PASSWORD = "123456";
 
 
@@ -108,15 +112,15 @@ public class SysConst {
     @AllArgsConstructor
     public enum ShowState {
 
-        HIDE(0, "hide", "隐藏"),
-        DISPLAY(1, "display", "显示");
+        HIDE((short) 0, "hide", "隐藏"),
+        DISPLAY((short) 1, "display", "显示");
 
-        private Integer code;
+        private Short code;
         private String type;
         private String name;
     }
 
-    public static Optional<ShowState> getShowStateByCode(Integer code) {
+    public static Optional<ShowState> getShowStateByCode(Short code) {
         return Arrays.stream(ShowState.values())
                 .filter(replyType -> Objects.equal(code, replyType.getCode()))
                 .findFirst();
@@ -137,13 +141,13 @@ public class SysConst {
 
     }
 
-    private static Optional<EnabledState> getEnabledStateByCode(Integer code) {
+    private static Optional<EnabledState> getEnabledStateByCode(Short code) {
         return Arrays.stream(EnabledState.values())
                 .filter(replyType -> code.equals(replyType.getCode()))
                 .findFirst();
     }
 
-    public static String getEnabledStateNameByCode(Integer code) {
+    public static String getEnabledStateNameByCode(Short code) {
         return getEnabledStateByCode(code).orElse(EnabledState.ON).getName();
     }
 
@@ -218,14 +222,14 @@ public class SysConst {
     @AllArgsConstructor
     public enum AccountState {
 
-        FROZEN(0, "冻结"),
-        normal(1, "正常");
-        private Integer code;
+        FROZEN((short) 0, "冻结"),
+        NORMAL((short) 1, "正常");
+        private Short code;
         private String name;
 
     }
 
-    public static Optional<AccountState> getAccountStateByCode(Integer code) {
+    public static Optional<AccountState> getAccountStateByCode(Short code) {
         return Arrays.stream(AccountState.values())
                 .filter(replyType -> Objects.equal(code, replyType.getCode()))
                 .findFirst();
@@ -239,12 +243,32 @@ public class SysConst {
     public enum AccountType {
 
         ADMIN("admin", "管理员用户"),
-        ORDINARY("ordinary", "普通用户");
+        STUDENT_PRESIDENT("studentPresident", "学生会用户"),
+        STUDENT("student", "学生用户");
 
         private String type;
         private String name;
     }
 
+    public static Optional<AccountType> getAccountTypeByType(String type) {
+        return Arrays.stream(AccountType.values())
+                .filter(replyType -> StringUtils.equals(type, replyType.getType()))
+                .findFirst();
+    }
+
+    /**
+     * 账户类型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum PermissionType {
+
+        ADMIN("admin", "管理员用户"),
+        STUDENT_PRESIDENT("studentPresident", "学生会用户");
+
+        private String type;
+        private String name;
+    }
 
     /**
      * 性别
@@ -253,20 +277,37 @@ public class SysConst {
     @AllArgsConstructor
     public enum Sex {
 
-        WOMEN(0, "女"),
-        MEN(1, "男"),
-        UNKNOWN(99, "未知");
+        WOMEN((short) 0, "女"),
+        MEN((short) 1, "男"),
+        UNKNOWN((short) 99, "未知");
 
-        private Integer code;
+        private Short code;
         private String name;
 
     }
 
-    public static Optional<Sex> getSexByCode(Integer code) {
+    public static Optional<Sex> getSexByCode(Short code) {
         return Arrays.stream(Sex.values())
                 .filter(replyType -> code.equals(replyType.getCode()))
                 .findFirst();
     }
+
+
+    /**
+     * 文件夹类型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum FolderType {
+        FOLDER_IMG("img", "图片"),
+        FOLDER_HEAD_PORTRAIT("headPortrait", "用户头像"),
+        FOLDER_FEEDBACK_IMG("feedbackImg", "反馈图片"),
+        FOLDER_QUESTION_BANK_FILE("questionBankFile", "用户头像");
+
+        private String type;
+        private String name;
+    }
+
 
     /**
      * 状态
@@ -278,7 +319,7 @@ public class SysConst {
         NEW_RELEASE("newRelease", "新发布"),
         AFTER_RELEASE("afterRelease", "发布后"),
         SOLVE("solve", "已解决"),
-        SELL_OUT("sellOut", "已解决"),
+        SELL_OUT("sellOut", "卖出"),
         LOWER_SHELF("lowerShelf", "下架");
 
         private String type;
@@ -322,6 +363,31 @@ public class SysConst {
     public enum ZanType {
         ZAN_TOPIC((short) 1, "主题"),
         ZAN_COMMENT((short) 2, "评论");
+
+        private Short code;
+        private String name;
+    }
+
+    /**
+     * 主体类型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum CommentState {
+        ADOPT("adopt", "采纳"),
+        NOT_ADOPTED("notAdopted", "采纳");
+
+        private String type;
+        private String name;
+    }
+
+    /**
+     * 反馈类型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum FeedbackType {
+        FEEDBACK_TYPE_CUSTOM((short) 99, "自定义");
 
         private Short code;
         private String name;

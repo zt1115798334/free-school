@@ -2,10 +2,10 @@ package com.example.school.common.mysql.service;
 
 import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ro.RoRecordTime;
-import com.example.school.common.base.entity.ro.RoTransaction;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.RecordTime;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface RecordTimeService extends BaseService<RecordTime, Long> {
 
-    RoRecordTime saveRecordTime(RecordTime recordtime);
+    RoRecordTime saveRecordTime(RecordTime recordTime);
 
     void deleteRecordTime(Long id);
 
@@ -26,10 +26,17 @@ public interface RecordTimeService extends BaseService<RecordTime, Long> {
 
     void modifyRecordTimeSateToAfterRelease(List<Long> userId);
 
-    RoRecordTime findRecordTime(Long id, Long userId) throws OperationException;
+    void incrementRecordTimeBrowsingVolume(Long id);
 
-    CustomPage<RoRecordTime> findRecordTimeEffectivePage(RecordTime recordtime, Long userId);
+    RecordTime findRecordTime(Long id) ;
 
-    CustomPage<RoRecordTime> findRecordTimeUserPage(RecordTime recordtime, Long userId);
+    RoRecordTime findRoRecordTime(Long id, Long userId) ;
+
+    PageImpl<RoRecordTime> findRecordTimeEffectivePage(RecordTime recordTime, Long userId);
+
+    PageImpl<RoRecordTime> findRecordTimeUserPage(RecordTime recordTime, Long userId);
+
+    PageImpl<RoRecordTime> findRecordTimeCollectionPage(CustomPage customPage, Long userId);
+
 
 }

@@ -1,4 +1,4 @@
-package com.example.school.task.task.job.clear;
+package com.example.school.task.task.job;
 
 import com.example.school.task.task.handler.UserPageHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class ModifySateToAfterReleaseJob implements Job {
     private UserPageHandler modifySateToAfterReleaseHandler;
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void execute(JobExecutionContext jobExecutionContext) {
         modifySateToAfterReleaseHandler.handle();
     }
 }

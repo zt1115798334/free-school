@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
  * description: 错误异常
  */
 @NoArgsConstructor
-public class OperationException extends Exception {
+public class OperationException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public OperationException(String message) {

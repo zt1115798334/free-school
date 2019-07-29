@@ -37,14 +37,14 @@ public class RoRecordTime extends RoTopic {
     private String dateTime;
 
     /**
-     * 商品描述
+     * 描述
      */
-    @ApiModelProperty(value = "商品描述")
+    @ApiModelProperty(value = "描述")
     private String describeContent;
 
-    public RoRecordTime(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, Long commentNum, List<RoImagePath> topicImgList,
+    public RoRecordTime(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, boolean collectionState, Long commentNum, Long browsingVolume, List<RoImagePath> topicImgList,
                         Long id, String title, String dateTime, String describeContent) {
-        super(user, state, userState, zanState, zanNum, zanUsers, commentNum, topicImgList);
+        super(user, state, userState, zanState, zanNum, zanUsers, collectionState, commentNum, browsingVolume, topicImgList);
         this.id = id;
         this.title = title;
         this.dateTime = dateTime;

@@ -1,4 +1,4 @@
-package com.example.school.task.task.job.clear;
+package com.example.school.task.task.job;
 
 import com.example.school.common.mysql.service.UserLogService;
 import com.example.school.common.mysql.service.VerificationCodeLogService;

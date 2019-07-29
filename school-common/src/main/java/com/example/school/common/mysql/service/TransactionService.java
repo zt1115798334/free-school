@@ -5,6 +5,7 @@ import com.example.school.common.base.entity.ro.RoTransaction;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Transaction;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
@@ -25,10 +26,16 @@ public interface TransactionService extends BaseService<Transaction, Long> {
 
     void modifyTransactionSateToAfterRelease(List<Long> userId);
 
-    RoTransaction findTransaction(Long id, Long userId) throws OperationException;
+    void incrementTransactionBrowsingVolume(Long id);
 
-    CustomPage<RoTransaction> findTransactionEffectivePage(Transaction transaction, Long userId);
+    Transaction findTransaction(Long id) ;
 
-    CustomPage<RoTransaction> findTransactionUserPage(Transaction transaction, Long userId);
+    RoTransaction findRoTransaction(Long id, Long userId) ;
+
+    PageImpl<RoTransaction> findTransactionEffectivePage(Transaction transaction, Long userId);
+
+    PageImpl<RoTransaction> findTransactionUserPage(Transaction transaction, Long userId);
+
+    PageImpl<RoTransaction> findTransactionCollectionPage(CustomPage customPage, Long userId);
 
 }

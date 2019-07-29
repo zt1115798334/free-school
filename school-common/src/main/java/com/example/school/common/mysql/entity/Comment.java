@@ -44,6 +44,11 @@ public class Comment extends IdPageEntity {
      */
     private String content;
     /**
+     * 状态
+     * {@link com.example.school.common.constant.SysConst.CommentState}
+     */
+    private String state;
+    /**
      * 创建时间
      */
     private LocalDateTime createdTime;

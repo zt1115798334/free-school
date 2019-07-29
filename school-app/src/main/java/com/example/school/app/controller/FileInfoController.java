@@ -3,6 +3,7 @@ package com.example.school.app.controller;
 import com.example.school.common.mysql.entity.FileInfo;
 import com.example.school.common.mysql.service.FileInfoService;
 import com.example.school.common.utils.FileUtils;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import javax.validation.constraints.NotNull;
  * date: 2019/6/23 16:05
  * description:
  */
+@Api(tags = "文件")
 @Controller
 @RequestMapping(value = "app/file")
 @AllArgsConstructor
@@ -33,7 +35,7 @@ public class FileInfoController {
     public void findOriginalImg(HttpServletRequest request, HttpServletResponse response,
                                 @NotNull(message = "id不能为空") @RequestParam Long topicImgId) throws Exception {
         FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
-        FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getFileName());
+        FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getOriginalFileName());
     }
 
     @ApiOperation(value = "展示压缩图片信息")
@@ -41,6 +43,15 @@ public class FileInfoController {
     public void findCompressImg(HttpServletRequest request, HttpServletResponse response,
                                 @NotNull(message = "id不能为空") @RequestParam Long topicImgId) throws Exception {
         FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
-        FileUtils.showFile(request, response, fileInfo.getCompressFilePath(), fileInfo.getFileName());
+        FileUtils.showFile(request, response, fileInfo.getCompressFilePath(), fileInfo.getOriginalFileName());
     }
+
+    @ApiOperation(value = "展示题库pdf信息")
+    @GetMapping(value = "findQuestionBankPdf")
+    public void findQuestionBankPdf(HttpServletRequest request, HttpServletResponse response,
+                                @NotNull(message = "id不能为空") @RequestParam Long topicFileId) throws Exception {
+        FileInfo fileInfo = fileInfoService.findFileInfo(topicFileId);
+        FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getOriginalFileName());
+    }
+
 }

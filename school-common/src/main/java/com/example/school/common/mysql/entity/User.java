@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.time.LocalDateTime;
 
 
@@ -59,13 +58,31 @@ public class User extends IdPageEntity {
      */
     private String email;
     /**
+     * 性别
+     */
+    private Short sex;
+    /**
+     * 积分
+     */
+    private Long integral;
+
+    /**
+     * 学校
+     */
+    private String school;
+    /**
+     * 学校地址
+     */
+    private String schoolAddress;
+
+    /**
      * 账户状态：{0：冻结,1:正常}
      * {@link SysConst.AccountState}
      */
-    private Integer accountState;
+    private Short accountState;
 
     /**
-     * 账户类型：{admin :管理员用户,ordinary:普通用户}
+     * 账户类型：{admin :管理员用户,studentPresident:学生会用户,student:学生用户}
      * {@link SysConst.AccountType}
      */
     private String accountType;
@@ -87,19 +104,24 @@ public class User extends IdPageEntity {
      */
     private Short deleteState;
 
-    public User(String account, String password, String salt, String phone, Integer accountState, String accountType) {
+    public User(String account, String password, String salt, String userName, String phone, Short sex, Long integral, Short accountState, String accountType) {
         this.account = account;
         this.password = password;
         this.salt = salt;
+        this.userName = userName;
         this.phone = phone;
+        this.sex = sex;
+        this.integral = integral;
         this.accountState = accountState;
         this.accountType = accountType;
     }
 
-    public User(String userName, String personalSignature, String phone, String email) {
+    public User(String userName, String personalSignature, String phone, String email, Short sex,String school) {
         this.userName = userName;
         this.personalSignature = personalSignature;
         this.phone = phone;
         this.email = email;
+        this.sex = sex;
+        this.school = school;
     }
 }

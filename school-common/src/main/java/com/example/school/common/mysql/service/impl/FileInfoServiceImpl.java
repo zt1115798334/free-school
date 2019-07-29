@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class FileInfoServiceImpl implements FileInfoService {
 
     private final FileInfoRepository fileInfoRepository;
@@ -59,7 +58,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
-    public FileInfo findFileInfo(Long id) throws OperationException {
+    public FileInfo findFileInfo(Long id) {
         Optional<FileInfo> infoOptional = findById(id);
         return infoOptional.orElseThrow(() -> new OperationException("图片不存在"));
 

@@ -99,6 +99,11 @@ public abstract class IdPageEntity implements Serializable {
     @Transient
     protected LocalDateTime endDateTime;
 
+    public IdPageEntity(int pageNumber, int pageSize) {
+        this.pageNumber = pageNumber;
+        this.pageSize = pageSize;
+    }
+
     public IdPageEntity(String sortName, String sortOrder, int pageNumber, int pageSize) {
         this.sortName = sortName;
         this.sortOrder = sortOrder;

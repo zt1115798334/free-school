@@ -116,4 +116,13 @@ public class NumberUtils {
         }
         return result;
     }
+
+    public static String intToBinary(int num) {
+        char[] chs = new char[Integer.SIZE];
+        for (int i = 0; i < Integer.SIZE; i++) {
+            chs[Integer.SIZE - 1 - i] = (char) ((num >> i & 1) + '0');
+        }
+        return new String(chs);
+    }
+
 }

@@ -33,6 +33,7 @@ import static java.util.stream.Collectors.*;
  */
 @AllArgsConstructor
 @Service
+@Transactional(rollbackOn = RuntimeException.class)
 public class UserImgServiceImpl implements UserImgService {
 
     private final UserImgRepository userImgRepository;
@@ -49,8 +50,9 @@ public class UserImgServiceImpl implements UserImgService {
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public UserImg saveUserImg(HttpServletRequest request, Long userId) {
-        String folderPath = getFolderPath();
+        String folderPath = FileUtils.getFolderPath(FOLDER_HEAD_PORTRAIT);
         UploadFile uploadFile = FileUtils.uploadFile(request, folderPath);
         FileInfo fileInfo = fileInfoService.saveFileInfo(uploadFile);
         userImgRepository.updateUserImgState(OFF, userId);
@@ -82,9 +84,4 @@ public class UserImgServiceImpl implements UserImgService {
         userImgRepository.saveAll(needSave);
     }
 
-    private String getFolderPath() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = formatter.format(LocalDate.now());
-        return System.getProperty("user.dir") + File.separator + "file" + File.separator + "user" + File.separator + date + File.separator;
-    }
 }

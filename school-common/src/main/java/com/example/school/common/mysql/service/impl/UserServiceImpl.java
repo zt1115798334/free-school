@@ -1,23 +1,26 @@
 package com.example.school.common.mysql.service.impl;
 
 import com.example.school.common.base.entity.ro.RoUser;
+import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
-import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.entity.UserImg;
 import com.example.school.common.mysql.repo.UserRepository;
+import com.example.school.common.mysql.service.PermissionService;
 import com.example.school.common.mysql.service.UserImgService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.UserUtils;
 import com.example.school.common.utils.change.RoChangeEntityUtils;
-import com.google.common.collect.Maps;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
+import static com.example.school.common.constant.SysConst.*;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
@@ -46,13 +51,15 @@ public class UserServiceImpl implements UserService {
 
     private final UserImgService userImgService;
 
+    private final PermissionService permissionService;
+
 
     //冻结
-    private static final Integer FROZEN = SysConst.AccountState.FROZEN.getCode();
-    private static final String ADMIN = SysConst.AccountType.ADMIN.getType();
+    private static final Short FROZEN = AccountState.FROZEN.getCode();
+    private static final Short NORMAL = AccountState.NORMAL.getCode();
+    private static final String ADMIN = AccountType.ADMIN.getType();
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public User save(User user) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Long userId = user.getId();
@@ -77,9 +84,19 @@ public class UserServiceImpl implements UserService {
             user.setUpdatedTime(currentDateTime);
             user.setDeleteState(ConstantService.UN_DELETED);
             user = userRepository.save(user);
+            permissionService.saveSysSystemPermission(user.getId(), user.getAccountType());
         }
 
         return user;
+    }
+
+    @Override
+    public void deleteById(Long aLong) {
+        Optional<User> userOptional = userRepository.findById(aLong);
+        userOptional.ifPresent(user -> {
+            user.setDeleteState(DELETED);
+            userRepository.save(user);
+        });
     }
 
     @Override
@@ -94,8 +111,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<User> findPageByEntity(User user) {
-        Map<String, SearchFilter> filters = buildQueryMap(user);
-        Specification<User> specification = SearchFilter.bySearchFilter(filters.values());
+        List<SearchFilter> filters = buildQueryMap(user);
+        Specification<User> specification = SearchFilter.bySearchFilter(filters);
         Pageable pageable = PageUtils.buildPageRequest(
                 user.getPageNumber(),
                 user.getPageSize());
@@ -113,26 +130,35 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUserOrdinary(String phone, String password) throws OperationException {
+    public void saveUserStudent(String phone, String password) {
+        this.saveUser(phone, password, AccountType.STUDENT.getType());
+    }
+
+    @Override
+    public void saveUserStudentPresident(String phone, String password) {
+        this.saveUser(phone, password, AccountType.STUDENT_PRESIDENT.getType());
+    }
+
+    @Override
+    public void saveUser(String phone, String password, String accountType) {
         this.validatePhoneByRegister(phone);
         String salt = UserUtils.getSalt();
         String encryptPassword = UserUtils.getEncryptPassword(phone, password, salt);
-        User user = new User(phone, encryptPassword, salt, phone, SysConst.AccountState.normal.getCode(), SysConst.AccountType.ORDINARY.getType());
+        User user = new User(phone, encryptPassword, salt, UserUtils.getDefaultUserName(phone), phone, Sex
+                .UNKNOWN.getCode(), DEFAULT_INTEGRAL, AccountState.NORMAL.getCode(), accountType);
         this.save(user);
     }
 
     @Override
     @Transactional(rollbackOn = RuntimeException.class)
-    public RoUser saveUserOrdinary(User user) throws OperationException {
+    public RoUser saveUser(User user) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Long userId = user.getId();
         Optional<User> userOptional = userRepository.findByIdAndDeleteState(userId, UN_DELETED);
         User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
-
         userDB.setUserName(user.getUserName());
         userDB.setPhone(user.getPhone());
         userDB.setPersonalSignature(user.getPersonalSignature());
-        userDB.setAccountState(user.getAccountState());
         userDB.setUpdatedTime(currentDateTime);
         userDB.setDeleteState(ConstantService.UN_DELETED);
         user = userRepository.save(userDB);
@@ -141,7 +167,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void modifyPasswordOrdinary(String phone, String password) throws OperationException {
+    @Transactional(rollbackOn = RuntimeException.class)
+    public void modifyPassword(String phone, String password) {
         this.validatePhoneByForget(phone);
         User user = this.findByPhoneUnDelete(phone);
         String salt = UserUtils.getSalt();
@@ -149,6 +176,34 @@ public class UserServiceImpl implements UserService {
         user.setSalt(salt);
         user.setPassword(encryptPassword);
         this.save(user);
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        this.deleteById(userId);
+    }
+
+    @Override
+    public void normalUser(Long userId) {
+        User user = this.findByUserId(userId);
+        Short accountState = user.getAccountState();
+        accountState = Objects.equal(accountState, FROZEN) ? NORMAL : FROZEN;
+        user.setAccountState(accountState);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void increaseIntegral(Long sellerUserId, Long integral) {
+        User sellerUser = this.findByUserId(sellerUserId);
+        sellerUser.setIntegral(sellerUser.getIntegral() + integral);
+        userRepository.save(sellerUser);
+    }
+
+    @Override
+    public void reduceIntegral(Long buyerUserId, Long integral) {
+        User buyerUser = this.findByUserId(buyerUserId);
+        buyerUser.setIntegral(buyerUser.getIntegral() - integral);
+        userRepository.save(buyerUser);
     }
 
     @Override
@@ -167,14 +222,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByPhoneUnDelete(String phone) throws OperationException {
+    public User findByPhoneUnDelete(String phone) {
         Optional<User> byPhoneAndDeleteState = userRepository.findByPhoneAndDeleteState(phone, ConstantService.UN_DELETED);
         return byPhoneAndDeleteState.orElseThrow(() -> new OperationException("该用户不存在"));
     }
 
 
     @Override
-    public User findByUserId(Long userId) throws OperationException {
+    public User findByUserId(Long userId) {
         return this.findByIdNotDelete(userId).orElseThrow(() -> new OperationException("该用户不存在"));
     }
 
@@ -198,7 +253,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void validatePhoneByRegister(String phone) throws OperationException {
+    public PageImpl<RoUser> findRoUser(VoUser voUser) {
+        User user = new User();
+        user.setAccount(voUser.getAccount());
+        user.setAccountType(voUser.getAccountType());
+        user.setUserName(voUser.getUserName());
+        Page<User> page = this.findPageByEntity(user);
+        List<Long> userIdList = page.stream().map(User::getId).collect(toList());
+        Map<Long, UserImg> userImgMap = userImgService.findUserImgUrlByOn(userIdList);
+        List<RoUser> roUserList = RoChangeEntityUtils.resultRoUser(page.getContent(), userImgMap);
+        return new PageImpl<>(roUserList, page.getPageable(), page.getTotalElements());
+    }
+
+    @Override
+    public void validatePhoneByRegister(String phone) {
         Optional<User> userOptional = userRepository.findByPhone(phone);
         if (userOptional.isPresent()) {
             throw new OperationException("该手机号已经注册，请直接登录");
@@ -206,29 +274,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void validatePhoneByForget(String phone) throws OperationException {
+    public void validatePhoneByForget(String phone) {
         Optional<User> userOptional = userRepository.findByPhone(phone);
         if (!userOptional.isPresent()) {
             throw new OperationException("该手机号没有注册，请直接注册");
         }
     }
 
-    private Map<String, SearchFilter> buildQueryMap(User user) {
-        Map<String, SearchFilter> filters = Maps.newHashMap();
+    private List<SearchFilter> buildQueryMap(User user) {
+        List<SearchFilter> filters = Lists.newArrayList();
         if (StringUtils.isNotEmpty(user.getAccount())) {
-            filters.put("account", new SearchFilter("account", user.getAccount(), SearchFilter.Operator.LIKE));
+            filters.add(new SearchFilter("account", user.getAccount(), SearchFilter.Operator.LIKE));
         }
         if (StringUtils.isNotEmpty(user.getUserName())) {
-            filters.put("userName", new SearchFilter("userName", user.getUserName(), SearchFilter.Operator.LIKE));
+            filters.add(new SearchFilter("userName", user.getUserName(), SearchFilter.Operator.LIKE));
         }
-        filters.put("deleteState", new SearchFilter("deleteState", ConstantService.UN_DELETED, SearchFilter.Operator.EQ));
-        return filters;
-    }
-
-    private Map<String, SearchFilter> getEffectiveParams() {
-        Map<String, SearchFilter> filters = Maps.newHashMap();
-        filters.put("accountState", new SearchFilter("accountState", FROZEN, SearchFilter.Operator.NEQ));
-        filters.put("deleteState", new SearchFilter("deleteState", ConstantService.UN_DELETED, SearchFilter.Operator.EQ));
+        if (StringUtils.isNotEmpty(user.getAccountType())) {
+            filters.add(new SearchFilter("accountType", user.getAccountType(), SearchFilter.Operator.EQ));
+        }
+        filters.add(new SearchFilter("deleteState", ConstantService.UN_DELETED, SearchFilter.Operator.EQ));
         return filters;
     }
 }

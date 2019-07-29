@@ -1,5 +1,8 @@
 package com.example.school.common.utils.change;
 
+import com.example.school.common.base.entity.CustomPage;
+import com.example.school.common.base.entity.IdEntity;
+import com.example.school.common.base.entity.IdPageEntity;
 import com.example.school.common.base.entity.vo.*;
 import com.example.school.common.mysql.entity.*;
 import com.example.school.common.utils.DateUtils;
@@ -13,11 +16,17 @@ import com.example.school.common.utils.DateUtils;
  */
 public class VoChangeEntityUtils {
 
+    public static CustomPage changeIdPageEntity(VoPage page) {
+        return new CustomPage(page.getPageNumber(), page.getPageSize());
+    }
+
     public static User changeUser(VoStorageUser voStorageUser) {
         return new User(voStorageUser.getUserName(),
                 voStorageUser.getPersonalSignature(),
+                voStorageUser.getPhone(),
                 voStorageUser.getEmail(),
-                voStorageUser.getPhone());
+                voStorageUser.getSex(),
+                voStorageUser.getSchool());
     }
 
     public static Comment changeComment(VoCommentPage commentPage) {
@@ -27,6 +36,7 @@ public class VoChangeEntityUtils {
                 commentPage.getPageSize(),
                 commentPage.getTopicId());
     }
+
     public static CommentReply changeCommentReply(VoCommentReplyPage commentReplyPage) {
         return new CommentReply(commentReplyPage.getSortName(),
                 commentReplyPage.getSortOrder(),
@@ -69,5 +79,62 @@ public class VoChangeEntityUtils {
         return new RecordTime(storageRecordTime.getId(),
                 storageRecordTime.getTitle(),
                 storageRecordTime.getDescribeContent());
+    }
+
+    public static Knowing changeKnowing(VoParams voParams) {
+        DateUtils.DateRange dateTimeRange = DateUtils.findDateTimeRange(voParams.getTimeType(), voParams.getStartDateTime(), voParams.getEndDateTime());
+        return new Knowing(voParams.getSortName(),
+                voParams.getSortOrder(),
+                voParams.getPageNumber(),
+                voParams.getPageSize(),
+                dateTimeRange.getStartDateTime(),
+                dateTimeRange.getEndDateTime());
+    }
+
+    public static Knowing changeStorageKnowing(VoStorageKnowing storageKnowing) {
+        return new Knowing(storageKnowing.getId(),
+                storageKnowing.getTitle(),
+                storageKnowing.getDescribeContent(),
+                storageKnowing.getIntegral());
+    }
+
+
+    public static Information changeInformation(VoParams voParams) {
+        DateUtils.DateRange dateTimeRange = DateUtils.findDateTimeRange(voParams.getTimeType(), voParams.getStartDateTime(), voParams.getEndDateTime());
+        return new Information(voParams.getSortName(),
+                voParams.getSortOrder(),
+                voParams.getPageNumber(),
+                voParams.getPageSize(),
+                dateTimeRange.getStartDateTime(),
+                dateTimeRange.getEndDateTime());
+    }
+
+    public static Information changeStorageInformation(VoStorageInformation storageInformation) {
+        return new Information(storageInformation.getId(),
+                storageInformation.getTitle(),
+                storageInformation.getDescribeContent());
+    }
+
+    public static QuestionBank changeQuestionBank(VoParams voParams) {
+        DateUtils.DateRange dateTimeRange = DateUtils.findDateTimeRange(voParams.getTimeType(), voParams.getStartDateTime(), voParams.getEndDateTime());
+        return new QuestionBank(voParams.getSortName(),
+                voParams.getSortOrder(),
+                voParams.getPageNumber(),
+                voParams.getPageSize(),
+                dateTimeRange.getStartDateTime(),
+                dateTimeRange.getEndDateTime());
+    }
+
+    public static QuestionBank changeStorageQuestionBank(VoStorageQuestionBank storageQuestionBank) {
+        return new QuestionBank(storageQuestionBank.getId(),
+                storageQuestionBank.getTitle(),
+                storageQuestionBank.getDescribeContent(),
+                storageQuestionBank.getIntegral());
+    }
+
+    public static Feedback changeStorageFeedback(VoStorageFeedback storageFeedback) {
+        return new Feedback(storageFeedback.getFeedbackType(),
+                storageFeedback.getContent(),
+                storageFeedback.getContactMode());
     }
 }

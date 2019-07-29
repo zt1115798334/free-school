@@ -61,7 +61,7 @@ public class ShortMessageTool {
         return acsClient.getCommonResponse(request);
     }
 
-    public void sendShortMessageFromCode(String phoneNumbers, String code, String codeType) throws OperationException {
+    public void sendShortMessageFromCode(String phoneNumbers, String code, String codeType) {
         CommonResponse response = null;
         try {
             String templateCode = null;

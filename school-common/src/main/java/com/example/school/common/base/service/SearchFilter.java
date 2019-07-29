@@ -48,9 +48,9 @@ public class SearchFilter {
         this.logic = logic;
     }
 
-    /**
+ /*   *//**
      * searchParams中key的格式为OPERATOR_FIELDNAME
-     */
+     *//*
     public static Map<String, SearchFilter> parse(Map<String, Object> searchParams) {
         Map<String, SearchFilter> filters = Maps.newHashMap();
 
@@ -77,7 +77,7 @@ public class SearchFilter {
         }
 
         return filters;
-    }
+    }*/
 
     public static <T> Specification<T> bySearchFilter(final Collection<SearchFilter> filters) {
         return (Specification<T>) (root, query, builder) -> {

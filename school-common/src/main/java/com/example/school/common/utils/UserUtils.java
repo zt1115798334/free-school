@@ -79,14 +79,23 @@ public class UserUtils {
 
 
     public static RoUser getDefaultRoUser() {
-        return new RoUser(0L, "未知", "", "未知", "未知", new RoImagePath(1L));
+        return new RoUser(0L, "时光", "", "未知", "未知", SysConst.Sex.UNKNOWN.getCode(),
+                SysConst.DEFAULT_INTEGRAL,"", SysConst.AccountType.STUDENT.getType(), new RoImagePath(1L));
     }
 
-    public static User getDefaultUser(){
+    public static User getDefaultUser() {
         return new User();
     }
 
     public static UserImg getDefaultUserImg() {
         return new UserImg(0L, 1L);
+    }
+
+    public static String getDefaultUserName(String phone) {
+        return SysConst.DEFAULT_USERNAME + phone.substring(phone.length() - 4);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getDefaultUserName("15130097582"));
     }
 }

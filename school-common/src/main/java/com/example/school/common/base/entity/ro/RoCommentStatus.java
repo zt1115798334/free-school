@@ -29,16 +29,16 @@ public class RoCommentStatus extends RoTopic {
 
     List<RoCommentReplyStatus> roCommentReplyStatusList;
 
-    public RoCommentStatus(RoUser user, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime) {
-        super(user, zanState, zanNum);
+    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime) {
+        super(user, state, userState, zanState, zanNum);
         this.commentId = commentId;
         this.topicId = topicId;
         this.content = content;
         this.createdTime = createdTime;
     }
 
-    public RoCommentStatus(RoUser user, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime, List<RoCommentReplyStatus> roCommentReplyStatusList) {
-        super(user, zanState, zanNum);
+    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime, List<RoCommentReplyStatus> roCommentReplyStatusList) {
+        super(user, state, userState, zanState, zanNum);
         this.commentId = commentId;
         this.topicId = topicId;
         this.content = content;

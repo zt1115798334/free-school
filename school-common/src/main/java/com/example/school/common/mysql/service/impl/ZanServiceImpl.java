@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.*;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class ZanServiceImpl implements ZanService {
 
     private final ZanRepository zanRepository;
@@ -59,12 +58,13 @@ public class ZanServiceImpl implements ZanService {
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public void enableOnZan(Long topicId, Short topicType, Short zanType, Long toUserId, Long fromUserId) {
         Optional<Zan> zanOptional = zanRepository.findByUserIdAndTopicIdAndTopicTypeAndZanType(toUserId, topicId, topicType, zanType);
         Zan zan = zanOptional.orElse(new Zan(toUserId, topicId, topicType, zanType, ON));
         zan.setZanState(ON);
         zanRepository.save(zan);
-        jPushTool.pushZanInfo(topicId, topicType, zanType, toUserId, fromUserId);
+//        jPushTool.pushZanInfo(topicId, topicType, zanType, toUserId, fromUserId);
     }
 
     @Override

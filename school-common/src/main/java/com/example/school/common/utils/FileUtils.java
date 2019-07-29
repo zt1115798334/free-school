@@ -26,6 +26,8 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipOutputStream;
@@ -39,6 +41,13 @@ import java.util.zip.ZipOutputStream;
  */
 @Slf4j
 public class FileUtils {
+
+    public static String getFolderPath(String folder) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String date = formatter.format(LocalDate.now());
+        return System.getProperty("user.dir") + File.separator + "file" + File.separator + folder + File.separator + date + File.separator;
+    }
+
 
     /**
      * 创建文件
@@ -84,6 +93,16 @@ public class FileUtils {
             }
             return null;
         }).collect(Collectors.toList());
+    }
+
+    public static UploadFile uploadFile(MultipartFile file, String folderPath) {
+        try {
+            Files.createDirectories(Paths.get(folderPath));
+            return transferFile(folderPath, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
@@ -203,7 +222,7 @@ public class FileUtils {
                     // 新建目录
                     Files.createDirectories(Paths.get(folderPath + File.separator + "compress"));
                     tarCompressPath = folderPath + File.separator + "compress" + File.separator + newName;
-                    ImagesUtils.scaleImage(tarPath, tarCompressPath, 0.8f, suffixName);
+                    ImagesUtils.scaleImage(tarPath, tarCompressPath, 0.15f, suffixName);
                 }
 
                 return new UploadFile(tarPath, tarCompressPath, fileSize, fileMD5, newName, originalFileName, fileName, suffixName);
@@ -253,16 +272,20 @@ public class FileUtils {
                     fileName = URLEncoder.encode(fileName, "UTF8");// 其他浏览器
                 }
             }
+            FileInputStream fileInputStream = new FileInputStream(file);
+            FileChannel fileChannel = fileInputStream.getChannel();
+            long fileLength =fileChannel.size();
+
             // 提示框设置
             response.reset(); // reset the response
-            // response.setCharacterEncoding("UTF-8");
+//            response.setCharacterEncoding("UTF-8");
             response.setContentType("application/octet-stream");//告诉浏览器输出内容为流
             response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            response.setContentLengthLong(fileLength);
             //NIO 实现
             int bufferSize = 131072;
             //读出文件到i/o流
-            FileInputStream fileInputStream = new FileInputStream(file);
-            FileChannel fileChannel = fileInputStream.getChannel();
+
             // 6x128 KB = 768KB byte buffer
             ByteBuffer buff = ByteBuffer.allocateDirect(786432);
             byte[] byteArr = new byte[bufferSize];

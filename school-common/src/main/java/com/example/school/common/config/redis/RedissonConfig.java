@@ -32,6 +32,7 @@ public class RedissonConfig {
     @Bean
     RedissonClient redissonSingle() {
         Config config = new Config();
+
         config.useSingleServer()
                 .setAddress("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort())
                 .setDatabase(0)

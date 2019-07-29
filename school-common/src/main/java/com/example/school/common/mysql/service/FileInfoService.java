@@ -20,6 +20,6 @@ public interface FileInfoService extends BaseService<FileInfo, Long> {
 
     List<FileInfo> saveFileInfo(List<UploadFile> uploadFile);
 
-    FileInfo findFileInfo(Long id) throws OperationException;
+    FileInfo findFileInfo(Long id) ;
 
 }

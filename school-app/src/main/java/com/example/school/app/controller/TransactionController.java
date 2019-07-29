@@ -6,6 +6,7 @@ import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
 import com.example.school.common.base.entity.ro.RoCommentStatus;
 import com.example.school.common.base.entity.ro.RoTransaction;
 import com.example.school.common.base.entity.vo.VoCommentPage;
+import com.example.school.common.base.entity.vo.VoPage;
 import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageTransaction;
 import com.example.school.common.base.service.ConstantService;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +61,11 @@ public class TransactionController extends AbstractController implements Current
 
     private final ZanService zanService;
 
+    private final CollectionService collectionService;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 发布
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存交易信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -69,8 +76,7 @@ public class TransactionController extends AbstractController implements Current
     @DistributedLock
     public ResultMessage saveTransaction(@Valid @RequestBody VoStorageTransaction storageTransaction) {
         Transaction transaction = VoChangeEntityUtils.changeStorageTransaction(storageTransaction);
-        Long currentUserId = getCurrentUserId();
-        transaction.setUserId(currentUserId);
+        transaction.setUserId(getCurrentUserId());
         RoTransaction roTransaction = transactionService.saveTransaction(transaction);
         return success("保存成功", roTransaction);
     }
@@ -92,6 +98,9 @@ public class TransactionController extends AbstractController implements Current
         return success("保存成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 删除
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "删除交易信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -105,14 +114,17 @@ public class TransactionController extends AbstractController implements Current
         return success("删除成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 展示
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "查询交易信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
             @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
     })
     @PostMapping(value = "findTransaction")
-    public ResultMessage findTransaction(@NotNull(message = "id不能为空") @RequestParam Long id) throws OperationException {
-        RoTransaction transaction = transactionService.findTransaction(id, getCurrentUserId());
+    public ResultMessage findTransaction(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        RoTransaction transaction = transactionService.findRoTransaction(id, getCurrentUserId());
         return success(transaction);
     }
 
@@ -124,8 +136,8 @@ public class TransactionController extends AbstractController implements Current
     @PostMapping(value = "findTransactionEffective")
     public ResultMessage findTransactionEffective(@Valid @RequestBody VoParams params) {
         Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
-        CustomPage<RoTransaction> page = transactionService.findTransactionEffectivePage(transaction, getCurrentUserId());
-        return success(page.getPageNumber(), page.getPageSize(), page.getTotalElements(), page.getList());
+        PageImpl<RoTransaction> page = transactionService.findTransactionEffectivePage(transaction, getCurrentUserId());
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
 
     @ApiOperation(value = "查询用户相关的交易信息")
@@ -138,10 +150,25 @@ public class TransactionController extends AbstractController implements Current
         Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
         Long currentUserId = getCurrentUserId();
         transaction.setUserId(currentUserId);
-        CustomPage<RoTransaction> page = transactionService.findTransactionUserPage(transaction, getCurrentUserId());
-        return success(page.getPageNumber(), page.getPageSize(), page.getTotalElements(), page.getList());
+        PageImpl<RoTransaction> page = transactionService.findTransactionUserPage(transaction, currentUserId);
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
 
+    @ApiOperation(value = "查询用户收藏的交易信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findTransactionCollection")
+    public ResultMessage findTransactionCollection(@Valid @RequestBody VoPage voPage) {
+        CustomPage customPage = VoChangeEntityUtils.changeIdPageEntity(voPage);
+        PageImpl<RoTransaction> page = transactionService.findTransactionCollectionPage(customPage, getCurrentUserId());
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 点赞
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存交易信息点赞")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -171,7 +198,38 @@ public class TransactionController extends AbstractController implements Current
         return success("保存成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 收藏
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation(value = "保存交易信息收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableTransactionCollectionOn")
+    @SaveLog(desc = "保存交易信息收藏")
+    @DistributedLock
+    public ResultMessage enableTransactionCollectionOn(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        collectionService.enableOnCollection(getCurrentUserId(), id, TOPIC_TYPE_1);
+        return success("保存成功");
+    }
 
+    @ApiOperation(value = "保存交易信息取消收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableTransactionCollectionOff")
+    @SaveLog(desc = "保存交易信息取消收藏")
+    @DistributedLock
+    public ResultMessage enableTransactionCollectionOff(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        collectionService.enableOffCollection(getCurrentUserId(), id, TOPIC_TYPE_1);
+        return success("保存成功");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 查看评论
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "显示交易信息评论")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -181,8 +239,8 @@ public class TransactionController extends AbstractController implements Current
     public ResultMessage findTransactionComment(@RequestBody VoCommentPage voCommentPage) {
         Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_1.getCode());
-        CustomPage<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
-        return success(voCommentPage.getPageNumber(), voCommentPage.getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getList());
+        PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
+        return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
     }
 
     @ApiOperation(value = "显示交易信息评论回复")
@@ -205,10 +263,13 @@ public class TransactionController extends AbstractController implements Current
     public ResultMessage findTransactionCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
         Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_1.getCode());
-        CustomPage<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
-        return success(voCommentPage.getPageNumber(), voCommentPage.getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getList());
+        PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
+        return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 保存评论
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存交易信息评论")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -222,29 +283,6 @@ public class TransactionController extends AbstractController implements Current
                                                 @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
         Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_1, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
-    }
-
-    @PostMapping(value = "enableTransactionCommentZanOn")
-    @SaveLog(desc = "保存交易信息评论点赞")
-    @DistributedLock
-    public ResultMessage enableTransactionCommentZanOn(@NotNull(message = "id不能为空") @RequestParam Long id,
-                                                       @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        zanService.enableOnZan(id, TOPIC_TYPE_1, ZAN_COMMENT, getCurrentUserId(), fromUserId);
-        return success("保存成功");
-    }
-
-    @ApiOperation(value = "保存交易信息评论取消点赞")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
-            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
-    })
-    @PostMapping(value = "enableTransactionCommentZanOff")
-    @SaveLog(desc = "保存交易信息点赞")
-    @DistributedLock
-    public ResultMessage enableTransactionCommentZanOff(@NotNull(message = "id不能为空") @RequestParam Long id,
-                                                        @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        zanService.enableOffZan(id, TOPIC_TYPE_1, ZAN_COMMENT, getCurrentUserId(), fromUserId);
-        return success("保存成功");
     }
 
     @ApiOperation(value = "保存交易信息回复")
@@ -278,6 +316,37 @@ public class TransactionController extends AbstractController implements Current
                                                             @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
         CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_1, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 评论点赞
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation(value = "保存交易信息评论点赞")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableTransactionCommentZanOn")
+    @SaveLog(desc = "保存交易信息评论点赞")
+    @DistributedLock
+    public ResultMessage enableTransactionCommentZanOn(@NotNull(message = "id不能为空") @RequestParam Long id,
+                                                       @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
+        zanService.enableOnZan(id, TOPIC_TYPE_1, ZAN_COMMENT, getCurrentUserId(), fromUserId);
+        return success("保存成功");
+    }
+
+    @ApiOperation(value = "保存交易信息评论取消点赞")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableTransactionCommentZanOff")
+    @SaveLog(desc = "保存交易信息点赞")
+    @DistributedLock
+    public ResultMessage enableTransactionCommentZanOff(@NotNull(message = "id不能为空") @RequestParam Long id,
+                                                        @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
+        zanService.enableOffZan(id, TOPIC_TYPE_1, ZAN_COMMENT, getCurrentUserId(), fromUserId);
+        return success("保存成功");
     }
 
 }

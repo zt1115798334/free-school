@@ -20,7 +20,7 @@ public interface VerificationCodeService {
      * @param noticeType    通知内容的类型 短信或者邮箱
      * @param codeType      通知的类型
      */
-    void sendCode(String ip, String noticeContent, String noticeType, String codeType) throws OperationException;
+    void sendCode(String ip, String noticeContent, String noticeType, String codeType) ;
 
     /**
      * 检验验证码
@@ -40,7 +40,6 @@ public interface VerificationCodeService {
      * @param noticeType    通知内容的类型 短信或者邮箱{@link SysConst.NoticeType}
      * @param code          验证码
      * @param codeType      通知的类型
-     * @return boolean
      */
     void deleteCode(String noticeContent, String noticeType, String code, String codeType);
 }

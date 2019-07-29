@@ -39,7 +39,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     private final VerificationCodeLogService verificationCodeLogService;
 
     @Override
-    public void sendCode(String ip, String noticeContent, String noticeType, String codeType) throws OperationException {
+    public void sendCode(String ip, String noticeContent, String noticeType, String codeType) {
         Long ipLong = NetworkUtil.ipToLong(ip);
         String ipCountKey = CacheKeys.getVerificationCodeIpCountKey(String.valueOf(ipLong));
         String noticeContentCountKey = CacheKeys.getVerificationCodeNoticeCountKey(noticeContent);

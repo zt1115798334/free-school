@@ -5,14 +5,13 @@ import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
-import com.example.school.common.mysql.service.UserRegistrationService;
+import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.common.validation.NoticeType;
 import com.example.school.shiro.aop.DistributedLock;
 import com.example.school.shiro.aop.SaveLog;
-import com.example.school.shiro.base.CurrentUser;
 import com.example.school.shiro.shiro.service.CommonLoginService;
 import com.example.school.shiro.shiro.token.PasswordToken;
 import com.example.school.shiro.shiro.utils.RequestResponseUtil;
@@ -22,6 +21,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -81,8 +81,10 @@ public class LoginController extends AbstractController {
             String LoginType = SysConst.LoginType.AJAX.getType();
             PasswordToken token = new PasswordToken(username, password, LoginType);
             String accessToken = commonLoginService.login(token, ip, deviceInfo, registrationId);
+            User user = (User) SecurityUtils.getSubject().getPrincipal();
             JSONObject result = new JSONObject();
             result.put("accessToken", accessToken);
+            result.put("accountType", user.getAccountType());
             return success("登录成功", result);
         } catch (Exception e) {
             return failure(e.getMessage());
@@ -124,7 +126,7 @@ public class LoginController extends AbstractController {
     @SaveLog(desc = "发送验证码执行登录操作")
     public ResultMessage sendVerificationCodeByLogin(HttpServletRequest request,
                                                      @NotBlank(message = "手机号或者邮件不能为空") @RequestParam(value = "noticeContent") String noticeContent,
-                                                     @NoticeType @NotBlank(message = "验证类型不能为空") @RequestParam(value = "noticeType") String noticeType) throws OperationException {
+                                                     @NoticeType @NotBlank(message = "验证类型不能为空") @RequestParam(value = "noticeType") String noticeType) {
         if (Objects.equal(SysConst.NoticeType.PHONE.getType(), noticeType)) {
             userService.findByPhoneUnDelete(noticeContent);  //验证手机号的合法性
         } else {
@@ -137,12 +139,11 @@ public class LoginController extends AbstractController {
     }
 
 
-
     @ApiOperation(value = "验证手机号执行注册操作")
     @PostMapping(value = "validatePhoneByRegister")
     public ResultMessage validatePhoneByRegister(@NotBlank(message = "手机号不能为空")
                                                  @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-                                                 @RequestParam String phone) throws OperationException {
+                                                 @RequestParam String phone) {
         userService.validatePhoneByRegister(phone);
         return success();
 
@@ -155,7 +156,7 @@ public class LoginController extends AbstractController {
     public ResultMessage sendPhoneCodeByRegister(HttpServletRequest request,
                                                  @NotBlank(message = "手机号不能为空")
                                                  @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-                                                 @RequestParam String phone) throws OperationException {
+                                                 @RequestParam String phone) {
         String ip = NetworkUtil.getLocalIp(request);
         userService.validatePhoneByRegister(phone);
         verificationCodeService.sendCode(ip, phone, SysConst.NoticeType.PHONE.getType(), SysConst.VerificationCodeType.REGISTER.getType());
@@ -171,10 +172,10 @@ public class LoginController extends AbstractController {
                                   @NotBlank(message = "验证码不能为空")
                                   @RequestParam String code,
                                   @NotBlank(message = "密码不能为空")
-                                  @RequestParam String password) throws OperationException {
+                                  @RequestParam String password) {
         boolean state = verificationCodeService.validateCode(phone, SysConst.NoticeType.PHONE.getType(), code, SysConst.VerificationCodeType.REGISTER.getType());
         if (state) {
-            userService.saveUserOrdinary(phone, password);
+            userService.saveUserStudent(phone, password);
             return success("保存成功");
         } else {
             return failure("验证失败");
@@ -185,7 +186,7 @@ public class LoginController extends AbstractController {
     @ApiOperation(value = "检验手机验证码执行重置密码操作")
     public ResultMessage validatePhoneCodeByForget(@NotBlank(message = "手机号不能为空")
                                                    @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-                                                   @RequestParam String phone) throws OperationException {
+                                                   @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         return success();
 
@@ -197,7 +198,7 @@ public class LoginController extends AbstractController {
     public ResultMessage sendPhoneCodeByForget(HttpServletRequest request,
                                                @NotBlank(message = "手机号不能为空")
                                                @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
-                                               @RequestParam String phone) throws OperationException {
+                                               @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         String ip = NetworkUtil.getLocalIp(request);
         verificationCodeService.sendCode(ip, phone, SysConst.NoticeType.PHONE.getType(), SysConst.VerificationCodeType.FORGET.getType());
@@ -213,10 +214,10 @@ public class LoginController extends AbstractController {
                                         @RequestParam String phone,
                                         @NotBlank(message = "验证码不能为空")
                                         @RequestParam String code,
-                                        @NotBlank(message = "密码不能为空") @RequestParam String password) throws OperationException {
+                                        @NotBlank(message = "密码不能为空") @RequestParam String password) {
         boolean state = verificationCodeService.validateCode(phone, SysConst.NoticeType.PHONE.getType(), code, SysConst.VerificationCodeType.FORGET.getType());
         if (state) {
-            userService.modifyPasswordOrdinary(phone, password);
+            userService.modifyPassword(phone, password);
             return success("保存成功");
         } else {
             return failure("验证失败");

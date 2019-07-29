@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +22,13 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
     Optional<Transaction> findByIdAndDeleteState(Long id, Short deleteState);
 
-    List<Transaction> findByUserIdInAndStateAndDeleteState(List<Long> userId, String state, Short deleteState);
+    List<Transaction> findByIdInAndDeleteState(List<Long> id, Short deleteState);
 
     @Modifying
     @Query(value = "update Transaction set state =:afterState where userId in :userId and state = :beforeState and deleteState =:deleteState ")
     void updateState(List<Long> userId, String beforeState, String afterState, Short deleteState);
+
+    @Modifying
+    @Query(value = "update Transaction set browsingVolume = browsingVolume+1 where id =:id")
+    void incrementBrowsingVolume(Long id);
 }

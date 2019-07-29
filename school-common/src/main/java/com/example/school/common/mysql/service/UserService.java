@@ -1,9 +1,13 @@
 package com.example.school.common.mysql.service;
 
+import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ro.RoUser;
+import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -18,30 +22,35 @@ import java.util.Optional;
  */
 public interface UserService extends BaseService<User, Long> {
 
-    /**
-     * 更新用户最后登录时间
-     *
-     * @param userId 用户id
-     */
     void updateLastLoginTime(Long userId);
 
-    void saveUserOrdinary(String phone, String password) throws OperationException;
+    void saveUserStudent(String phone, String password) ;
 
-    RoUser saveUserOrdinary(User user) throws OperationException;
+    void saveUserStudentPresident(String phone, String password) ;
 
-    void modifyPasswordOrdinary(String phone, String password) throws OperationException;
+    void saveUser(String phone, String password, String accountType) ;
+
+    RoUser saveUser(User user) ;
+
+    void modifyPassword(String phone, String password) ;
+
+    void deleteUser(Long userId);
+
+    void normalUser(Long userId) ;
+
+    void increaseIntegral(Long sellerUserId, Long integral) ;
+
+    void reduceIntegral(Long buyerUserId, Long integral) ;
 
     Optional<User> findOptByUserId(Long userId);
 
     Optional<User> findOptByUserId(String account);
 
-
     Optional<User> findOptByPhone(String phone);
 
+    User findByPhoneUnDelete(String phone) ;
 
-    User findByPhoneUnDelete(String phone) throws OperationException;
-
-    User findByUserId(Long userId) throws OperationException;
+    User findByUserId(Long userId) ;
 
     RoUser findRoUserByUserId(Long userId);
 
@@ -49,8 +58,10 @@ public interface UserService extends BaseService<User, Long> {
 
     Map<Long, RoUser> findMapRoUserByUserId(List<Long> userIdList);
 
-    void validatePhoneByRegister(String phone) throws OperationException;
+    PageImpl<RoUser> findRoUser(VoUser voUser);
 
-    void validatePhoneByForget(String phone) throws OperationException;
+    void validatePhoneByRegister(String phone) ;
+
+    void validatePhoneByForget(String phone) ;
 
 }

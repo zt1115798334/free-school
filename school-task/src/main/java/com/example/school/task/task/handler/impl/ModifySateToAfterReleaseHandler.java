@@ -1,8 +1,7 @@
 package com.example.school.task.task.handler.impl;
 
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.RecordTimeService;
-import com.example.school.common.mysql.service.TransactionService;
+import com.example.school.common.mysql.service.*;
 import com.example.school.task.task.handler.UserPageHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +26,20 @@ public class ModifySateToAfterReleaseHandler extends UserPageHandler {
 
     private final RecordTimeService recordTimeService;
 
+    private final KnowingService knowingService;
+
+    private final InformationService informationService;
+
+    private final QuestionBankService questionBankService;
+
     @Override
     protected int handleDataOfPerPage(List<User> list, int pageNumber) {
         List<Long> userIdList = list.parallelStream().map(User::getId).collect(Collectors.toList());
         transactionService.modifyTransactionSateToAfterRelease(userIdList);
         recordTimeService.modifyRecordTimeSateToAfterRelease(userIdList);
+        knowingService.modifyKnowingSateToAfterRelease(userIdList);
+        informationService.modifyInformationSateToAfterRelease(userIdList);
+        questionBankService.modifyQuestionBankSateToAfterRelease(userIdList);
         return list.size();
     }
 }

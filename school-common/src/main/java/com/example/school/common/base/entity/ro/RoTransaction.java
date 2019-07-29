@@ -62,9 +62,9 @@ public class RoTransaction extends RoTopic {
     @ApiModelProperty(value = "地址")
     private String address;
 
-    public RoTransaction(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, Long commentNum, List<RoImagePath> topicImgList,
-                         Long id, String title,String dateTime, Double price, String describeContent, String contactMode, String contactPeople, String address) {
-        super(user, state, userState, zanState, zanNum, zanUsers, commentNum, topicImgList);
+    public RoTransaction(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, boolean collectionState, Long commentNum, Long browsingVolume, List<RoImagePath> topicImgList,
+                         Long id, String title, String dateTime, Double price, String describeContent, String contactMode, String contactPeople, String address) {
+        super(user, state, userState, zanState, zanNum, zanUsers, collectionState, commentNum, browsingVolume, topicImgList);
         this.id = id;
         this.title = title;
         this.dateTime = dateTime;

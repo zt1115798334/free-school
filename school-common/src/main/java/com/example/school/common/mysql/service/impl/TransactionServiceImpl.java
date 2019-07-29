@@ -7,17 +7,18 @@ import com.example.school.common.base.service.SearchFilter;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Transaction;
 import com.example.school.common.mysql.repo.TransactionRepository;
+import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.TopicService;
 import com.example.school.common.mysql.service.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.example.school.common.base.service.SearchFilter.Operator;
@@ -31,15 +32,15 @@ import static com.example.school.common.base.service.SearchFilter.Operator;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
     private final TopicService topicService;
 
+    private final CollectionService collectionService;
+
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public Transaction save(Transaction transaction) {
         Long id = transaction.getId();
         if (id != null && id != 0L) {
@@ -56,6 +57,7 @@ public class TransactionServiceImpl implements TransactionService {
             }
             return null;
         } else {
+            transaction.setBrowsingVolume(0L);
             transaction.setState(IN_RELEASE);
             transaction.setCreatedTime(currentDateTime());
             transaction.setDeleteState(UN_DELETED);
@@ -64,7 +66,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void deleteById(Long aLong) {
         transactionRepository.findById(aLong).ifPresent(transaction -> {
             transaction.setDeleteState(DELETED);
@@ -73,9 +74,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public Optional<Transaction> findByIdNotDelete(Long aLong) {
         return transactionRepository.findByIdAndDeleteState(aLong, UN_DELETED);
+    }
+
+    @Override
+    public List<Transaction> findByIdsNotDelete(List<Long> id) {
+        return transactionRepository.findByIdInAndDeleteState(id, UN_DELETED);
     }
 
     @Override
@@ -86,7 +91,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public RoTransaction saveTransaction(Transaction transaction) {
         transaction = this.save(transaction);
-        return topicService.resultRoTransaction(transaction, transaction.getUserId(), TOPIC_TYPE_1, ZAN_TOPIC);
+        return topicService.resultRoTransaction(transaction, transaction.getUserId());
     }
 
     @Override
@@ -95,7 +100,6 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void modifyTransactionSateToNewRelease(Long id) {
         transactionRepository.findById(id).ifPresent(transaction -> {
             transaction.setState(NEW_RELEASE);
@@ -105,44 +109,62 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void modifyTransactionSateToAfterRelease(List<Long> userId) {
         transactionRepository.updateState(userId, NEW_RELEASE, AFTER_RELEASE, UN_DELETED);
     }
 
     @Override
-    public RoTransaction findTransaction(Long id, Long userId) throws OperationException {
-        Transaction transaction = this.findByIdNotDelete(id).orElseThrow(() -> new OperationException("已删除"));
-        return topicService.resultRoTransaction(transaction, userId, TOPIC_TYPE_1, ZAN_TOPIC);
+    public void incrementTransactionBrowsingVolume(Long id) {
+        transactionRepository.incrementBrowsingVolume(id);
+    }
+
+    @Override
+    public Transaction findTransaction(Long id) {
+        return this.findByIdNotDelete(id).orElseThrow(() -> new OperationException("已删除"));
+    }
+
+    @Override
+    public RoTransaction findRoTransaction(Long id, Long userId) {
+        Transaction transaction = this.findTransaction(id);
+        this.incrementTransactionBrowsingVolume(id);
+        return topicService.resultRoTransaction(transaction, userId);
     }
 
 
     @Override
-    public CustomPage<RoTransaction> findTransactionEffectivePage(Transaction transaction, Long userId) {
-        Map<String, SearchFilter> filters = getTransactionFilter(getEffectiveState(), transaction);
+    public PageImpl<RoTransaction> findTransactionEffectivePage(Transaction transaction, Long userId) {
+        List<SearchFilter> filters = getTransactionFilter(getEffectiveState(), transaction);
         return getRoTransactionCustomPage(transaction, userId, filters);
 
     }
 
     @Override
-    public CustomPage<RoTransaction> findTransactionUserPage(Transaction transaction, Long userId) {
-        Map<String, SearchFilter> filters = getTransactionFilter(getEffectiveState(), transaction);
-        filters.put("userId", new SearchFilter("userId", transaction.getUserId(), Operator.EQ));
+    public PageImpl<RoTransaction> findTransactionUserPage(Transaction transaction, Long userId) {
+        List<SearchFilter> filters = getTransactionFilter(getEffectiveState(), transaction);
+        filters.add(new SearchFilter("userId", transaction.getUserId(), Operator.EQ));
         return getRoTransactionCustomPage(transaction, userId, filters);
 
     }
 
-    private CustomPage<RoTransaction> getRoTransactionCustomPage(Transaction transaction, Long userId, Map<String, SearchFilter> filters) {
-        Specification<Transaction> specification = SearchFilter.bySearchFilter(filters.values());
+    @Override
+    public PageImpl<RoTransaction> findTransactionCollectionPage(CustomPage customPage, Long userId) {
+        PageImpl<Long> topicIdPage = collectionService.findCollection(userId, TOPIC_TYPE_1, customPage);
+        List<Transaction> transactionList = this.findByIdsNotDelete(topicIdPage.getContent());
+        return topicService.resultRoTransactionPage(new PageImpl<>(transactionList, topicIdPage.getPageable(), topicIdPage.getTotalElements()),
+                userId);
+    }
+
+    private PageImpl<RoTransaction> getRoTransactionCustomPage(Transaction transaction, Long userId, List<SearchFilter> filters) {
+        Specification<Transaction> specification = SearchFilter.bySearchFilter(filters);
         Pageable pageable = PageUtils.buildPageRequest(transaction);
         Page<Transaction> page = transactionRepository.findAll(specification, pageable);
-        return topicService.resultRoTransactionPage(page, userId, TOPIC_TYPE_1, ZAN_TOPIC);
+        return topicService.resultRoTransactionPage(page, userId);
     }
 
-    private Map<String, SearchFilter> getTransactionFilter(Map<String, SearchFilter> filters, Transaction transaction) {
+    private List<SearchFilter> getTransactionFilter(List<SearchFilter> filters, Transaction transaction) {
         if (transaction.getStartDateTime() != null && transaction.getEndDateTime() != null) {
-            filters.put("createdTimeStart", new SearchFilter("createdTime", transaction.getStartDateTime(), Operator.GTE));
-            filters.put("createdTimeEnd", new SearchFilter("createdTime", transaction.getEndDateTime(), Operator.LTE));
+            filters.add(new SearchFilter("createdTime", transaction.getStartDateTime(), Operator.GTE));
+            filters.add(new SearchFilter("createdTime", transaction.getEndDateTime(), Operator.LTE));
         }
         return filters;
     }

@@ -29,12 +29,12 @@ public interface ConstantService {
     /**
      * 隐藏
      */
-    Integer HIDE = SysConst.ShowState.HIDE.getCode();
+    Short HIDE = SysConst.ShowState.HIDE.getCode();
 
     /**
      * 显示
      */
-    Integer DISPLAY = SysConst.ShowState.DISPLAY.getCode();
+    Short DISPLAY = SysConst.ShowState.DISPLAY.getCode();
 
     /**
      * 关
@@ -83,10 +83,13 @@ public interface ConstantService {
     Short TOPIC_TYPE_4 = SysConst.TopicType.TOPIC_TYPE_4.getCode();
     Short TOPIC_TYPE_5 = SysConst.TopicType.TOPIC_TYPE_5.getCode();
 
-
-
     Short ZAN_TOPIC = SysConst.ZanType.ZAN_TOPIC.getCode();
     Short ZAN_COMMENT = SysConst.ZanType.ZAN_COMMENT.getCode();
+
+    String FOLDER_IMG = SysConst.FolderType.FOLDER_IMG.getType();
+    String FOLDER_HEAD_PORTRAIT = SysConst.FolderType.FOLDER_HEAD_PORTRAIT.getType();
+    String FOLDER_FEEDBACK_IMG = SysConst.FolderType.FOLDER_FEEDBACK_IMG.getType();
+    String FOLDER_QUESTION_BANK_FILE = SysConst.FolderType.FOLDER_QUESTION_BANK_FILE.getType();
 
     /**
      * 排序状态

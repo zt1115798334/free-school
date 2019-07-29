@@ -7,17 +7,18 @@ import com.example.school.common.base.service.SearchFilter;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.RecordTime;
 import com.example.school.common.mysql.repo.RecordTimeRepository;
+import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.RecordTimeService;
 import com.example.school.common.mysql.service.TopicService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.example.school.common.base.service.SearchFilter.Operator;
@@ -34,14 +35,13 @@ import static com.example.school.common.base.service.SearchFilter.bySearchFilter
 @Service
 public class RecordTimeServiceImpl implements RecordTimeService {
 
-
     private final RecordTimeRepository recordTimeRepository;
 
     private final TopicService topicService;
 
+    private final CollectionService collectionService;
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public RecordTime save(RecordTime recordTime) {
         Long id = recordTime.getId();
         if (id != null && id != 0L) {
@@ -54,6 +54,7 @@ public class RecordTimeServiceImpl implements RecordTimeService {
             }
             return null;
         } else {
+            recordTime.setBrowsingVolume(0L);
             recordTime.setState(IN_RELEASE);
             recordTime.setCreatedTime(currentDateTime());
             recordTime.setDeleteState(UN_DELETED);
@@ -62,7 +63,6 @@ public class RecordTimeServiceImpl implements RecordTimeService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void deleteById(Long aLong) {
         recordTimeRepository.findById(aLong).ifPresent(recordTime -> {
             recordTime.setDeleteState(DELETED);
@@ -76,6 +76,11 @@ public class RecordTimeServiceImpl implements RecordTimeService {
     }
 
     @Override
+    public List<RecordTime> findByIdsNotDelete(List<Long> id) {
+        return recordTimeRepository.findByIdInAndDeleteState(id, UN_DELETED);
+    }
+
+    @Override
     public Page<RecordTime> findPageByEntity(RecordTime recordTime) {
         return null;
     }
@@ -83,7 +88,7 @@ public class RecordTimeServiceImpl implements RecordTimeService {
     @Override
     public RoRecordTime saveRecordTime(RecordTime recordTime) {
         recordTime = this.save(recordTime);
-        return topicService.resultRoRecordTime(recordTime, recordTime.getUserId(), TOPIC_TYPE_5, ZAN_TOPIC);
+        return topicService.resultRoRecordTime(recordTime, recordTime.getUserId());
 
     }
 
@@ -93,7 +98,6 @@ public class RecordTimeServiceImpl implements RecordTimeService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void modifyRecordTimeSateToNewRelease(Long id) {
         recordTimeRepository.findById(id).ifPresent(recordTime -> {
             recordTime.setState(NEW_RELEASE);
@@ -102,45 +106,65 @@ public class RecordTimeServiceImpl implements RecordTimeService {
     }
 
     @Override
-    @Transactional(rollbackOn = RuntimeException.class)
     public void modifyRecordTimeSateToAfterRelease(List<Long> userId) {
         recordTimeRepository.updateState(userId, NEW_RELEASE, AFTER_RELEASE, UN_DELETED);
     }
 
     @Override
-    public RoRecordTime findRecordTime(Long id, Long userId) throws OperationException {
-        RecordTime recordTime = this.findByIdNotDelete(id).orElseThrow(() -> new OperationException("已删除"));
-        return topicService.resultRoRecordTime(recordTime, userId, TOPIC_TYPE_5, ZAN_TOPIC);
+    @Transactional(rollbackOn = RuntimeException.class)
+    public void incrementRecordTimeBrowsingVolume(Long id) {
+        recordTimeRepository.incrementBrowsingVolume(id);
+    }
+
+    @Override
+    public RecordTime findRecordTime(Long id) {
+        return this.findByIdNotDelete(id).orElseThrow(() -> new OperationException("已删除"));
+    }
+
+    @Override
+    public RoRecordTime findRoRecordTime(Long id, Long userId) {
+        RecordTime recordTime = this.findRecordTime(id);
+        this.incrementRecordTimeBrowsingVolume(id);
+        return topicService.resultRoRecordTime(recordTime, userId);
     }
 
 
     @Override
-    public CustomPage<RoRecordTime> findRecordTimeEffectivePage(RecordTime recordTime, Long userId) {
-        Map<String, SearchFilter> filters = getRecordTimeFilter(getEffectiveState(), recordTime);
+    public PageImpl<RoRecordTime> findRecordTimeEffectivePage(RecordTime recordTime, Long userId) {
+        List<SearchFilter> filters = getRecordTimeFilter(getEffectiveState(), recordTime);
         return getRoRecordTimeCustomPage(recordTime, userId, filters);
 
     }
 
     @Override
-    public CustomPage<RoRecordTime> findRecordTimeUserPage(RecordTime recordTime, Long userId) {
-        Map<String, SearchFilter> filters = getRecordTimeFilter(getEffectiveState(), recordTime);
-        filters.put("userId", new SearchFilter("userId", recordTime.getUserId(), Operator.EQ));
+    public PageImpl<RoRecordTime> findRecordTimeUserPage(RecordTime recordTime, Long userId) {
+        List<SearchFilter> filters = getRecordTimeFilter(getEffectiveState(), recordTime);
+        filters.add(new SearchFilter("userId", recordTime.getUserId(), Operator.EQ));
         return getRoRecordTimeCustomPage(recordTime, userId, filters);
 
     }
 
-    private CustomPage<RoRecordTime> getRoRecordTimeCustomPage(RecordTime recordTime, Long userId, Map<String, SearchFilter> filters) {
-        Specification<RecordTime> specification = bySearchFilter(filters.values());
+    @Override
+    public PageImpl<RoRecordTime> findRecordTimeCollectionPage(CustomPage customPage, Long userId) {
+        PageImpl<Long> topicIdPage = collectionService.findCollection(userId, TOPIC_TYPE_5, customPage);
+        List<RecordTime> recordTimeList = this.findByIdsNotDelete(topicIdPage.getContent());
+        return topicService.resultRoRecordTimePage(new PageImpl<>(recordTimeList, topicIdPage.getPageable(), topicIdPage.getTotalElements()),
+                userId);
+    }
+
+    private PageImpl<RoRecordTime> getRoRecordTimeCustomPage(RecordTime recordTime, Long userId, List<SearchFilter> filters) {
+        Specification<RecordTime> specification = bySearchFilter(filters);
         Pageable pageable = PageUtils.buildPageRequest(recordTime);
         Page<RecordTime> page = recordTimeRepository.findAll(specification, pageable);
-        return topicService.resultRoRecordTimePage(page, userId, TOPIC_TYPE_5, ZAN_TOPIC);
+        return topicService.resultRoRecordTimePage(page, userId);
     }
 
-    private Map<String, SearchFilter> getRecordTimeFilter(Map<String, SearchFilter> filters, RecordTime recordTime) {
+    private List<SearchFilter> getRecordTimeFilter(List<SearchFilter> filters, RecordTime recordTime) {
         if (recordTime.getStartDateTime() != null && recordTime.getEndDateTime() != null) {
-            filters.put("createdTimeStart", new SearchFilter("createdTime", recordTime.getStartDateTime(), Operator.GTE));
-            filters.put("createdTimeEnd", new SearchFilter("createdTime", recordTime.getEndDateTime(), Operator.LTE));
+            filters.add(new SearchFilter("createdTime", recordTime.getStartDateTime(), Operator.GTE));
+            filters.add(new SearchFilter("createdTime", recordTime.getEndDateTime(), Operator.LTE));
         }
         return filters;
     }
+
 }

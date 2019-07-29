@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,6 +16,10 @@ import java.util.List;
  */
 public interface CommentRepository extends CrudRepository<Comment, Long>,
         JpaSpecificationExecutor<Comment> {
+
+    Optional<Comment> findByIdAndDeleteState(Long aLong, Short deleteState);
+
+    List<Comment> findByTopicIdAndTopicTypeAndDeleteState(Long topicId, Short topicType, Short deleteState);
 
     List<Comment> findByTopicIdInAndTopicTypeAndDeleteState(List<Long> topicId, Short topicType, Short deleteState);
 }

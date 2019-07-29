@@ -39,6 +39,10 @@ public class RecordTime extends IdPageEntity {
 	*/
 	private String describeContent;
 	/**
+	 * 浏览量
+	 */
+	private Long browsingVolume;
+	/**
 	* 交易状态{inRelease：发布中，newRelease：新发布，afterRelease，发布后；solve:已解决,lowerShelf，下架}
 	*/
 	private String state;

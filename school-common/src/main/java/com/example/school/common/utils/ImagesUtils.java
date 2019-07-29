@@ -165,9 +165,9 @@ public class ImagesUtils {
 
     public static void main(String[] args) {
         //需要压缩的图片地址     aaa.jpg为需要压缩的图片
-        String sourceImagePath = "E:\\image\\0d6e8bb6c1026c2b6ab8fc5ba54ec8e9.jpg";
-        String destinationPath = "E:\\image\\eeeeeeeeefefefefefef.jpg";
-        ImagesUtils.scaleImage(sourceImagePath, destinationPath, 0.5f, "jpeg");
+        String sourceImagePath = "E:\\image\\1b4473cef28e7d6fe4312146cf79bb1b.jpg";
+        String destinationPath = "E:\\image\\zhizhuxiasuofang.jpg";
+        ImagesUtils.scaleImage(sourceImagePath, destinationPath, 0.15f, "jpeg");
 
 
     }

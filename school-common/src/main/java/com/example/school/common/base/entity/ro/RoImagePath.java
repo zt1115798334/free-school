@@ -16,6 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RoImagePath {
+
     private String originalImageFileUrl;
     private String compressImageFileUrl;
 

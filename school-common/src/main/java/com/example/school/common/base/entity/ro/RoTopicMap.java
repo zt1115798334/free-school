@@ -14,11 +14,12 @@ import java.util.Map;
 @NoArgsConstructor
 public class RoTopicMap{
 
-    private RoUser roUser;
+    private Map<Long, RoUser> userMap;
     private Map<Long, List<Long>> topicImgMap;
     private Map<Long, Long> zanNumMap;
     private Map<Long, Long> zanStateMap;
-    private Map<Long, List<RoUser>> zanUserMap;
+    private Map<Long, Long> collectionStateMap;
     private Map<Long, Long> commentCountMap;
+    private Map<Long, List<RoUser>> zanUserMap;
 
 }

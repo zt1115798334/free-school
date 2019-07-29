@@ -1,23 +1,34 @@
 package com.example.school.common.mysql.service;
 
-import com.example.school.common.base.entity.CustomPage;
-import com.example.school.common.base.entity.ro.RoRecordTime;
-import com.example.school.common.base.entity.ro.RoTransaction;
-import com.example.school.common.mysql.entity.RecordTime;
-import com.example.school.common.mysql.entity.Transaction;
+import com.example.school.common.base.entity.ro.*;
+import com.example.school.common.base.service.ConstantService;
+import com.example.school.common.mysql.entity.*;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
-public interface TopicService {
+import java.util.List;
+
+public interface TopicService extends ConstantService {
 
     RoTransaction resultRoTransaction(Transaction transaction,
-                                      Long userId, Short topicTyp, Short zanType);
+                                      Long userId);
 
-    CustomPage<RoTransaction> resultRoTransactionPage(Page<Transaction> page,
-                                                      Long userId, Short topicTyp, Short zanType);
+    PageImpl<RoTransaction> resultRoTransactionPage(Page<Transaction> page, Long userId);
 
-    RoRecordTime resultRoRecordTime(RecordTime recordTime,
-                                    Long userId, Short topicTyp, Short zanType);
+    RoRecordTime resultRoRecordTime(RecordTime recordTime, Long userId);
 
-    CustomPage<RoRecordTime> resultRoRecordTimePage(Page<RecordTime> page,
-                                                    Long userId, Short topicTyp, Short zanType);
+    PageImpl<RoRecordTime> resultRoRecordTimePage(Page<RecordTime> page, Long userId);
+
+    RoKnowing resultRoKnowing(Knowing knowing, Long userId);
+
+    PageImpl<RoKnowing> resultRoKnowingPage(Page<Knowing> page, Long userId);
+
+    RoInformation resultRoInformation(Information information, Long userId);
+
+    PageImpl<RoInformation> resultRoInformationPage(Page<Information> page, Long userId);
+
+    RoQuestionBank resultRoQuestionBank(QuestionBank questionBank, Long userId);
+
+    PageImpl<RoQuestionBank> resultRoQuestionBankPage(Page<QuestionBank> page, Long userId);
+
 }

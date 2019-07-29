@@ -519,7 +519,6 @@ public class DateUtils {
         return dateTime.isAfter(startDateTime) && dateTime.isBefore(endDateTime);
     }
 
-
     /**
      * 查询两个时间内的list
      *
@@ -628,9 +627,8 @@ public class DateUtils {
             endDateTime = dateTimeToLastTime(currentDateTime);
         }
         if (Objects.equal(timeType, TimeType.ALL.getType())) {
-            LocalDateTime beforeMonthDateTime = currentDateTimeAddMonth(-2);
-            startDateTime = dateTimeToFirstTime(beforeMonthDateTime);
-            endDateTime = dateTimeToLastTime(currentDateTime);
+            startDateTime = null;
+            endDateTime = null;
         }
         return DateRange.getIns(startDateTime, endDateTime);
     }

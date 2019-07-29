@@ -6,6 +6,7 @@ import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
 import com.example.school.common.base.entity.ro.RoCommentStatus;
 import com.example.school.common.base.entity.ro.RoRecordTime;
 import com.example.school.common.base.entity.vo.VoCommentPage;
+import com.example.school.common.base.entity.vo.VoPage;
 import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageRecordTime;
 import com.example.school.common.base.service.ConstantService;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +61,11 @@ public class RecordTimeController extends AbstractController implements CurrentU
 
     private final ZanService zanService;
 
+    private final CollectionService collectionService;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 发布
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存时光信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -69,8 +76,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     @DistributedLock
     public ResultMessage saveRecordTime(@Valid @RequestBody VoStorageRecordTime storageRecordTime) {
         RecordTime recordTime = VoChangeEntityUtils.changeStorageRecordTime(storageRecordTime);
-        Long currentUserId = getCurrentUserId();
-        recordTime.setUserId(currentUserId);
+        recordTime.setUserId(getCurrentUserId());
         RoRecordTime roRecordTime = recordTimeService.saveRecordTime(recordTime);
         return success("保存成功", roRecordTime);
     }
@@ -79,7 +85,8 @@ public class RecordTimeController extends AbstractController implements CurrentU
     @ApiOperation(value = "保存时光图片信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
-            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile"),
+            @ApiImplicitParam(paramType = "query", name = "topicId", dataType = "String")
     })
     @PostMapping(value = "saveRecordTimeImg")
     @SaveLog(desc = "保存时光图片信息")
@@ -91,6 +98,9 @@ public class RecordTimeController extends AbstractController implements CurrentU
         return success("保存成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 删除
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "删除时光信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -104,14 +114,17 @@ public class RecordTimeController extends AbstractController implements CurrentU
         return success("删除成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 展示
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "查询时光信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
             @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
     })
     @PostMapping(value = "findRecordTime")
-    public ResultMessage findRecordTime(@NotNull(message = "id不能为空") @RequestParam Long id) throws OperationException {
-        RoRecordTime recordTime = recordTimeService.findRecordTime(id, getCurrentUserId());
+    public ResultMessage findRecordTime(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        RoRecordTime recordTime = recordTimeService.findRoRecordTime(id, getCurrentUserId());
         return success(recordTime);
     }
 
@@ -123,8 +136,8 @@ public class RecordTimeController extends AbstractController implements CurrentU
     @PostMapping(value = "findRecordTimeEffective")
     public ResultMessage findRecordTimeEffective(@Valid @RequestBody VoParams params) {
         RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
-        CustomPage<RoRecordTime> page = recordTimeService.findRecordTimeEffectivePage(recordTime, getCurrentUserId());
-        return success(page.getPageNumber(), page.getPageSize(), page.getTotalElements(), page.getList());
+        PageImpl<RoRecordTime> page = recordTimeService.findRecordTimeEffectivePage(recordTime, getCurrentUserId());
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
 
     @ApiOperation(value = "查询用户相关的时光信息")
@@ -137,10 +150,25 @@ public class RecordTimeController extends AbstractController implements CurrentU
         RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
         Long currentUserId = getCurrentUserId();
         recordTime.setUserId(currentUserId);
-        CustomPage<RoRecordTime> page = recordTimeService.findRecordTimeUserPage(recordTime, getCurrentUserId());
-        return success(page.getPageNumber(), page.getPageSize(), page.getTotalElements(), page.getList());
+        PageImpl<RoRecordTime> page = recordTimeService.findRecordTimeUserPage(recordTime, currentUserId);
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
 
+    @ApiOperation(value = "查询用户收藏的时光信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findRecordTimeCollection")
+    public ResultMessage findRecordTimeCollection(@Valid @RequestBody VoPage voPage) {
+        CustomPage customPage = VoChangeEntityUtils.changeIdPageEntity(voPage);
+        PageImpl<RoRecordTime> page = recordTimeService.findRecordTimeCollectionPage(customPage, getCurrentUserId());
+        return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 点赞
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存时光信息点赞")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -162,7 +190,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
             @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
     })
     @PostMapping(value = "enableRecordTimeZanOff")
-    @SaveLog(desc = "保存时光信息点赞")
+    @SaveLog(desc = "保存时光信息取消点赞")
     @DistributedLock
     public ResultMessage enableRecordTimeZanOff(@NotNull(message = "id不能为空") @RequestParam Long id,
                                                 @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
@@ -170,7 +198,38 @@ public class RecordTimeController extends AbstractController implements CurrentU
         return success("保存成功");
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 收藏
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation(value = "保存时光信息收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableRecordTimeCollectionOn")
+    @SaveLog(desc = "保存时光信息收藏")
+    @DistributedLock
+    public ResultMessage enableRecordTimeCollectionOn(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        collectionService.enableOnCollection(getCurrentUserId(), id, TOPIC_TYPE_5);
+        return success("保存成功");
+    }
 
+    @ApiOperation(value = "保存时光信息取消收藏")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableRecordTimeCollectionOff")
+    @SaveLog(desc = "保存时光信息取消收藏")
+    @DistributedLock
+    public ResultMessage enableRecordTimeCollectionOff(@NotNull(message = "id不能为空") @RequestParam Long id) {
+        collectionService.enableOffCollection(getCurrentUserId(), id, TOPIC_TYPE_5);
+        return success("保存成功");
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 查看评论
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "显示时光信息评论")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -180,8 +239,8 @@ public class RecordTimeController extends AbstractController implements CurrentU
     public ResultMessage findRecordTimeComment(@RequestBody VoCommentPage voCommentPage) {
         Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_5.getCode());
-        CustomPage<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
-        return success(voCommentPage.getPageNumber(), voCommentPage.getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getList());
+        PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
+        return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
     }
 
     @ApiOperation(value = "显示时光信息评论回复")
@@ -204,10 +263,13 @@ public class RecordTimeController extends AbstractController implements CurrentU
     public ResultMessage findRecordTimeCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
         Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_5.getCode());
-        CustomPage<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
-        return success(voCommentPage.getPageNumber(), voCommentPage.getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getList());
+        PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
+        return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 保存评论
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "保存时光信息评论")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
@@ -217,33 +279,10 @@ public class RecordTimeController extends AbstractController implements CurrentU
     @SaveLog(desc = "保存时光信息评论")
     @DistributedLock
     public ResultMessage saveRecordTimeComment(@NotNull(message = "topicId不能为空") @RequestParam Long topicId,
-                                               @NotNull(message = "content不能为空") @RequestParam String content,
+                                               @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
         Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_5, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
-    }
-
-    @PostMapping(value = "enableRecordTimeCommentZanOn")
-    @SaveLog(desc = "保存时光信息评论点赞")
-    @DistributedLock
-    public ResultMessage enableRecordTimeCommentZanOn(@NotNull(message = "id不能为空") @RequestParam Long id,
-                                                      @NotNull(message = "fromUserId不能为空") Long fromUserId) {
-        zanService.enableOnZan(id, TOPIC_TYPE_5, ZAN_COMMENT, getCurrentUserId(), fromUserId);
-        return success("保存成功");
-    }
-
-    @ApiOperation(value = "保存时光信息评论取消点赞")
-    @ApiImplicitParams({
-            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
-            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
-    })
-    @PostMapping(value = "enableRecordTimeCommentZanOff")
-    @SaveLog(desc = "保存时光信息点赞")
-    @DistributedLock
-    public ResultMessage enableRecordTimeCommentZanOff(@NotNull(message = "id不能为空") @RequestParam Long id,
-                                                       @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        zanService.enableOffZan(id, TOPIC_TYPE_5, ZAN_COMMENT, getCurrentUserId(), fromUserId);
-        return success("保存成功");
     }
 
     @ApiOperation(value = "保存时光信息回复")
@@ -278,5 +317,37 @@ public class RecordTimeController extends AbstractController implements CurrentU
         CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_5, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 评论点赞
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation(value = "保存时光信息评论点赞")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableRecordTimeCommentZanOn")
+    @SaveLog(desc = "保存时光信息评论点赞")
+    @DistributedLock
+    public ResultMessage enableRecordTimeCommentZanOn(@NotNull(message = "id不能为空") @RequestParam Long id,
+                                                      @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
+        zanService.enableOnZan(id, TOPIC_TYPE_5, ZAN_COMMENT, getCurrentUserId(), fromUserId);
+        return success("保存成功");
+    }
+
+    @ApiOperation(value = "保存时光信息评论取消点赞")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "enableRecordTimeCommentZanOff")
+    @SaveLog(desc = "保存时光信息点赞")
+    @DistributedLock
+    public ResultMessage enableRecordTimeCommentZanOff(@NotNull(message = "id不能为空") @RequestParam Long id,
+                                                       @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
+        zanService.enableOffZan(id, TOPIC_TYPE_5, ZAN_COMMENT, getCurrentUserId(), fromUserId);
+        return success("保存成功");
+    }
+
 
 }

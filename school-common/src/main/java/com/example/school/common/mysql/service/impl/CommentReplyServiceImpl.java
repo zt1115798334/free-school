@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class CommentReplyServiceImpl implements CommentReplyService {
 
     private final CommentReplyRepository commentReplyRepository;
@@ -46,14 +45,16 @@ public class CommentReplyServiceImpl implements CommentReplyService {
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public CommentReply saveCommentReplyToComment(Long topicId, Short topicType, Long commentId, Long replyId, String content, Long toUserId, Long fromUserId) {
-        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
+//        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
         return this.save(new CommentReply(commentId, SysConst.ReplyType.COMMENT.getCode(), replyId, content, toUserId, fromUserId));
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public CommentReply saveCommentReplyToReply(Long topicId, Short topicType, Long commentId, Long replyId, String content, Long toUserId, Long fromUserId) {
-        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
+//        jPushTool.pushCommentInfo(topicId, topicType, content, toUserId, fromUserId);
         return this.save(new CommentReply(commentId, SysConst.ReplyType.REPLY.getCode(), replyId, content, toUserId, fromUserId));
     }
 

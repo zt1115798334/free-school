@@ -1,14 +1,13 @@
 package com.example.school.common.base.service;
 
 import com.example.school.common.constant.SysConst;
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import static com.example.school.common.base.service.SearchFilter.*;
+import static com.example.school.common.base.service.SearchFilter.Operator;
 
 /**
  * Created with IntelliJ IDEA.
@@ -69,11 +68,12 @@ public interface BaseService<T, ID> extends ConstantService {
     }
 
 
-     default Map<String, SearchFilter> getEffectiveState() {
-        Map<String, SearchFilter> filters = Maps.newHashMap();
-        filters.put("inReleaseState", new SearchFilter("state", SysConst.State.IN_RELEASE.getType(), Operator.NEQ));
-        filters.put("lowerShelfState", new SearchFilter("state", SysConst.State.LOWER_SHELF.getType(), Operator.NEQ));
-        filters.put("deleteState", new SearchFilter("deleteState", UN_DELETED, Operator.EQ));
+    default List<SearchFilter> getEffectiveState() {
+        List<SearchFilter> filters = Lists.newArrayList();
+        filters.add(new SearchFilter("state", SysConst.State.IN_RELEASE.getType(), Operator.NEQ));
+        filters.add(new SearchFilter("state", SysConst.State.LOWER_SHELF.getType(), Operator.NEQ));
+        filters.add(new SearchFilter("deleteState", UN_DELETED, Operator.EQ));
         return filters;
     }
+
 }

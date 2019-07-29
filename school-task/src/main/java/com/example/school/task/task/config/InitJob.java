@@ -2,8 +2,8 @@ package com.example.school.task.task.config;
 
 import com.example.school.task.quartz.entity.QuartzEntity;
 import com.example.school.task.quartz.service.JobService;
-import com.example.school.task.task.job.clear.ClearUserLogJob;
-import com.example.school.task.task.job.clear.ModifySateToAfterReleaseJob;
+import com.example.school.task.task.job.ClearUserLogJob;
+import com.example.school.task.task.job.ModifySateToAfterReleaseJob;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

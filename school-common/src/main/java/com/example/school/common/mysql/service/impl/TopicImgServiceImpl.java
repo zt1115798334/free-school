@@ -1,5 +1,6 @@
 package com.example.school.common.mysql.service.impl;
 
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.mysql.entity.FileInfo;
 import com.example.school.common.mysql.entity.TopicImg;
 import com.example.school.common.mysql.repo.TopicImgRepository;
@@ -29,9 +30,7 @@ import static java.util.stream.Collectors.*;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class TopicImgServiceImpl implements TopicImgService {
-
 
     private final TopicImgRepository topicImgRepository;
 
@@ -46,8 +45,9 @@ public class TopicImgServiceImpl implements TopicImgService {
     }
 
     @Override
+    @Transactional(rollbackOn = RuntimeException.class)
     public void saveTopicImgFile(HttpServletRequest request, Long topicId, Short topicType) {
-        String folderPath = getFolderPath();
+        String folderPath = FileUtils.getFolderPath(FOLDER_IMG);
         List<UploadFile> uploadFile = FileUtils.batchUploadFile(request, folderPath);
         List<FileInfo> fileInfoList = fileInfoService.saveFileInfo(uploadFile);
         List<TopicImg> topicImgList = fileInfoList.stream().map(FileInfo::getId)
@@ -61,12 +61,6 @@ public class TopicImgServiceImpl implements TopicImgService {
     public Map<Long, List<Long>> findTopicImgList(List<Long> topicId, Short topicType) {
         List<TopicImg> topicImgList = topicImgRepository.findByTopicIdInAndTopicTypeAndDeleteState(topicId, topicType, UN_DELETED);
         return topicImgList.stream().collect(groupingBy(TopicImg::getTopicId, mapping(TopicImg::getImgId, toList())));
-    }
-
-    private String getFolderPath() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String date = formatter.format(LocalDate.now());
-        return System.getProperty("user.dir") + File.separator + "file" + File.separator + date + File.separator;
     }
 
 }
