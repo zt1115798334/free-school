@@ -30,5 +30,6 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
     @Modifying
     @Query(value = "update Transaction set browsingVolume = browsingVolume+1 where id =:id")
+    @Transactional(rollbackFor = RuntimeException.class)
     void incrementBrowsingVolume(Long id);
 }
