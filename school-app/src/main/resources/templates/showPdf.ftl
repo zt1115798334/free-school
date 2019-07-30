@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>PDF.js viewer</title>
-
+    <title>PDF viewer</title>
 
     <link rel="stylesheet" href="/css/viewer.css">
-
-
     <!-- This snippet is used in production (included from viewer.html) -->
     <link rel="resource" type="application/l10n" href="/locale/locale.properties">
     <script src="/js/pdf/pdf.js"></script>
@@ -21,6 +18,7 @@
 </head>
 
 <body tabindex="1" class="loadingInProgress">
+<input type="hidden" value="${topicFileId}" id="topicFileId">
 <div id="outerContainer">
 
     <div id="sidebarContainer">

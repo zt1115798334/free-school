@@ -5125,7 +5125,7 @@ var defaultOptions = {
     kind: OptionKind.VIEWER
   },
   defaultUrl: {
-    value: '/app/file/findQuestionBankPdf?topicFileId=30',
+    value: '/app/file/findQuestionBankPdf?topicFileId='+$("#topicFileId").val(),
     kind: OptionKind.VIEWER
   },
   defaultZoomValue: {
