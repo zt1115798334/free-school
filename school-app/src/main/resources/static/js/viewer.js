@@ -1787,7 +1787,7 @@ function webViewerInitialized() {
   var file;
   var queryString = document.location.search.substring(1);
   var params = (0, _ui_utils.parseQueryString)(queryString);
-  file = 'file' in params ? params.file : _app_options.AppOptions.get('defaultUrl');
+  file = 'file' in params ? params.file : _app_options.AppOptions.get('defaultUrl')+$("#topicFileId").val();
   validateFileURL(file);
   var fileInput = document.createElement('input');
   fileInput.id = appConfig.openFileInputName;
@@ -5125,7 +5125,7 @@ var defaultOptions = {
     kind: OptionKind.VIEWER
   },
   defaultUrl: {
-    value: '/app/file/findQuestionBankPdf?topicFileId='+$("#topicFileId").val(),
+    value: '/app/file/findQuestionBankPdf?topicFileId=',
     kind: OptionKind.VIEWER
   },
   defaultZoomValue: {

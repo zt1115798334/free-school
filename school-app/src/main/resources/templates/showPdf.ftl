@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/css/viewer.css">
     <!-- This snippet is used in production (included from viewer.html) -->
     <link rel="resource" type="application/l10n" href="/locale/locale.properties">
+    <script src="/js/jquery/jquery-3.2.1.min.js"></script>
     <script src="/js/pdf/pdf.js"></script>
 
 
