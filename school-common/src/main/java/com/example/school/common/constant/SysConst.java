@@ -20,7 +20,7 @@ public class SysConst {
     public static final String ORIGINAL_IMAGE_FILE_URL = "/app/file/findOriginalImg?topicImgId=";
     public static final String COMPRESS_IMAGE_FILE_URL = "/app/file/findCompressImg?topicImgId=";
 
-    public static final String QUESTION_BANK_PDF_FILE_URL = "/app/file/findQuestionBankPdf?topicFileId=";
+    public static final String QUESTION_BANK_PDF_FILE_URL = "/app/file/findQuestionBankPdfHtml?topicFileId=";
 
     public static final int DEFAULT_BATCH_SIZE = 200;
     public static final String DEFAULT_SORT_NAME = "createdTime";

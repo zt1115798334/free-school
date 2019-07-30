@@ -51,9 +51,13 @@ public abstract class AbsHttpAspect {
     @AfterReturning(returning = "object", pointcut = "aopPointCut()")
     private void doAfterReturning(Object object) {
         if (object != null) {
-            JSONObject result = JSONObject.parseObject(JSONObject.toJSONString(object));
-            result.remove("data");
-            log.info("response：{}", result.toJSONString());
+            if (object instanceof JSONObject) {
+                JSONObject result = JSONObject.parseObject(JSONObject.toJSONString(object));
+                result.remove("data");
+                log.info("response：{}", result.toJSONString());
+            } else {
+                log.info("response：{}", object.toString());
+            }
         }
     }
 

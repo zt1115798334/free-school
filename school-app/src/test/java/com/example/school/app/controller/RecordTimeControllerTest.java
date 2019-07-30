@@ -110,8 +110,9 @@ public class RecordTimeControllerTest extends BaseAutoLoginTest {
     @Test
     public void saveRecordTimeComment() {
         url += "saveRecordTimeComment";
-        params.put("topicId", 1);
-        params.put("content", "我的评论内容");
+        params.put("topicId", 33);
+        params.put("content", "找我找我");
+        params.put("fromUserId", "3");
         postParams(url, params);
     }
 

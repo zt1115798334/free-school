@@ -7,6 +7,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,9 +50,16 @@ public class FileInfoController {
     @ApiOperation(value = "展示题库pdf信息")
     @GetMapping(value = "findQuestionBankPdf")
     public void findQuestionBankPdf(HttpServletRequest request, HttpServletResponse response,
-                                @NotNull(message = "id不能为空") @RequestParam Long topicFileId) throws Exception {
+                                    @NotNull(message = "id不能为空") @RequestParam Long topicFileId) throws Exception {
         FileInfo fileInfo = fileInfoService.findFileInfo(topicFileId);
         FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getOriginalFileName());
+    }
+
+    @ApiOperation(value = "展示题库pdf信息Html")
+    @GetMapping(value = "findQuestionBankPdfHtml")
+    public String findQuestionBankPdfHtml(Model model, @NotNull(message = "id不能为空") @RequestParam Long topicFileId) {
+        model.addAttribute("topicFileId", topicFileId);
+        return "showPdf";
     }
 
 }

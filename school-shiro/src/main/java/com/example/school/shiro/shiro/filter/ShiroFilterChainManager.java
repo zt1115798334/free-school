@@ -52,9 +52,9 @@ public class ShiroFilterChainManager {
      */
     public Map<String, String> initGetFilterChain() {
         Map<String, String> filterChain = Maps.newLinkedHashMap();
-        filterChain.put("/api/login/*", "anon");
-        filterChain.put("/app/login/*", "anon");
-        filterChain.put("/app/file/*", "anon");
+        filterChain.put("/api/login/**", "anon");
+        filterChain.put("/app/login/**", "anon");
+        filterChain.put("/app/file/**", "anon");
 
         filterChain.put("/api/logout/logout", "JwtFilter");
         filterChain.put("/app/logout/logout", "JwtFilter");
