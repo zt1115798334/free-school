@@ -240,6 +240,7 @@ public class RoChangeEntityUtils {
 
     public static RoFeedback resultRoFeedback(Feedback feedback, Map<Long, List<Long>> feedbackImgMap) {
         return new RoFeedback(
+                feedback.getId(),
                 feedback.getFeedbackType(),
                 feedback.getContent(),
                 feedback.getContactMode(),

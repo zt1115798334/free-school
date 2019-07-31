@@ -21,8 +21,12 @@ import java.util.List;
 @AllArgsConstructor
 @Setter
 @Getter
-public class RoFeedback extends IdPageEntity {
-
+public class RoFeedback{
+    /**
+     * id
+     */
+    @ApiModelProperty(value = "id")
+    private Long id;
 
     /**
      *
