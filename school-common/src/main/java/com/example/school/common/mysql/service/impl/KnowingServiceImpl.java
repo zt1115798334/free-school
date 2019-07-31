@@ -9,6 +9,7 @@ import com.example.school.common.mysql.entity.Knowing;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.repo.KnowingRepository;
 import com.example.school.common.mysql.service.*;
+import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -54,6 +55,7 @@ public class KnowingServiceImpl implements KnowingService {
                 knowingDB.setTitle(knowing.getTitle());
                 knowingDB.setIntegral(knowing.getIntegral());
                 knowingDB.setDescribeContent(knowing.getDescribeContent());
+                knowingDB.setUpdatedTime(DateUtils.currentDateTime());
                 return knowingRepository.save(knowingDB);
             }
             return null;

@@ -51,6 +51,10 @@ public class RecordTime extends IdPageEntity {
 	*/
 	private LocalDateTime createdTime;
 	/**
+	 * 修改时间
+	 */
+	private LocalDateTime updatedTime;
+	/**
 	* 删除状态：1已删除 0未删除
 	*/
 	private Short deleteState;

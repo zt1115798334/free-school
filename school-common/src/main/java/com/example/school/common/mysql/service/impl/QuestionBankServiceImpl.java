@@ -13,6 +13,7 @@ import com.example.school.common.mysql.entity.QuestionPurchaseLog;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.repo.QuestionBankRepository;
 import com.example.school.common.mysql.service.*;
+import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.FileUtils;
 import com.example.school.common.utils.module.UploadFile;
 import lombok.AllArgsConstructor;
@@ -63,6 +64,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
                 QuestionBank questionBankDB = questionBankOptional.get();
                 questionBankDB.setTitle(questionBank.getTitle());
                 questionBankDB.setDescribeContent(questionBank.getDescribeContent());
+                questionBankDB.setUpdatedTime(DateUtils.currentDateTime());
                 return questionBankRepository.save(questionBankDB);
             }
             return null;

@@ -10,6 +10,7 @@ import com.example.school.common.mysql.repo.InformationRepository;
 import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.InformationService;
 import com.example.school.common.mysql.service.TopicService;
+import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -51,6 +52,7 @@ public class InformationServiceImpl implements InformationService {
                 Information informationDB = informationOptional.get();
                 informationDB.setTitle(information.getTitle());
                 informationDB.setDescribeContent(information.getDescribeContent());
+                informationDB.setUpdatedTime(DateUtils.currentDateTime());
                 return informationRepository.save(informationDB);
             }
             return null;

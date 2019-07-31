@@ -10,6 +10,7 @@ import com.example.school.common.mysql.repo.TransactionRepository;
 import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.TopicService;
 import com.example.school.common.mysql.service.TransactionService;
+import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -53,6 +54,7 @@ public class TransactionServiceImpl implements TransactionService {
                 transactionDB.setContactMode(transaction.getContactMode());
                 transactionDB.setContactPeople(transaction.getContactPeople());
                 transactionDB.setAddress(transaction.getAddress());
+                transactionDB.setUpdatedTime(DateUtils.currentDateTime());
                 return transactionRepository.save(transactionDB);
             }
             return null;

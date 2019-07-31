@@ -10,6 +10,7 @@ import com.example.school.common.mysql.repo.RecordTimeRepository;
 import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.RecordTimeService;
 import com.example.school.common.mysql.service.TopicService;
+import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -50,6 +51,7 @@ public class RecordTimeServiceImpl implements RecordTimeService {
                 RecordTime recordTimeDB = recordTimeOptional.get();
                 recordTimeDB.setTitle(recordTime.getTitle());
                 recordTimeDB.setDescribeContent(recordTime.getDescribeContent());
+                recordTimeDB.setUpdatedTime(DateUtils.currentDateTime());
                 return recordTimeRepository.save(recordTimeDB);
             }
             return null;
