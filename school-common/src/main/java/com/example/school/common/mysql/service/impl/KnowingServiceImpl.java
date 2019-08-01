@@ -4,12 +4,14 @@ import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ro.RoKnowing;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Knowing;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.repo.KnowingRepository;
 import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.DateUtils;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -109,7 +111,9 @@ public class KnowingServiceImpl implements KnowingService {
     @Transactional(rollbackFor = RuntimeException.class)
     public void deleteKnowing(Long id) {
         Knowing knowing = this.findKnowing(id);
-        userService.increaseIntegral(knowing.getUserId(), knowing.getIntegral());
+        if (!Objects.equal(knowing.getState(), SysConst.State.SOLVE.getType())) {
+            userService.increaseIntegral(knowing.getUserId(), knowing.getIntegral());
+        }
         this.deleteById(id);
     }
 

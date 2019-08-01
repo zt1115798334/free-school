@@ -253,6 +253,9 @@ function getViewerConfiguration() {
 
 function webViewerLoad() {
   var config = getViewerConfiguration();
+  config.toolbar.openFile.setAttribute('hidden', 'true');
+  config.toolbar.print.setAttribute('hidden', 'true');
+  config.toolbar.download.setAttribute('hidden', 'true');
   window.PDFViewerApplication = pdfjsWebApp.PDFViewerApplication;
   window.PDFViewerApplicationOptions = pdfjsWebAppOptions.AppOptions;
   var event = document.createEvent('CustomEvent');

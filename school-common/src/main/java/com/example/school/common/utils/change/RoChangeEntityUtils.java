@@ -227,7 +227,8 @@ public class RoChangeEntityUtils {
                 questionBankId,
                 questionBank.getTitle(),
                 DateUtils.formatDateTime(questionBank.getCreatedTime()),
-                questionBank.getDescribeContent());
+                questionBank.getDescribeContent(),
+                questionBank.getIntegral());
     }
 
     public static List<RoQuestionBank> resultRoQuestionBank(List<QuestionBank> questionBankList,

@@ -42,13 +42,19 @@ public class RoQuestionBank extends RoTopic {
     @ApiModelProperty(value = "描述")
     private String describeContent;
 
+    /**
+     * 积分
+     */
+    private Long integral;
+
     public RoQuestionBank(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, boolean collectionState, Long commentNum, Long browsingVolume, List<RoImagePath> topicImgList,
-                          Long id, String title, String dateTime, String describeContent) {
+                          Long id, String title, String dateTime, String describeContent, Long integral) {
         super(user, state, userState, zanState, zanNum, zanUsers, collectionState, commentNum, browsingVolume, topicImgList);
         this.id = id;
         this.title = title;
         this.dateTime = dateTime;
         this.describeContent = describeContent;
+        this.integral = integral;
 
     }
 }
