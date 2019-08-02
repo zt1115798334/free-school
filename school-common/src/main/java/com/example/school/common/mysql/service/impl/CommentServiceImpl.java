@@ -1,5 +1,7 @@
 package com.example.school.common.mysql.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
 import com.example.school.common.base.entity.ro.RoCommentStatus;
 import com.example.school.common.base.entity.ro.RoTopicCommentMap;
@@ -113,6 +115,14 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment findComment(Long id) {
         return this.findByIdNotDelete(id).orElseThrow(() -> new OperationException("已删除"));
+    }
+
+    @Override
+    public JSONObject countComment(Long topicId, Short topicType) {
+        long count = commentRepository.countByTopicIdAndTopicTypeAndDeleteState(topicId, topicType, UN_DELETED);
+        JSONObject result = new JSONObject();
+        result.put("commentNum", count);
+        return result;
     }
 
     @Override

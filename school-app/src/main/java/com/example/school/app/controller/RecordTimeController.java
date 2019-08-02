@@ -1,5 +1,6 @@
 package com.example.school.app.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
@@ -11,7 +12,6 @@ import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageRecordTime;
 import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.web.AbstractController;
-import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Comment;
 import com.example.school.common.mysql.entity.CommentReply;
 import com.example.school.common.mysql.entity.RecordTime;
@@ -241,6 +241,17 @@ public class RecordTimeController extends AbstractController implements CurrentU
         comment.setTopicType(TopicType.TOPIC_TYPE_5.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
+    }
+
+    @ApiOperation(value = "显示时光信息评论数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findRecordTimeCommentCount")
+    public ResultMessage findRecordTimeCommentCount(@NotNull(message = "topicId不能为空") @RequestParam Long topicId) {
+        JSONObject result = commentService.countComment(topicId, TopicType.TOPIC_TYPE_5.getCode());
+        return success(result);
     }
 
     @ApiOperation(value = "显示时光信息评论回复")

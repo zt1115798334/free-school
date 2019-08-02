@@ -1,5 +1,6 @@
 package com.example.school.common.mysql.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ro.RoCommentStatus;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.mysql.entity.Comment;
@@ -22,6 +23,8 @@ public interface CommentService extends BaseService<Comment, Long> {
     void adoptComment(Long id, Long topicId, Short topicType);
 
     Comment findComment(Long id);
+
+    JSONObject countComment(Long topicId, Short topicType);
 
     Map<Long, Long> countComment(List<Long> topicId, Short topicType);
 

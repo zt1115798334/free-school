@@ -47,6 +47,11 @@ public class RoQuestionBank extends RoTopic {
      */
     private Long integral;
 
+    /**
+     * 查看状态
+     */
+    private boolean lookState;
+
     public RoQuestionBank(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, List<RoUser> zanUsers, boolean collectionState, Long commentNum, Long browsingVolume, List<RoImagePath> topicImgList,
                           Long id, String title, String dateTime, String describeContent, Long integral) {
         super(user, state, userState, zanState, zanNum, zanUsers, collectionState, commentNum, browsingVolume, topicImgList);

@@ -1,5 +1,6 @@
 package com.example.school.app.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
@@ -239,6 +240,17 @@ public class KnowingController extends AbstractController implements CurrentUser
         comment.setTopicType(TopicType.TOPIC_TYPE_3.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
+    }
+
+    @ApiOperation(value = "显示问答信息评论数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findKnowingCommentCount")
+    public ResultMessage findKnowingCommentCount(@NotNull(message = "topicId不能为空") @RequestParam Long topicId) {
+        JSONObject result = commentService.countComment(topicId, TopicType.TOPIC_TYPE_3.getCode());
+        return success(result);
     }
 
     @ApiOperation(value = "显示问答信息评论回复")

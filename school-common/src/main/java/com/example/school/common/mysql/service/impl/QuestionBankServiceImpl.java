@@ -156,7 +156,10 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     public RoQuestionBank findRoQuestionBank(Long id, Long userId) {
         QuestionBank questionBank = this.findQuestionBank(id);
         this.incrementQuestionBankBrowsingVolume(id);
-        return topicService.resultRoQuestionBank(questionBank, userId);
+        RoQuestionBank roQuestionBank = topicService.resultRoQuestionBank(questionBank, userId);
+        Optional<QuestionPurchaseLog> logOptional = questionPurchaseLogService.findQuestionPurchaseLog(userId, id);
+        roQuestionBank.setLookState(logOptional.isPresent());
+        return roQuestionBank;
     }
 
 
@@ -194,7 +197,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public JSONObject findQuestionBankExistenceAnswer(Long id, Long userId) {
-        Optional<QuestionPurchaseLog> logOptional = questionPurchaseLogService.findQuestionPurchaseLog(id, userId);
+        Optional<QuestionPurchaseLog> logOptional = questionPurchaseLogService.findQuestionPurchaseLog(userId, id);
         QuestionBank questionBank = this.findQuestionBank(id);
         long existenceAnswer;
         if (logOptional.isPresent()) {

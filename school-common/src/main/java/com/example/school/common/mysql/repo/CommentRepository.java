@@ -21,5 +21,7 @@ public interface CommentRepository extends CrudRepository<Comment, Long>,
 
     List<Comment> findByTopicIdAndTopicTypeAndDeleteState(Long topicId, Short topicType, Short deleteState);
 
+    long countByTopicIdAndTopicTypeAndDeleteState(Long topicId, Short topicType, Short deleteState);
+
     List<Comment> findByTopicIdInAndTopicTypeAndDeleteState(List<Long> topicId, Short topicType, Short deleteState);
 }

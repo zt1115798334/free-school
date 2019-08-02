@@ -280,6 +280,17 @@ public class QuestionBankController extends AbstractController implements Curren
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
     }
 
+    @ApiOperation(value = "显示题库信息评论数量")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findQuestionBankCommentCount")
+    public ResultMessage findQuestionBankCommentCount(@NotNull(message = "topicId不能为空") @RequestParam Long topicId) {
+        JSONObject result = commentService.countComment(topicId, TopicType.TOPIC_TYPE_4.getCode());
+        return success(result);
+    }
+
     @ApiOperation(value = "显示题库信息评论回复")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
