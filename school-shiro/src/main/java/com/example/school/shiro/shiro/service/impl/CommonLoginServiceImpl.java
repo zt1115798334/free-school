@@ -63,7 +63,9 @@ public class CommonLoginServiceImpl implements CommonLoginService {
         //token 存储redis
         stringRedisService.saveAccessToken(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong), accessToken, rememberMe);
         stringRedisService.saveRefreshToken(CacheKeys.getJwtRefreshTokenKey(deviceInfo, userId, ipLong), refreshToken, rememberMe);
-
+        if (StringUtils.isNotBlank(registrationId)) {
+            stringRedisService.saveRefreshToken(CacheKeys.getJpushTokenKey(userId, registrationId), registrationId, rememberMe);
+        }
         if (StringUtils.equals(deviceInfo, SysConst.DeviceInfo.MOBILE.getType())) {
             UserRegistration userRegistration = new UserRegistration(userId, registrationId, accessToken);
             userRegistrationService.save(userRegistration);
@@ -74,9 +76,17 @@ public class CommonLoginServiceImpl implements CommonLoginService {
 
     @Override
     public void logout(Long currentUserId, String ip, String deviceInfo) {
+        this.logout(currentUserId, ip, deviceInfo, StringUtils.EMPTY);
+    }
+
+    @Override
+    public void logout(Long currentUserId, String ip, String deviceInfo, String registrationId) {
         Long ipLong = NetworkUtil.ipToLong(ip);
         stringRedisService.delete(CacheKeys.getJwtAccessTokenKey(deviceInfo, currentUserId, ipLong));
         stringRedisService.delete(CacheKeys.getJwtRefreshTokenKey(deviceInfo, currentUserId, ipLong));
+        if (StringUtils.isNotEmpty(registrationId)) {
+            stringRedisService.delete(CacheKeys.getJpushTokenKey(currentUserId, registrationId));
+        }
         SecurityUtils.getSubject().logout();
     }
 }

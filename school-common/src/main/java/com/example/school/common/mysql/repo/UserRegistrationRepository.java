@@ -18,8 +18,6 @@ import java.util.Optional;
 public interface UserRegistrationRepository extends CrudRepository<UserRegistration, Long>,
         JpaSpecificationExecutor<UserRegistration> {
 
-    void deleteByUserIdAndRegistrationId(Long userId, String registrationId);
-
     Optional<UserRegistration> findByUserIdAndRegistrationId(Long userId, String registrationId);
 
     @Query(value = "select registrationId from UserRegistration where userId =:userId")

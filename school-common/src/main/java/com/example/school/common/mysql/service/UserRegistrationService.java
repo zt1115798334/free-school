@@ -15,14 +15,6 @@ import java.util.List;
 public interface UserRegistrationService extends BaseService<UserRegistration, Long> {
 
     /**
-     * 根据用户id 极光推送id删除
-     *
-     * @param userId         用户id
-     * @param registrationId 极光推送id
-     */
-    void deleteByUserIdAndRegistrationId(Long userId, String registrationId);
-
-    /**
      * 根据用户id查询所有的token值
      *
      * @param userId 用户id

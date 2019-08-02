@@ -34,6 +34,8 @@ public class CacheKeys {
      */
     private static final String PREFIX_JWT_REFRESH_TOKEN = "jwt:refresh_token:";
 
+    private static final String PREFIX_JPUSH_TOKEN = "jpush:";
+
 
     /**
      * 短信 验证码
@@ -64,12 +66,6 @@ public class CacheKeys {
      * 获取ip锁定状态
      */
     private static final String PREFIX_VERIFICATION_CODE_IP_IS_LOCK = "verification_code_ip:count_is_lock_";
-
-    /**
-     * 邀请码
-     */
-    private static final String PREFIX_INVITATION_CODE = "invitation_code:";
-
 
     /**
      * 用户登录次数计数
@@ -115,10 +111,14 @@ public class CacheKeys {
         return PREFIX_JWT_REFRESH_TOKEN + deviceInfo + ":" + userId + ":" + ipLong;
     }
 
+    public static String getJpushTokenKey(Long userId, String registrationId) {
+        return PREFIX_JPUSH_TOKEN + ":" + userId + ":" + registrationId;
+    }
+
     /**
      * 短信 验证码
      *
-     * @param verificationCodeType 验证码类型{@link com.zkdj.navy.common.constant.SysConst.VerificationCodeType}
+     * @param verificationCodeType 验证码类型{@link SysConst.VerificationCodeType}
      * @param phone                手机号
      * @return key
      */
@@ -129,7 +129,7 @@ public class CacheKeys {
     /**
      * 邮箱 验证码
      *
-     * @param verificationCodeType 验证码类型{@link com.zkdj.navy.common.constant.SysConst.VerificationCodeType}
+     * @param verificationCodeType 验证码类型{@link SysConst.VerificationCodeType}
      * @param email                邮箱
      * @return key
      */
@@ -140,7 +140,7 @@ public class CacheKeys {
     /**
      * 统计发送个数
      *
-     * @param notice 通知类型{@link com.zkdj.navy.common.constant.SysConst.NoticeType}
+     * @param notice 通知类型{@link SysConst.NoticeType}
      * @return key
      */
     public static String getVerificationCodeNoticeCountKey(String notice) {
@@ -160,7 +160,7 @@ public class CacheKeys {
     /**
      * 获取锁定状态
      *
-     * @param notice 通知类型{@link com.zkdj.navy.common.constant.SysConst.NoticeType}
+     * @param notice 通知类型{@link SysConst.NoticeType}
      * @return key
      */
     public static String getVerificationCodeNoticeIsLockKey(String notice) {
@@ -175,27 +175,6 @@ public class CacheKeys {
      */
     public static String getVerificationCodeIpIsLockKey(String ip) {
         return PREFIX_VERIFICATION_CODE_IP_IS_LOCK + ip;
-    }
-
-
-    /**
-     * 邀请码(记录前缀+userId: c邀请码)
-     *
-     * @param userId 邀请码
-     * @return key
-     */
-    public static String getInvitationCode(Long userId) {
-        return PREFIX_INVITATION_CODE + ":" + userId;
-    }
-
-    /**
-     *  邀请码(记录前缀+邀请码: 信息)
-     *
-     * @param invitationCode    邀请码
-     * @return key
-     */
-    public static String getInvitationCode(String invitationCode) {
-        return PREFIX_INVITATION_CODE + ":" + invitationCode;
     }
 
 }

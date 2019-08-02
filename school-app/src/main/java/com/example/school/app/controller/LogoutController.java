@@ -3,9 +3,6 @@ package com.example.school.app.controller;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
-import com.example.school.common.mysql.service.UserRegistrationService;
-import com.example.school.common.mysql.service.UserService;
-import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.shiro.aop.SaveLog;
 import com.example.school.shiro.base.CurrentUser;
@@ -39,8 +36,6 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("app/logout")
 public class LogoutController extends AbstractController implements CurrentUser {
 
-    private final UserRegistrationService userRegistrationService;
-
     private final CommonLoginService commonLoginService;
 
     private static final String deviceInfo = SysConst.DeviceInfo.MOBILE.getType();
@@ -62,8 +57,7 @@ public class LogoutController extends AbstractController implements CurrentUser 
                                 @NotBlank(message = "极光推送id不能为空") @RequestParam String registrationId) {
         String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
         Long currentUserId = getCurrentUserId();
-        userRegistrationService.deleteByUserIdAndRegistrationId(currentUserId, registrationId);
-        commonLoginService.logout(currentUserId, ip, deviceInfo);
+        commonLoginService.logout(currentUserId, ip, deviceInfo, registrationId);
         return success("退出成功");
     }
 

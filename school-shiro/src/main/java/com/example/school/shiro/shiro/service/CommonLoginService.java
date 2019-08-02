@@ -21,4 +21,6 @@ public interface CommonLoginService {
     String login(PasswordToken token, Boolean rememberMe, String ip, String deviceInfo, String registrationId) throws OperationException;
 
     void logout(Long currentUserId, String ip, String deviceInfo);
+
+    void logout(Long currentUserId, String ip, String deviceInfo, String registrationId);
 }
