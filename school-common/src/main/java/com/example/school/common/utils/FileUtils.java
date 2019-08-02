@@ -378,7 +378,7 @@ public class FileUtils {
                     bl = true;
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             } finally {
                 buff.clear();
                 fileChannel.close();

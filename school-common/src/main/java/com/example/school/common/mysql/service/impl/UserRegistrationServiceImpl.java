@@ -32,7 +32,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     private final StringRedisService stringRedisService;
 
     @Override
-    @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.READ_COMMITTED)
+    @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.READ_UNCOMMITTED)
     public UserRegistration save(UserRegistration userRegistration) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Optional<UserRegistration> repository = userRegistrationRepository.findByUserIdAndRegistrationId(userRegistration.getUserId(), userRegistration.getRegistrationId());
