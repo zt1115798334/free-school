@@ -79,8 +79,8 @@ public class LoginController extends AbstractController {
         try {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
             String LoginType = SysConst.LoginType.AJAX.getType();
-            PasswordToken token = new PasswordToken(username, password, LoginType);
-            String accessToken = commonLoginService.login(token, ip, deviceInfo, registrationId);
+            PasswordToken token = new PasswordToken(username, password, Boolean.TRUE, LoginType);
+            String accessToken = commonLoginService.login(token, Boolean.TRUE, ip, deviceInfo, registrationId);
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             JSONObject result = new JSONObject();
             result.put("accessToken", accessToken);
