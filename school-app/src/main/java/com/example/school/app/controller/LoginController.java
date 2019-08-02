@@ -72,6 +72,7 @@ public class LoginController extends AbstractController {
     })
     @PostMapping(value = "login")
     @SaveLog(desc = "app登录")
+    @DistributedLock
     public ResultMessage login(HttpServletRequest request,
                                @NotBlank(message = "账户不能为空") @RequestParam String username,
                                @NotBlank(message = "密码不能为空") @RequestParam String password,
@@ -79,7 +80,7 @@ public class LoginController extends AbstractController {
         try {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
             String LoginType = SysConst.LoginType.AJAX.getType();
-            PasswordToken token = new PasswordToken(username, password, Boolean.TRUE, LoginType);
+            PasswordToken token = new PasswordToken(username, password, LoginType);
             String accessToken = commonLoginService.login(token, Boolean.TRUE, ip, deviceInfo, registrationId);
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             JSONObject result = new JSONObject();

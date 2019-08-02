@@ -6,6 +6,7 @@ import com.example.school.common.mysql.service.UserRegistrationService;
 import com.example.school.common.utils.DateUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -21,12 +22,12 @@ import java.util.Optional;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackFor = RuntimeException.class)
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private final UserRegistrationRepository userRegistrationRepository;
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.READ_COMMITTED)
     public UserRegistration save(UserRegistration userRegistration) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Optional<UserRegistration> repository = userRegistrationRepository.findByUserIdAndRegistrationId(userRegistration.getUserId(), userRegistration.getRegistrationId());
@@ -43,6 +44,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class)
     public void deleteByUserIdAndRegistrationId(Long userId, String registrationId) {
         userRegistrationRepository.deleteByUserIdAndRegistrationId(userId, registrationId);
     }

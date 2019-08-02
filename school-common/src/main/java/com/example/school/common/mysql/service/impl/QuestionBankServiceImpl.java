@@ -209,7 +209,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
                 throw new OperationException("积分不够，请充值");
             }
             userService.reduceIntegral(userId, integral);
-            questionPurchaseLogService.saveQuestionPurchaseLog(id, userId);
+            questionPurchaseLogService.saveQuestionPurchaseLog(userId, id);
             existenceAnswer = questionBank.getExistenceAnswer();
         }
         JSONObject result = new JSONObject();
