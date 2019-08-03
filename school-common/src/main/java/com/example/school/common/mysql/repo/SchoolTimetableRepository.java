@@ -3,6 +3,8 @@ package com.example.school.common.mysql.repo;
 import com.example.school.common.mysql.entity.SchoolTimetable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -11,4 +13,6 @@ import org.springframework.data.repository.CrudRepository;
  * description:
  */
 public interface SchoolTimetableRepository extends CrudRepository<SchoolTimetable, Long> {
+
+    List<SchoolTimetable> findByStudentIdAndSemesterAndWeeklyTimes(String studentId, String semester, Integer weeklyTimes);
 }

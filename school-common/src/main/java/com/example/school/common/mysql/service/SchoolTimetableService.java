@@ -1,7 +1,10 @@
 package com.example.school.common.mysql.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.mysql.entity.SchoolTimetable;
+
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,4 +15,6 @@ import com.example.school.common.mysql.entity.SchoolTimetable;
  */
 public interface SchoolTimetableService extends BaseService<SchoolTimetable, Long> {
 
+
+    JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes);
 }

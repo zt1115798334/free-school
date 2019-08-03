@@ -10,8 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.example.school.common.constant.SysConst.TimeType;
 
@@ -661,6 +663,23 @@ public class DateUtils {
             dr.endDateTime = endDateTime;
             return dr;
         }
+    }
+
+    public static List<LocalDate> test(int year, int n, int week) {
+        if (n == 1) {
+
+        }
+        if (n == 2) {
+
+        }
+
+        WeekFields weekFields = WeekFields.of(Locale.FRANCE);
+        LocalDate monday = LocalDate.now()
+                .withYear(year)
+                .with(weekFields.weekOfYear(), week)
+                .with(weekFields.dayOfWeek(), 7L);
+        System.out.println("monday = " + monday);
+        return null;
     }
 
 

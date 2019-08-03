@@ -10,10 +10,7 @@ import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.SchoolAdministrationService;
-import com.example.school.common.mysql.service.SignRecordService;
-import com.example.school.common.mysql.service.UserImgService;
-import com.example.school.common.mysql.service.UserService;
+import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.RegularMatchUtils;
 import com.example.school.common.utils.change.RoChangeEntityUtils;
@@ -58,6 +55,8 @@ public class PersonalCenterController extends AbstractController implements Curr
     private final SignRecordService signRecordService;
 
     private final SchoolAdministrationService schoolAdministrationService;
+
+    private final SchoolTimetableService schoolTimetableService;
 
     @ApiOperation(value = "显示用户信息")
     @ApiImplicitParams({
@@ -148,6 +147,18 @@ public class PersonalCenterController extends AbstractController implements Curr
     public ResultMessage findSchoolAdministration() {
         SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(getCurrentUserId());
         return success(RoChangeEntityUtils.resultRoSchoolAdministration(schoolAdministration));
+    }
+
+    @ApiOperation(value = "查询课程表信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findSchoolTimetable")
+    public ResultMessage findSchoolTimetable(@RequestParam String semester,
+                                             @RequestParam Integer weeklyTimes) {
+        JSONObject result = schoolTimetableService.findSchoolTimetable(getCurrentUserId(), semester, weeklyTimes);
+        return success(result);
     }
 
 

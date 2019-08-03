@@ -6,7 +6,9 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -412,6 +414,10 @@ public class SysConst {
         private String name;
     }
 
+    public static List<String> getAllWeekType() {
+        return Arrays.stream(Week.values()).map(Week::getType).collect(Collectors.toList());
+    }
+
     /**
      * 课次
      */
@@ -427,6 +433,10 @@ public class SysConst {
 
         private short code;
         private String name;
+    }
+
+    public static List<Short> getAllClassTimesCode() {
+        return Arrays.stream(ClassTimes.values()).map(ClassTimes::getCode).collect(Collectors.toList());
     }
 
     /**

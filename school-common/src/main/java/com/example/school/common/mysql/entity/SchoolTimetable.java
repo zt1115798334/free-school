@@ -36,7 +36,7 @@ public class SchoolTimetable extends IdEntity {
     /**
      * 周次
      */
-    private String weeklyTimes;
+    private Integer weeklyTimes;
     /**
      * 周（星期一 mon 星期二 tue 星期三 wed 星期四 thu 星期五 fri 星期六 sat 星期天 sun）
      * {@link com.example.school.common.constant.SysConst.Week}
@@ -48,5 +48,8 @@ public class SchoolTimetable extends IdEntity {
      */
     private Short classTimes;
 
-
+    /**
+     * 课程
+     */
+    private String curriculum;
 }

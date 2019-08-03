@@ -6,6 +6,8 @@ import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.google.common.collect.Maps;
 import org.junit.Test;
 
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -47,5 +49,14 @@ public class PersonalCenterControllerTest extends BaseAutoLoginTest {
     public void findSchoolAdministration() {
         url += "findSchoolAdministration";
         postParams(url, Maps.newHashMap());
+    }
+
+    @Test
+    public void findSchoolTimetable() {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("semester", "2018-2019-2");
+        params.put("weeklyTimes", "2");
+        url += "findSchoolTimetable";
+        postParams(url, params);
     }
 }
