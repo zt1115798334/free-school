@@ -1,11 +1,10 @@
 package com.example.school.app.controller;
 
 import com.example.school.app.BaseAutoLoginTest;
+import com.example.school.common.base.entity.vo.VoStorageSchoolAdministration;
 import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.google.common.collect.Maps;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,5 +32,20 @@ public class PersonalCenterControllerTest extends BaseAutoLoginTest {
         voStorageUser.setPhone("15130097582");
         voStorageUser.setEmail("zhang@qq.com");
         postJSONObject(url, voStorageUser);
+    }
+
+    @Test
+    public void saveSchoolAdministration() {
+        url += "saveSchoolAdministration";
+        VoStorageSchoolAdministration schoolAdministration = new VoStorageSchoolAdministration();
+        schoolAdministration.setStudentId("160740061");
+        schoolAdministration.setStudentPwd("lixin123");
+        postJSONObject(url, schoolAdministration);
+    }
+
+    @Test
+    public void findSchoolAdministration() {
+        url += "findSchoolAdministration";
+        postParams(url, Maps.newHashMap());
     }
 }

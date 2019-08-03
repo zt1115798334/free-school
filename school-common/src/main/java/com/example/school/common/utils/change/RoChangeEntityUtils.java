@@ -43,6 +43,11 @@ public class RoChangeEntityUtils {
                 .collect(toList());
     }
 
+    public static RoSchoolAdministration resultRoSchoolAdministration(SchoolAdministration schoolAdministration) {
+        return new RoSchoolAdministration(schoolAdministration.getStudentId(),
+                schoolAdministration.getStudentPwd(),
+                schoolAdministration.getUsableState());
+    }
 
     public static RoCommentStatus resultRoCommentStatus(Comment comment,
                                                         Long userId,

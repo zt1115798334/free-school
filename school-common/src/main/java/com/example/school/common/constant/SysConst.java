@@ -393,4 +393,53 @@ public class SysConst {
         private String name;
     }
 
+    /**
+     * 星期
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum Week {
+
+        MON("mon", "星期一"),
+        TUE("tue", "星期二"),
+        WED("wed", "星期三"),
+        THU("thu", "星期四"),
+        FRI("fri", "星期五"),
+        SAT("sat", "星期六"),
+        SUN("sun", "星期天");
+
+        private String type;
+        private String name;
+    }
+
+    /**
+     * 课次
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum ClassTimes {
+        CLASS_ONE((short) 1, "第一节"),
+        CLASS_TWO((short) 2, "第二节"),
+        CLASS_THREE((short) 3, "第三节"),
+        CLASS_FOUR((short) 4, "第四节"),
+        CLASS_FIVE((short) 5, "第五节"),
+        CLASS_SIX((short) 6, "第六节");
+
+        private short code;
+        private String name;
+    }
+
+    /**
+     * 课次
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum UsableState {
+        AVAILABLE((short) 0, "可用"),
+        NOT_AVAILABLE((short) 1, "不可用");
+
+        private short code;
+        private String name;
+    }
+
 }

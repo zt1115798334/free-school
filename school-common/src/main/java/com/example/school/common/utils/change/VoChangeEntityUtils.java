@@ -1,8 +1,6 @@
 package com.example.school.common.utils.change;
 
 import com.example.school.common.base.entity.CustomPage;
-import com.example.school.common.base.entity.IdEntity;
-import com.example.school.common.base.entity.IdPageEntity;
 import com.example.school.common.base.entity.vo.*;
 import com.example.school.common.mysql.entity.*;
 import com.example.school.common.utils.DateUtils;
@@ -27,6 +25,11 @@ public class VoChangeEntityUtils {
                 voStorageUser.getEmail(),
                 voStorageUser.getSex(),
                 voStorageUser.getSchool());
+    }
+
+    public static SchoolAdministration changeSchoolAdministration(VoStorageSchoolAdministration storageSchoolAdministration) {
+        return new SchoolAdministration(storageSchoolAdministration.getStudentId(),
+                storageSchoolAdministration.getStudentPwd());
     }
 
     public static Comment changeComment(VoCommentPage commentPage) {

@@ -3,17 +3,20 @@ package com.example.school.app.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.entity.ro.RoUser;
+import com.example.school.common.base.entity.vo.VoStorageSchoolAdministration;
 import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.web.AbstractController;
-import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
+import com.example.school.common.mysql.service.SchoolAdministrationService;
 import com.example.school.common.mysql.service.SignRecordService;
 import com.example.school.common.mysql.service.UserImgService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.RegularMatchUtils;
+import com.example.school.common.utils.change.RoChangeEntityUtils;
 import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.shiro.aop.DistributedLock;
 import com.example.school.shiro.aop.SaveLog;
@@ -53,6 +56,8 @@ public class PersonalCenterController extends AbstractController implements Curr
     private final UserImgService userImgService;
 
     private final SignRecordService signRecordService;
+
+    private final SchoolAdministrationService schoolAdministrationService;
 
     @ApiOperation(value = "显示用户信息")
     @ApiImplicitParams({
@@ -117,6 +122,34 @@ public class PersonalCenterController extends AbstractController implements Curr
         List<JSONObject> result = signRecordService.signInCalendar(getCurrentUserId(), DateUtils.parseDate(dateMonth));
         return success(result);
     }
+
+
+    @ApiOperation(value = "保存教务信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "saveSchoolAdministration")
+    @SaveLog(desc = "保存教务信息")
+    @DistributedLock
+    public ResultMessage saveSchoolAdministration(@RequestBody VoStorageSchoolAdministration storageSchoolAdministration) {
+        SchoolAdministration schoolAdministration = VoChangeEntityUtils.changeSchoolAdministration(storageSchoolAdministration);
+        schoolAdministration.setUserId(getCurrentUserId());
+        schoolAdministrationService.saveSchoolAdministration(schoolAdministration);
+        return success("保存成功");
+    }
+
+    @ApiOperation(value = "查询教务信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "findSchoolAdministration")
+    public ResultMessage findSchoolAdministration() {
+        SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(getCurrentUserId());
+        return success(RoChangeEntityUtils.resultRoSchoolAdministration(schoolAdministration));
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////
     // 管理员操作
