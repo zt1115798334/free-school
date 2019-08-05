@@ -1,11 +1,12 @@
 package com.example.school.common.mysql.service.impl;
 
 import com.example.school.common.constant.SysConst;
+import com.example.school.common.constant.properties.SchoolProperties;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.repo.SchoolAdministrationRepository;
 import com.example.school.common.mysql.service.SchoolAdministrationService;
-import com.example.school.common.utils.DateUtils;
+import com.example.school.common.utils.RSAUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,8 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
 
     private final SchoolAdministrationRepository schoolAdministrationRepository;
 
+    private final SchoolProperties schoolProperties;
+
     @Override
     public SchoolAdministration save(SchoolAdministration schoolAdministration) {
         Long userId = schoolAdministration.getUserId();
@@ -44,7 +47,10 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(SchoolAdministration schoolAdministration) {
+    public SchoolAdministration saveSchoolAdministration(SchoolAdministration schoolAdministration) throws Exception {
+//        String studentPwd = schoolAdministration.getStudentPwd();
+//        String studentPwdRsa = RSAUtils.encryptBASE64(RSAUtils.encryptByPrivateKey(studentPwd.getBytes(), schoolProperties.getRsa().getPrivateKey()));
+//        schoolAdministration.setStudentPwd(studentPwdRsa);
         return this.save(schoolAdministration);
     }
 

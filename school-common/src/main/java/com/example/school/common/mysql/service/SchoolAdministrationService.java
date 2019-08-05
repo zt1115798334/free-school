@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 public interface SchoolAdministrationService extends BaseService<SchoolAdministration, Long> {
 
-    SchoolAdministration saveSchoolAdministration(SchoolAdministration schoolAdministration);
+    SchoolAdministration saveSchoolAdministration(SchoolAdministration schoolAdministration) throws Exception;
 
     void modifySchoolAdministrationUsableStateToNotAvailable(Long userId);
 

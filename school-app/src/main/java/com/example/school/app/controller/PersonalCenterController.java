@@ -131,7 +131,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     @PostMapping(value = "saveSchoolAdministration")
     @SaveLog(desc = "保存教务信息")
     @DistributedLock
-    public ResultMessage saveSchoolAdministration(@RequestBody VoStorageSchoolAdministration storageSchoolAdministration) {
+    public ResultMessage saveSchoolAdministration(@RequestBody VoStorageSchoolAdministration storageSchoolAdministration) throws Exception {
         SchoolAdministration schoolAdministration = VoChangeEntityUtils.changeSchoolAdministration(storageSchoolAdministration);
         schoolAdministration.setUserId(getCurrentUserId());
         schoolAdministrationService.saveSchoolAdministration(schoolAdministration);

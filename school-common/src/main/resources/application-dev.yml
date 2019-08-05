@@ -84,7 +84,12 @@ custom:
     remember-me-refresh-expiration: 40 #记住我-刷新时间 单位 天
     token-head: Bearer
     secret: 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-
+  school: #网评
+    host: http://114.55.179.202:8282  #网评地址
+    #    host: http://127.0.0.1:8091  #网评地址
+    rsa:
+      public-key: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBCZgk4qd4naW5mMvvvDcQeI/3pZAogp4GUbKfOFcRcaaOc0VzrUrs/3dl42bL52Tm2GGuBf7A+STkvp3FyQl7IG8CAwEAAQ==
+      private-key: MIIBVwIBADANBgkqhkiG9w0BAQEFAASCAUEwggE9AgEAAkEJmCTip3idpbmYy++8NxB4j/elkCiCngZRsp84VxFxpo5zRXOtSuz/d2XjZsvnZObYYa4F/sD5JOS+ncXJCXsgbwIDAQABAkEHieOZsGuGu5w8oimqIz4u7Thyf/ZEw7RFZ2vSEh/jxC2Qhh1NX3AQnEBfbzxmmRSvqw5fXnU+ZFZEn2OVN+R7AQIhA2YiMmxwi8h6d9v6Y8ZIJPcubQjb7U+knQozWChZpkXvAiEC0p3TFe06nKpj9MNP1cyCH4/rdFrgNKGt6oF7/zHnTYECIQHGZ5tvmALXymUnwwYx+WEcmOkmFDxFOFEuj4u9Xrv/jwIhAmHaTOG+eq7ppr5Vb7VSiac1gVOLtpj0sqCtcwanCT0BAiEB7jUm2QcYnkxKWfdNj6+07eBfK1hX4OqcRF9yiufbj1w=
 
 server:
   tomcat:
