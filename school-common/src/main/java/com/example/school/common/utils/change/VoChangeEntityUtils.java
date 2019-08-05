@@ -27,11 +27,6 @@ public class VoChangeEntityUtils {
                 voStorageUser.getSchool());
     }
 
-    public static SchoolAdministration changeSchoolAdministration(VoStorageSchoolAdministration storageSchoolAdministration) {
-        return new SchoolAdministration(storageSchoolAdministration.getStudentId(),
-                storageSchoolAdministration.getStudentPwd());
-    }
-
     public static Comment changeComment(VoCommentPage commentPage) {
         return new Comment(commentPage.getSortName(),
                 commentPage.getSortOrder(),

@@ -1,7 +1,6 @@
 package com.example.school.app.controller;
 
 import com.example.school.app.BaseAutoLoginTest;
-import com.example.school.common.base.entity.vo.VoStorageSchoolAdministration;
 import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.google.common.collect.Maps;
 import org.junit.Test;
@@ -39,10 +38,10 @@ public class PersonalCenterControllerTest extends BaseAutoLoginTest {
     @Test
     public void saveSchoolAdministration() {
         url += "saveSchoolAdministration";
-        VoStorageSchoolAdministration schoolAdministration = new VoStorageSchoolAdministration();
-        schoolAdministration.setStudentId("160740061");
-        schoolAdministration.setStudentPwd("lixin123");
-        postJSONObject(url, schoolAdministration);
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("studentId", "160740061");
+        params.put("studentPwd", "lixin123");
+        postParams(url, params);
     }
 
     @Test

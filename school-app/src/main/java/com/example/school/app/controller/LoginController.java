@@ -5,10 +5,13 @@ import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
+import com.example.school.common.mysql.service.SchoolAdministrationService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.NetworkUtil;
+import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.common.validation.NoticeType;
 import com.example.school.shiro.aop.DistributedLock;
 import com.example.school.shiro.aop.SaveLog;
@@ -51,6 +54,8 @@ public class LoginController extends AbstractController {
     private final CommonLoginService commonLoginService;
 
     private final UserService userService;
+
+    private final SchoolAdministrationService schoolAdministrationService;
 
     private final VerificationCodeService verificationCodeService;
 
@@ -182,6 +187,26 @@ public class LoginController extends AbstractController {
             return failure("验证失败");
         }
     }
+
+    @ApiOperation(value = "保存教务信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "saveSchoolAdministrationFromRegister")
+    @SaveLog(desc = "保存教务信息")
+    @DistributedLock
+    public ResultMessage saveSchoolAdministrationFromRegister(@NotBlank(message = "手机号不能为空")
+                                                              @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                                              @RequestParam String phone,
+                                                              @NotBlank(message = "教务处账户不能为空")
+                                                              @RequestParam String studentId,
+                                                              @NotBlank(message = "教务处密码不能为空")
+                                                              @RequestParam String studentPwd) {
+        userService.saveSchoolAdministration(phone, studentId, studentPwd);
+        return success("保存成功");
+    }
+
 
     @PostMapping(value = "validatePhoneCodeByForget")
     @ApiOperation(value = "检验手机验证码执行重置密码操作")

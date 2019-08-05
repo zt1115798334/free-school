@@ -6,10 +6,12 @@ import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
 import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.entity.UserImg;
 import com.example.school.common.mysql.repo.UserRepository;
 import com.example.school.common.mysql.service.PermissionService;
+import com.example.school.common.mysql.service.SchoolAdministrationService;
 import com.example.school.common.mysql.service.UserImgService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.DateUtils;
@@ -52,6 +54,8 @@ public class UserServiceImpl implements UserService {
     private final UserImgService userImgService;
 
     private final PermissionService permissionService;
+
+    private final SchoolAdministrationService schoolAdministrationService;
 
 
     //冻结
@@ -164,6 +168,17 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(userDB);
         UserImg userImg = userImgService.findUserImgUrlByOn(user.getId());
         return RoChangeEntityUtils.resultRoUser(user, userImg);
+    }
+
+    @Override
+    public SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
+        return schoolAdministrationService.saveSchoolAdministration(userId, studentId, studentPwd);
+    }
+
+    @Override
+    public SchoolAdministration saveSchoolAdministration(String phone, String studentId, String studentPwd) {
+        User user = this.findByPhoneUnDelete(phone);
+        return schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
     }
 
     @Override

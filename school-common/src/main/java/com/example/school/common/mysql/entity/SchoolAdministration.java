@@ -51,7 +51,8 @@ public class SchoolAdministration extends IdEntity {
      */
     private LocalDateTime updatedTime;
 
-    public SchoolAdministration(String studentId, String studentPwd) {
+    public SchoolAdministration(Long userId,String studentId, String studentPwd) {
+        this.userId = userId;
         this.studentId = studentId;
         this.studentPwd = studentPwd;
     }

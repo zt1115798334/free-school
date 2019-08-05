@@ -47,10 +47,11 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(SchoolAdministration schoolAdministration) throws Exception {
+    public SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
 //        String studentPwd = schoolAdministration.getStudentPwd();
 //        String studentPwdRsa = RSAUtils.encryptBASE64(RSAUtils.encryptByPrivateKey(studentPwd.getBytes(), schoolProperties.getRsa().getPrivateKey()));
 //        schoolAdministration.setStudentPwd(studentPwdRsa);
+        SchoolAdministration schoolAdministration = new SchoolAdministration(userId, studentId, studentPwd);
         return this.save(schoolAdministration);
     }
 

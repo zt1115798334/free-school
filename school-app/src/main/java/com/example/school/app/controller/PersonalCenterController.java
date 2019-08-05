@@ -3,7 +3,6 @@ package com.example.school.app.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.entity.ro.RoUser;
-import com.example.school.common.base.entity.vo.VoStorageSchoolAdministration;
 import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.ConstantService;
@@ -131,10 +130,11 @@ public class PersonalCenterController extends AbstractController implements Curr
     @PostMapping(value = "saveSchoolAdministration")
     @SaveLog(desc = "保存教务信息")
     @DistributedLock
-    public ResultMessage saveSchoolAdministration(@RequestBody VoStorageSchoolAdministration storageSchoolAdministration) throws Exception {
-        SchoolAdministration schoolAdministration = VoChangeEntityUtils.changeSchoolAdministration(storageSchoolAdministration);
-        schoolAdministration.setUserId(getCurrentUserId());
-        schoolAdministrationService.saveSchoolAdministration(schoolAdministration);
+    public ResultMessage saveSchoolAdministration(@NotBlank(message = "教务处账户不能为空")
+                                                  @RequestParam String studentId,
+                                                  @NotBlank(message = "教务处密码不能为空")
+                                                  @RequestParam String studentPwd) {
+        userService.saveSchoolAdministration(getCurrentUserId(), studentId, studentPwd);
         return success("保存成功");
     }
 
