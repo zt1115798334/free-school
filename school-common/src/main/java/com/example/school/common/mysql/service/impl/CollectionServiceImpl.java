@@ -68,6 +68,7 @@ public class CollectionServiceImpl implements CollectionService {
     public PageImpl<Long> findCollection(Long userId, Short topicType, IdPageEntity pageEntity) {
         List<SearchFilter> filters = Lists.newArrayList();
         filters.add(new SearchFilter("userId", userId, Operator.EQ));
+        filters.add(new SearchFilter("topicType", topicType, Operator.EQ));
         filters.add(new SearchFilter("collectionState", ON, Operator.EQ));
         Pageable pageable = PageUtils.buildPageRequest(pageEntity);
         Page<Collection> collectionPage = collectionRepository.findAll(SearchFilter.bySearchFilter(filters), pageable);

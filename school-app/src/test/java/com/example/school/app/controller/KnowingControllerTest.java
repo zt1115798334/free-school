@@ -43,7 +43,7 @@ public class KnowingControllerTest extends BaseAutoLoginTest {
 
     @Test
     public void findKnowing() {
-        url += "findRoKnowing";
+        url += "findKnowing";
         params.put("id", 11L);
         postParams(url, params);
     }
