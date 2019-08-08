@@ -1,7 +1,6 @@
 package com.example.school.common.mysql.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.school.common.base.entity.ro.RoCurriculum;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.SchoolTimetable;
@@ -42,6 +41,7 @@ public class SchoolTimetableServiceImpl implements SchoolTimetableService {
     public JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes) {
         SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(userId);
         List<SchoolTimetable> timetableList = schoolTimetableRepository.findByStudentIdAndSemesterAndWeeklyTimes(schoolAdministration.getStudentId(), semester, weeklyTimes);
+        Map<String, String> colorMap = SysConst.getColorBySchoolTimetable(timetableList);
         Map<String, Map<Short, SchoolTimetable>> timetableMap = timetableList.stream()
                 .collect(groupingBy(SchoolTimetable::getWeek, toMap(SchoolTimetable::getClassTimes, Function.identity())));
         JSONObject weekJSON = new JSONObject();
@@ -49,17 +49,19 @@ public class SchoolTimetableServiceImpl implements SchoolTimetableService {
             Map<Short, SchoolTimetable> weekMap = timetableMap.getOrDefault(week, Collections.emptyMap());
             JSONObject classTimeJSON = new JSONObject();
             for (Short classTimes : SysConst.getAllClassTimesCode()) {
-                RoCurriculum roCurriculum = Optional.ofNullable(weekMap.get(classTimes))
+                JSONObject other = new JSONObject();
+                other.put("curriculum", "-");
+                other.put("color", SysConst.Color.PANTONE_GCMI_91.getColorRGB());
+                JSONObject curriculumJSON = Optional.ofNullable(weekMap.get(classTimes))
                         .map(schoolTimetable -> {
-
-                            return new RoCurriculum(schoolTimetable.getCurriculum(),
-                                    schoolTimetable.getWeeklyTimesCurr(),
-                                    schoolTimetable.getClassTimesCurr(),
-                                    schoolTimetable.getTeacherCurr(),
-                                    schoolTimetable.getClassroomCurr());
+                            String curriculum = schoolTimetable.getCurriculum();
+                            JSONObject json = new JSONObject();
+                            json.put("curriculum", curriculum);
+                            json.put("color", colorMap.get(curriculum));
+                            return json;
                         })
-                        .orElse(new RoCurriculum());
-                classTimeJSON.put(String.valueOf(classTimes), roCurriculum);
+                        .orElse(other);
+                classTimeJSON.put(String.valueOf(classTimes), curriculumJSON);
             }
             weekJSON.put(week, classTimeJSON);
         }

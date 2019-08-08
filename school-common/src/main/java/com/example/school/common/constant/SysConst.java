@@ -1,12 +1,15 @@
 package com.example.school.common.constant;
 
+import com.example.school.common.mysql.entity.SchoolTimetable;
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -450,6 +453,74 @@ public class SysConst {
 
         private short code;
         private String name;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public enum Color {
+
+        PANTONE_Yellow_U("#FFE800"),
+        PANTONE_Yellow_012_U("#FFE000"),
+        PANTONE_Orange_021_U("#FF6C2F"),
+        PANTONE_Bright_Red_U("#FE5442"),
+        PANTONE_2388_U("#3F5EA9"),
+        PANTONE_Warm_Red_U("#FF665E"),
+        PANTONE_Red_032_U("#F65058"),
+        PANTONE_Rubine_Red_U("#DB487E"),
+        PANTONE_Rhodamine_Red_U("#E44C9A"),
+        PANTONE_Pink_U("#D1428D"),
+        PANTONE_Purple_U("#BF53B6"),
+        PANTONE_Medium_Purple_U("#65428A"),
+        PANTONE_Violet_U("#7758B3"),
+        PANTONE_Blue_072_U("#3F43AD"),
+        PANTONE_Dark_Blue_U("#444795"),
+        PANTONE_Reflex_Blue_U("#39499C"),
+        PANTONE_Process_Blue_U("#0083C3"),
+        PANTONE_Green_U("#00AC8C"),
+        PANTONE_2070_U("#944B96"),
+        PANTONE_Black_U("#615D59"),
+        PANTONE_Yellow_0131_U("#FBF59B"),
+        PANTONE_Red_0331_U("#FFB1BE"),
+        PANTONE_Magenta_0521_U("#F8AADD"),
+        PANTONE_Violet_0631_U("#BA93DF"),
+        PANTONE_Blue_0821_U("#6CD1EF"),
+        PANTONE_Green_0921_U("#78E6D0"),
+        PANTONE_Black_0961_U("#9D9994"),
+        PANTONE_801_U("#009CCD"),
+        PANTONE_802_U("#3BD23D"),
+        PANTONE_803_U("#FFE916"),
+        PANTONE_804_U("#FFAA52"),
+        PANTONE_805_U("#FF7477"),
+        PANTONE_806_U("#FF48B0"),
+        PANTONE_807_U("#E838BF"),
+        PANTONE_197_U("#F2A1B2"),
+        PANTONE_2098_U("#6753AA"),
+        PANTONE_198_U("#E76B7C"),
+        PANTONE_199_U("#DD5061"),
+        PANTONE_200_U("#BD4F5C"),
+        PANTONE_232_U("#F16AB7"),
+        PANTONE_7665_U("#725E7C"),
+        PANTONE_2198_U("#3FC9E6"),
+        PANTONE_GCMI_91("#FFFFFF");
+
+        private String colorRGB;
+    }
+
+    public static Map<String, String> getColorBySchoolTimetable(List<SchoolTimetable> schoolTimetables) {
+        List<String> curriculumList = schoolTimetables.stream()
+                .map(SchoolTimetable::getCurriculum)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        List<String> colorList = Arrays.stream(Color.values())
+                .map(Color::getColorRGB)
+                .collect(Collectors.toList());
+        Map<String, String> result = Maps.newHashMap();
+        for (int i = 0; i < curriculumList.size(); i++) {
+            int i1 = i % curriculumList.size();
+            result.put(curriculumList.get(i), colorList.get(i1));
+        }
+        return result;
     }
 
 }
