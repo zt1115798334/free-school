@@ -47,9 +47,25 @@ public class SchoolTimetable extends IdEntity {
      * {@link com.example.school.common.constant.SysConst.ClassTimes}
      */
     private Short classTimes;
-
     /**
      * 课程
      */
     private String curriculum;
+
+    /**
+     * 课程里面的周次
+     */
+    private String weeklyTimesCurr;
+    /**
+     * 课程里面的课时
+     */
+    private String classTimesCurr;
+    /**
+     * 课程里面的教师
+     */
+    private String teacherCurr;
+    /**
+     * 课程里面的教室
+     */
+    private String classroomCurr;
 }

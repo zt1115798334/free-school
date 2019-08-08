@@ -53,8 +53,8 @@ public class PersonalCenterControllerTest extends BaseAutoLoginTest {
     @Test
     public void findSchoolTimetable() {
         Map<String, Object> params = Maps.newHashMap();
-        params.put("semester", "2018-2019-2");
-        params.put("weeklyTimes", "2");
+        params.put("semester", "2018-2019-1");
+        params.put("weeklyTimes", "1");
         url += "findSchoolTimetable";
         postParams(url, params);
     }

@@ -1,6 +1,7 @@
 package com.example.school.common.mysql.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.example.school.common.base.entity.ro.RoCurriculum;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.SchoolTimetable;
@@ -17,7 +18,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -40,30 +42,31 @@ public class SchoolTimetableServiceImpl implements SchoolTimetableService {
     public JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes) {
         SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(userId);
         List<SchoolTimetable> timetableList = schoolTimetableRepository.findByStudentIdAndSemesterAndWeeklyTimes(schoolAdministration.getStudentId(), semester, weeklyTimes);
-//        Map<Short, Map<String, SchoolTimetable>> timetableMap = timetableList.stream()
-//                .collect(groupingBy(SchoolTimetable::getClassTimes, toMap(SchoolTimetable::getWeek, Function.identity())));
-//        List<List<String>> curriculumList = SysConst.getAllClassTimesCode().stream()
-//                .map(classTimes -> {
-//                    Map<String, SchoolTimetable> weekMap = timetableMap.getOrDefault(classTimes, Collections.emptyMap());
-//                    return SysConst.getAllWeekType().stream()
-//                            .map(week -> Optional.ofNullable(weekMap.get(week))
-//                                    .map(SchoolTimetable::getCurriculum)
-//                                    .orElse("-")).collect(toList());
-//                }).collect(toList());
         Map<String, Map<Short, SchoolTimetable>> timetableMap = timetableList.stream()
                 .collect(groupingBy(SchoolTimetable::getWeek, toMap(SchoolTimetable::getClassTimes, Function.identity())));
-        List<List<String>> curriculumList = SysConst.getAllWeekType().stream()
-                .map(week -> {
-                    Map<Short, SchoolTimetable> weekMap = timetableMap.getOrDefault(week, Collections.emptyMap());
-                    return SysConst.getAllClassTimesCode().stream()
-                            .map(classTimes -> Optional.ofNullable(weekMap.get(classTimes))
-                                    .map(SchoolTimetable::getCurriculum)
-                                    .orElse("-")).collect(toList());
-                }).collect(toList());
+        JSONObject weekJSON = new JSONObject();
+        for (String week : SysConst.getAllWeekType()) {
+            Map<Short, SchoolTimetable> weekMap = timetableMap.getOrDefault(week, Collections.emptyMap());
+            JSONObject classTimeJSON = new JSONObject();
+            for (Short classTimes : SysConst.getAllClassTimesCode()) {
+                RoCurriculum roCurriculum = Optional.ofNullable(weekMap.get(classTimes))
+                        .map(schoolTimetable -> {
+
+                            return new RoCurriculum(schoolTimetable.getCurriculum(),
+                                    schoolTimetable.getWeeklyTimesCurr(),
+                                    schoolTimetable.getClassTimesCurr(),
+                                    schoolTimetable.getTeacherCurr(),
+                                    schoolTimetable.getClassroomCurr());
+                        })
+                        .orElse(new RoCurriculum());
+                classTimeJSON.put(String.valueOf(classTimes), roCurriculum);
+            }
+            weekJSON.put(week, classTimeJSON);
+        }
 
 
         JSONObject result = new JSONObject();
-        result.put("curriculumList", curriculumList);
+        result.put("curriculum", weekJSON);
         return result;
     }
 
