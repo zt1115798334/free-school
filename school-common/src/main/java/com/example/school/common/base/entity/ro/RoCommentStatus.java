@@ -27,22 +27,29 @@ public class RoCommentStatus extends RoTopic {
      */
     private String createdTime;
 
+    /**
+     * 评论回复数量
+     */
+    private Long commentReplyNum;
+
     List<RoCommentReplyStatus> roCommentReplyStatusList;
 
-    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime) {
+    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime, Long commentReplyNum) {
         super(user, state, userState, zanState, zanNum);
         this.commentId = commentId;
         this.topicId = topicId;
         this.content = content;
         this.createdTime = createdTime;
+        this.commentReplyNum = commentReplyNum;
     }
 
-    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime, List<RoCommentReplyStatus> roCommentReplyStatusList) {
+    public RoCommentStatus(RoUser user, String state, boolean userState, boolean zanState, Long zanNum, Long commentId, Long topicId, String content, String createdTime, Long commentReplyNum, List<RoCommentReplyStatus> roCommentReplyStatusList) {
         super(user, state, userState, zanState, zanNum);
         this.commentId = commentId;
         this.topicId = topicId;
         this.content = content;
         this.createdTime = createdTime;
+        this.commentReplyNum = commentReplyNum;
         this.roCommentReplyStatusList = roCommentReplyStatusList;
     }
 }

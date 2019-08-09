@@ -52,6 +52,7 @@ public class RoChangeEntityUtils {
     public static RoCommentStatus resultRoCommentStatus(Comment comment,
                                                         Long userId,
                                                         RoTopicCommentMap topicCommentMap,
+                                                        Map<Long, Long> commentReplyNumMap,
                                                         Map<Long, List<RoCommentReplyStatus>> roCommentReplyStatusMap) {
         Long commentId = comment.getId();
         Long commentUserId = comment.getUserId();
@@ -65,15 +66,17 @@ public class RoChangeEntityUtils {
                 comment.getTopicId(),
                 comment.getContent(),
                 DateUtils.formatDate(comment.getCreatedTime()),
-                roCommentReplyStatusMap.getOrDefault(commentId,Collections.emptyList()));
+                commentReplyNumMap.getOrDefault(commentId,0L),
+                roCommentReplyStatusMap.getOrDefault(commentId, Collections.emptyList()));
     }
 
     public static List<RoCommentStatus> resultRoCommentStatus(List<Comment> commentList,
                                                               Long userId,
                                                               RoTopicCommentMap topicCommentMap,
+                                                              Map<Long, Long> commentReplyNumMap,
                                                               Map<Long, List<RoCommentReplyStatus>> roCommentReplyStatusMap) {
         return commentList.stream()
-                .map(comment -> resultRoCommentStatus(comment, userId, topicCommentMap, roCommentReplyStatusMap)).collect(toList());
+                .map(comment -> resultRoCommentStatus(comment, userId, topicCommentMap, commentReplyNumMap, roCommentReplyStatusMap)).collect(toList());
     }
 
     public static RoTransaction resultRoTransaction(Transaction transaction, Long userId,

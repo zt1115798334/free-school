@@ -1,6 +1,5 @@
 package com.example.school.common.mysql.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ro.RoCommentReplyStatus;
 import com.example.school.common.base.entity.ro.RoCommentStatus;
@@ -157,10 +156,12 @@ public class CommentServiceImpl implements CommentService {
         List<Long> topicId = page.stream().map(Comment::getId).collect(toList());
         List<Long> userIdList = page.stream().map(Comment::getUserId).distinct().collect(toList());
         RoTopicCommentMap topicCommentMap = getTopicCommentMethod(userIdList, userId, topicId, topicTyp);
+        Map<Long, Long> commentReplyNumMap = roCommentReplyStatusList.stream()
+                .collect(groupingBy(RoCommentReplyStatus::getCommentId, counting()));
         Map<Long, List<RoCommentReplyStatus>> roCommentReplyStatusMap = roCommentReplyStatusList.stream()
                 .collect(groupingBy(RoCommentReplyStatus::getCommentId));
         List<RoCommentStatus> roTransactionList = RoChangeEntityUtils
-                .resultRoCommentStatus(page.getContent(), userId, topicCommentMap, roCommentReplyStatusMap);
+                .resultRoCommentStatus(page.getContent(), userId, topicCommentMap, commentReplyNumMap, roCommentReplyStatusMap);
         return new PageImpl<>(roTransactionList, page.getPageable(), page.getTotalElements());
     }
 
