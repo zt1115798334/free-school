@@ -10,6 +10,7 @@ import com.example.school.common.utils.UserUtils;
 import com.example.school.shiro.shiro.token.JwtToken;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.service.UserService;
+import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,6 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public class JwtRealm extends AuthorizingRealm {
         if (user != null) {
             if (UserUtils.checkUserFrozen(user)) { //冻结
                 permissionSet.add(SystemStatusCode.USER_FROZEN.getName());
-            } else if (Objects.equals(user.getDeleteState(), SysConst.DeleteState.DELETE.getCode())) {
+            } else if (Objects.equal(user.getDeleteState(), SysConst.DeleteState.DELETE.getCode())) {
                 permissionSet.add(SystemStatusCode.USER_DELETE.getName());  //未找到
             } else {
                 permissionSet.add(SystemStatusCode.USER_NORMAL.getName()); //用户正常
@@ -79,12 +79,14 @@ public class JwtRealm extends AuthorizingRealm {
         JwtToken jwtToken = (JwtToken) authenticationToken;
 
         String token = (String) jwtToken.getCredentials();
+        String deviceInfo = jwtToken.getDeviceInfo();
         Long userId = jwtToken.getUserId();
         String ip = jwtToken.getIpHost();
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = Objects.equal(deviceInfo, SysConst.DeviceInfo.WEB.getType()) ?
+                NetworkUtil.ipToLong(ip) : 0L;
         if (StringUtils.isNotBlank(token)) {
             if (userId != null) {
-                Optional<String> accessTokenRedis = stringRedisService.get(CacheKeys.getJwtAccessTokenKey(jwtToken.getDeviceInfo(), userId, ipLong));
+                Optional<String> accessTokenRedis = stringRedisService.get(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong));
                 if (accessTokenRedis.isPresent()) {
                     Optional<User> userOptional = userService.findByIdNotDelete(userId);
                     if (userOptional.isPresent()) {

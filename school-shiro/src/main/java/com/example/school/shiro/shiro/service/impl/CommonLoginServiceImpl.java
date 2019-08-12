@@ -11,6 +11,7 @@ import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.shiro.shiro.service.CommonLoginService;
 import com.example.school.shiro.shiro.token.PasswordToken;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -53,7 +54,8 @@ public class CommonLoginServiceImpl implements CommonLoginService {
 
     @Override
     public String login(PasswordToken token, Boolean rememberMe, String ip, String deviceInfo, String registrationId) throws OperationException {
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = Objects.equal(deviceInfo, SysConst.DeviceInfo.WEB.getType()) ?
+                NetworkUtil.ipToLong(ip) : 0L;
         SecurityUtils.getSubject().login(token);
         User user = (User) SecurityUtils.getSubject().getPrincipal();
         Long userId = user.getId();
@@ -81,7 +83,8 @@ public class CommonLoginServiceImpl implements CommonLoginService {
 
     @Override
     public void logout(Long currentUserId, String ip, String deviceInfo, String registrationId) {
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = Objects.equal(deviceInfo, SysConst.DeviceInfo.WEB.getType()) ?
+                NetworkUtil.ipToLong(ip) : 0L;
         stringRedisService.delete(CacheKeys.getJwtAccessTokenKey(deviceInfo, currentUserId, ipLong));
         stringRedisService.delete(CacheKeys.getJwtRefreshTokenKey(deviceInfo, currentUserId, ipLong));
         if (StringUtils.isNotEmpty(registrationId)) {

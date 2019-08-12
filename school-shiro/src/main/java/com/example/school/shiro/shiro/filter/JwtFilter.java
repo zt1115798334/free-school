@@ -3,6 +3,7 @@ package com.example.school.shiro.shiro.filter;
 import com.alibaba.fastjson.JSON;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.constant.CacheKeys;
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.SystemStatusCode;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.redis.StringRedisService;
@@ -11,6 +12,7 @@ import com.example.school.common.utils.NetworkUtil;
 import com.example.school.shiro.shiro.token.JwtToken;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.shiro.shiro.utils.RequestResponseUtil;
+import com.google.common.base.Objects;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
@@ -21,7 +23,6 @@ import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -55,7 +56,7 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
             return true;
         } catch (AuthenticationException e) {
             String exceptionMsg = e.getMessage();
-            if (Objects.equals(exceptionMsg, SystemStatusCode.ACCESS_TOKEN_EXPIRE.getName())) { //token过期
+            if (Objects.equal(exceptionMsg, SystemStatusCode.ACCESS_TOKEN_EXPIRE.getName())) { //token过期
 //                判断RefreshToken未过期就进行AccessToken刷新
                 if (!this.refreshToken(request, response)) {
                     //jwt 已过期,通知客户端重新登录
@@ -63,11 +64,11 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                     RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);
                 }
             }
-            if (Objects.equals(exceptionMsg, SystemStatusCode.JWT_NOT_FOUND.getName())) { //没有发现token
+            if (Objects.equal(exceptionMsg, SystemStatusCode.JWT_NOT_FOUND.getName())) { //没有发现token
                 ResultMessage message = new ResultMessage().ok(SystemStatusCode.JWT_NOT_FOUND.getCode(), SystemStatusCode.JWT_NOT_FOUND.getName());
                 RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);
             }
-            if (Objects.equals(exceptionMsg, SystemStatusCode.USER_NOT_FOUND.getName())) { //没有发现账户
+            if (Objects.equal(exceptionMsg, SystemStatusCode.USER_NOT_FOUND.getName())) { //没有发现账户
                 ResultMessage message = new ResultMessage().ok(SystemStatusCode.USER_NOT_FOUND.getCode(), SystemStatusCode.USER_NOT_FOUND.getName());
                 RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);
             }
@@ -101,7 +102,8 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         Long userId = jwtUtils.getUserIdFromToken(token);
 
         String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
-        Long ipLong = NetworkUtil.ipToLong(ip);
+        Long ipLong = Objects.equal(deviceInfo, SysConst.DeviceInfo.WEB.getType()) ?
+                NetworkUtil.ipToLong(ip) : 0L;
 
         String jwtMobileRefreshTokenKey = CacheKeys.getJwtRefreshTokenKey(deviceInfo, userId, ipLong);
         Optional<String> refreshTokenOption = stringRedisService.get(jwtMobileRefreshTokenKey);
