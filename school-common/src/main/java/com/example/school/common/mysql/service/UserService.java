@@ -32,7 +32,7 @@ public interface UserService extends BaseService<User, Long> {
 
     SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd);
 
-    SchoolAdministration saveSchoolAdministration(String phone, String studentId, String studentPwd);
+    SchoolAdministration saveSchoolAdministration(String phone, String school, String studentId, String studentPwd);
 
     void modifyPassword(String phone, String password);
 

@@ -176,8 +176,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(String phone, String studentId, String studentPwd) {
+    public SchoolAdministration saveSchoolAdministration(String phone, String school, String studentId, String studentPwd) {
         User user = this.findByPhoneUnDelete(phone);
+        user.setSchool(school);
+        this.save(user);
         return schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
     }
 
