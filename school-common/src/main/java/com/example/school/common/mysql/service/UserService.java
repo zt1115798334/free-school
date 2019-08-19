@@ -46,7 +46,7 @@ public interface UserService extends BaseService<User, Long> {
 
     Optional<User> findOptByUserId(Long userId);
 
-    Optional<User> findOptByUserId(String account);
+    Optional<User> findOptByAccount(String account);
 
     Optional<User> findOptByPhone(String phone);
 

@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findOptByUserId(String account) {
+    public Optional<User> findOptByAccount(String account) {
         return userRepository.findByAccountAndDeleteState(account, UN_DELETED);
     }
 

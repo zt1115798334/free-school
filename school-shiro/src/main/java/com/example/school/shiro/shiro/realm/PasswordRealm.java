@@ -77,7 +77,7 @@ public class PasswordRealm extends AuthorizingRealm {
             }
 
             //密码进行加密处理  明文为  password+name
-            Optional<User> userOptional = userService.findOptByUserId(name);
+            Optional<User> userOptional = userService.findOptByAccount(name);
             if (!userOptional.isPresent()) {
                 //登录错误开始计数
                 increment(shiroLoginCountKey, shiroIsLockKey);
@@ -111,7 +111,7 @@ public class PasswordRealm extends AuthorizingRealm {
         if (Objects.equal(SysConst.LoginType.TOKEN.getType(), loginType)) {    //token登陆
             String apiToken = token.getToken();
             String apiTime = token.getTime();
-            Optional<User> userOptional = userService.findOptByUserId(name);
+            Optional<User> userOptional = userService.findOptByAccount(name);
             if (!userOptional.isPresent()) {
                 throw new AccountException("账户不存在！");
             }
