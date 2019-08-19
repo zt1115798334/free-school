@@ -44,7 +44,7 @@ public class QuestionBankControllerTest extends BaseAutoLoginTest {
     @Test
     public void findQuestionBank() {
         url += "findQuestionBank";
-        params.put("id", 4L);
+        params.put("id", 13L);
         postParams(url, params);
     }
 

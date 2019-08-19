@@ -30,8 +30,10 @@ public class BaseAutoLoginTest {
 //        String username = "11157983341";
 //        String password = "1115798334";
 
-        String username = "15130097582";
-        String password = "15130097582";
+//        String username = "15130097582";
+//        String password = "15130097582";
+        String username = "15830088978";
+        String password = "123456";
 
         webClient = WebClient.builder().baseUrl("http://127.0.0.1:8093").build();
         Map<String, Object> map = Maps.newHashMap();

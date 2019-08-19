@@ -162,6 +162,8 @@ public class UserServiceImpl implements UserService {
         User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
         userDB.setUserName(user.getUserName());
         userDB.setPhone(user.getPhone());
+        userDB.setSchool(user.getSchool());
+        userDB.setEmail(user.getEmail());
         userDB.setPersonalSignature(user.getPersonalSignature());
         userDB.setUpdatedTime(currentDateTime);
         userDB.setDeleteState(ConstantService.UN_DELETED);
@@ -230,17 +232,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findOptByUserId(String account) {
-        return userRepository.findByAccount(account);
+        return userRepository.findByAccountAndDeleteState(account, UN_DELETED);
     }
 
     @Override
     public Optional<User> findOptByPhone(String phone) {
-        return userRepository.findByPhone(phone);
+        return userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
     }
 
     @Override
     public User findByPhoneUnDelete(String phone) {
-        Optional<User> byPhoneAndDeleteState = userRepository.findByPhoneAndDeleteState(phone, ConstantService.UN_DELETED);
+        Optional<User> byPhoneAndDeleteState = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
         return byPhoneAndDeleteState.orElseThrow(() -> new OperationException("该用户不存在"));
     }
 
@@ -284,7 +286,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validatePhoneByRegister(String phone) {
-        Optional<User> userOptional = userRepository.findByPhone(phone);
+        Optional<User> userOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
         if (userOptional.isPresent()) {
             throw new OperationException("该手机号已经注册，请直接登录");
         }
@@ -292,7 +294,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validatePhoneByForget(String phone) {
-        Optional<User> userOptional = userRepository.findByPhone(phone);
+        Optional<User> userOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
         if (!userOptional.isPresent()) {
             throw new OperationException("该手机号没有注册，请直接注册");
         }
