@@ -3,7 +3,6 @@ package com.example.school.common.mysql.service;
 import com.example.school.common.base.entity.ro.RoUser;
 import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.BaseService;
-import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
 import org.springframework.data.domain.PageImpl;
 
@@ -30,9 +29,9 @@ public interface UserService extends BaseService<User, Long> {
 
     RoUser saveUser(User user);
 
-    SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd);
+    void saveSchoolAdministration(Long userId, String studentId, String studentPwd);
 
-    SchoolAdministration saveSchoolAdministration(String phone, String school, String studentId, String studentPwd);
+    void saveSchoolAdministration(String phone, String school, String studentId, String studentPwd);
 
     void modifyPassword(String phone, String password);
 

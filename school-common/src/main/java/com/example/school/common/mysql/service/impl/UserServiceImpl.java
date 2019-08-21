@@ -6,7 +6,6 @@ import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
 import com.example.school.common.exception.custom.OperationException;
-import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.entity.UserImg;
 import com.example.school.common.mysql.repo.UserRepository;
@@ -76,6 +75,7 @@ public class UserServiceImpl implements UserService {
                 userO.setUserName(user.getUserName());
                 userO.setSalt(user.getSalt());
                 userO.setPhone(user.getPhone());
+                userO.setSchool(user.getSchool());
                 userO.setPersonalSignature(user.getPersonalSignature());
                 userO.setAccountState(user.getAccountState());
                 userO.setUpdatedTime(currentDateTime);
@@ -173,16 +173,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
-        return schoolAdministrationService.saveSchoolAdministration(userId, studentId, studentPwd);
+    public void saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
+        schoolAdministrationService.saveSchoolAdministration(userId, studentId, studentPwd);
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(String phone, String school, String studentId, String studentPwd) {
+    public void saveSchoolAdministration(String phone, String school, String studentId, String studentPwd) {
         User user = this.findByPhoneUnDelete(phone);
         user.setSchool(school);
         this.save(user);
-        return schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
+        schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
     }
 
     @Override
@@ -286,16 +286,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validatePhoneByRegister(String phone) {
-        Optional<User> userOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
-        if (userOptional.isPresent()) {
+        Optional<User> userPhoneOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
+        Optional<User> userAccountOptional = userRepository.findByAccountAndDeleteState(phone, UN_DELETED);
+        if (userPhoneOptional.isPresent() || userAccountOptional.isPresent()) {
             throw new OperationException("该手机号已经注册，请直接登录");
         }
     }
 
     @Override
     public void validatePhoneByForget(String phone) {
-        Optional<User> userOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
-        if (!userOptional.isPresent()) {
+        Optional<User> userPhoneOptional = userRepository.findByPhoneAndDeleteState(phone, UN_DELETED);
+        Optional<User> userAccountOptional = userRepository.findByAccountAndDeleteState(phone, UN_DELETED);
+        if (!userPhoneOptional.isPresent() || !userAccountOptional.isPresent()) {
             throw new OperationException("该手机号没有注册，请直接注册");
         }
     }

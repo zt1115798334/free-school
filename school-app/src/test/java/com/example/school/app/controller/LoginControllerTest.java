@@ -48,7 +48,7 @@ public class LoginControllerTest extends BaseTest {
     @Test
     public void sendPhoneCodeByRegister() {
         url += "sendPhoneCodeByRegister";
-        params.put("phone", "13699210234");
+        params.put("phone", "15830088978");
         postParams(url, params);
     }
 
