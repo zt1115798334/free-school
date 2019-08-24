@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
                 user = userRepository.save(userO);
             }
         } else {
-            user.setUserName("用户名");
+            user.setUserName(UserUtils.getDefaultUserName());
             user.setCreatedTime(currentDateTime);
             user.setUpdatedTime(currentDateTime);
             user.setDeleteState(ConstantService.UN_DELETED);
@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
         this.validatePhoneByRegister(phone);
         String salt = UserUtils.getSalt();
         String encryptPassword = UserUtils.getEncryptPassword(phone, password, salt);
-        User user = new User(phone, encryptPassword, salt, UserUtils.getDefaultUserName(phone), phone, Sex
+        User user = new User(phone, encryptPassword, salt, UserUtils.getDefaultUserName(), phone, Sex
                 .UNKNOWN.getCode(), DEFAULT_INTEGRAL, AccountState.NORMAL.getCode(), accountType);
         this.save(user);
     }
@@ -158,9 +158,16 @@ public class UserServiceImpl implements UserService {
     public RoUser saveUser(User user) {
         LocalDateTime currentDateTime = DateUtils.currentDateTime();
         Long userId = user.getId();
+        String userName = user.getUserName();
+        Optional<User> optionalUser = userRepository.findByUserNameAndDeleteState(userName, UN_DELETED);
+        if (optionalUser.isPresent()) {
+            if (!Objects.equal(optionalUser.get().getId(), userId)) {
+                throw new OperationException("昵称重复");
+            }
+        }
         Optional<User> userOptional = userRepository.findByIdAndDeleteState(userId, UN_DELETED);
         User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
-        userDB.setUserName(user.getUserName());
+        userDB.setUserName(userName);
         userDB.setPhone(user.getPhone());
         userDB.setSchool(user.getSchool());
         userDB.setEmail(user.getEmail());

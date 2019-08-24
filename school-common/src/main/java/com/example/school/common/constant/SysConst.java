@@ -52,6 +52,16 @@ public class SysConst {
         private String name;
     }
 
+
+    @Getter
+    @AllArgsConstructor
+    public enum AppSystemType {
+        ANDROID("android"),
+        IOS("ios");
+
+        private String type;
+    }
+
     /**
      * 排序
      */
@@ -60,7 +70,7 @@ public class SysConst {
     public enum SortOrder {
 
         ASC("asc"),
-        DESC("describeContent");
+        DESC("desc");
 
         private String code;
     }

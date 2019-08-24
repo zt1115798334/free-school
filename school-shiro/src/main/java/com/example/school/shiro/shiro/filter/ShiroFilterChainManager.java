@@ -55,6 +55,7 @@ public class ShiroFilterChainManager {
         filterChain.put("/api/login/**", "anon");
         filterChain.put("/app/login/**", "anon");
         filterChain.put("/app/file/**", "anon");
+        filterChain.put("/app/appVersion/**", "anon");
 
         filterChain.put("/api/logout/logout", "JwtFilter");
         filterChain.put("/app/logout/logout", "JwtFilter");

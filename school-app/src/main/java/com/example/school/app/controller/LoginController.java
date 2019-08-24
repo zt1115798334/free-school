@@ -144,7 +144,7 @@ public class LoginController extends AbstractController {
     @ApiOperation(value = "验证手机号执行注册操作")
     @PostMapping(value = "validatePhoneByRegister")
     public ResultMessage validatePhoneByRegister(@NotBlank(message = "手机号不能为空")
-                                                 @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                                 @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                  @RequestParam String phone) {
         userService.validatePhoneByRegister(phone);
         return success();
@@ -157,7 +157,7 @@ public class LoginController extends AbstractController {
     @SaveLog(desc = "发送手机验证码执行注册操作")
     public ResultMessage sendPhoneCodeByRegister(HttpServletRequest request,
                                                  @NotBlank(message = "手机号不能为空")
-                                                 @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                                 @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                  @RequestParam String phone) {
         String ip = NetworkUtil.getLocalIp(request);
         userService.validatePhoneByRegister(phone);
@@ -169,7 +169,7 @@ public class LoginController extends AbstractController {
     @PostMapping(value = "register")
     @SaveLog(desc = "注册")
     public ResultMessage register(@NotBlank(message = "手机号不能为空")
-                                  @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                  @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                   @RequestParam String phone,
                                   @NotBlank(message = "验证码不能为空")
                                   @RequestParam String code,
@@ -189,7 +189,7 @@ public class LoginController extends AbstractController {
     @SaveLog(desc = "保存教务信息")
     @DistributedLock
     public ResultMessage saveSchoolAdministrationFromRegister(@NotBlank(message = "手机号不能为空")
-                                                              @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                                              @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                               @RequestParam String phone,
                                                               @NotBlank(message = "学校不能为空")
                                                               @RequestParam String school,
@@ -205,7 +205,7 @@ public class LoginController extends AbstractController {
     @PostMapping(value = "validatePhoneCodeByForget")
     @ApiOperation(value = "检验手机验证码执行重置密码操作")
     public ResultMessage validatePhoneCodeByForget(@NotBlank(message = "手机号不能为空")
-                                                   @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                                   @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                    @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         return success();
@@ -217,7 +217,7 @@ public class LoginController extends AbstractController {
     @SaveLog(desc = "发送手机验证码执行重置密码操作")
     public ResultMessage sendPhoneCodeByForget(HttpServletRequest request,
                                                @NotBlank(message = "手机号不能为空")
-                                               @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                               @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         String ip = NetworkUtil.getLocalIp(request);
@@ -230,7 +230,7 @@ public class LoginController extends AbstractController {
     @SaveLog(desc = "修改密码")
     @DistributedLock
     public ResultMessage modifyPassword(@NotBlank(message = "手机号不能为空")
-                                        @Pattern(regexp = "^1([34578])\\d{9}$", message = "手机号码格式错误")
+                                        @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                         @RequestParam String phone,
                                         @NotBlank(message = "验证码不能为空")
                                         @RequestParam String code,

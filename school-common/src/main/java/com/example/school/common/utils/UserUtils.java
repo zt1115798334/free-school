@@ -91,11 +91,11 @@ public class UserUtils {
         return new UserImg(0L, 1L);
     }
 
-    public static String getDefaultUserName(String phone) {
-        return SysConst.DEFAULT_USERNAME + phone.substring(phone.length() - 4);
+    public static String getDefaultUserName() {
+        return SysConst.DEFAULT_USERNAME + MStringUtils.getRandomString(5);
     }
 
     public static void main(String[] args) {
-        System.out.println(getDefaultUserName("15130097582"));
+        System.out.println(getDefaultUserName());
     }
 }

@@ -18,6 +18,8 @@ public interface UserRepository extends CrudRepository<User, Long>,
         JpaSpecificationExecutor<User> {
     Optional<User> findByIdAndDeleteState(Long id, Short deleteState);
 
+    Optional<User> findByUserNameAndDeleteState(String username, Short deleteState);
+
     Optional<User> findByAccountAndDeleteState(String account, Short deleteState);
 
     Optional<User> findByPhoneAndDeleteState(String phone, Short deleteState);
