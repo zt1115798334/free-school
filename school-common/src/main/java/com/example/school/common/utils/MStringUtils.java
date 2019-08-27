@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 
 import java.io.Serializable;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,12 +46,48 @@ public class MStringUtils {
         return stringBuffer.toString();
     }
 
-    public static String getRandomString(int length){
-        String str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random=new Random();
-        StringBuffer sb=new StringBuffer();
-        for(int i=0;i<length;i++){
-            int number=random.nextInt(62);
+    /**
+     * unicode编码
+     *
+     * @param string string
+     * @return string
+     */
+    public static String unicodeEncode(String string) {
+        char[] utfBytes = string.toCharArray();
+        String unicodeBytes = "";
+        for (int i = 0; i < utfBytes.length; i++) {
+            String hexB = Integer.toHexString(utfBytes[i]);
+            if (hexB.length() <= 2) {
+                hexB = "00" + hexB;
+            }
+            unicodeBytes = unicodeBytes + "\\u" + hexB;
+        }
+        return unicodeBytes;
+    }
+
+    /**
+     * unicode解码
+     *
+     * @param string
+     * @return string
+     */
+    public static String unicodeDecode(String string) {
+        Pattern pattern = Pattern.compile("(\\\\u(\\p{XDigit}{4}))");
+        Matcher matcher = pattern.matcher(string);
+        char ch;
+        while (matcher.find()) {
+            ch = (char) Integer.parseInt(matcher.group(2), 16);
+            string = string.replace(matcher.group(1), ch + "");
+        }
+        return string;
+    }
+
+    public static String getRandomString(int length) {
+        String str = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        Random random = new Random();
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            int number = random.nextInt(62);
             sb.append(str.charAt(number));
         }
         return sb.toString();

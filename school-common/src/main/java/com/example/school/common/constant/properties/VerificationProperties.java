@@ -9,21 +9,13 @@ import org.springframework.stereotype.Component;
  * Created with IntelliJ IDEA.
  *
  * @author zhang
- * date: 2019/8/3 19:41
+ * date: 2019/8/27 16:40
  * description:
  */
 @Getter
 @Setter
 @Component
-@ConfigurationProperties(prefix = "custom.school")
-public class SchoolProperties {
+@ConfigurationProperties(prefix = "custom.verification")
+public class VerificationProperties {
     private String host;
-    private RSA rsa = new RSA();
-
-    @Getter
-    @Setter
-    public static class RSA {
-        private String privateKey;
-        private String publicKey;
-    }
 }

@@ -3,6 +3,7 @@ package com.example.school.app.controller;
 import com.example.school.app.SchoolAppApplicationTests;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.externalService.verification.VerificationService;
 import com.example.school.common.mysql.service.UserRegistrationService;
 import com.example.school.common.tools.ShortMessageTool;
 import org.junit.Test;
@@ -28,12 +29,11 @@ public class ToolTest extends SchoolAppApplicationTests {
     }
 
     @Autowired
-    private UserRegistrationService registrationService;
+    private VerificationService verificationService;
 
     @Test
     public void ddd() {
-        List<String> registrationIdByUserId = registrationService.findRegistrationIdByUserId(1L);
-        registrationIdByUserId.forEach(System.out::println);
+        verificationService.verificationSchoolOfYJLG("160740061","lixin123");
     }
 
 }

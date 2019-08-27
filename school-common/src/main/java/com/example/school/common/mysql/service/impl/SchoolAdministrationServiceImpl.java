@@ -1,12 +1,10 @@
 package com.example.school.common.mysql.service.impl;
 
 import com.example.school.common.constant.SysConst;
-import com.example.school.common.constant.properties.SchoolProperties;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.repo.SchoolAdministrationRepository;
 import com.example.school.common.mysql.service.SchoolAdministrationService;
-import com.example.school.common.utils.RSAUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +24,6 @@ import java.util.Optional;
 public class SchoolAdministrationServiceImpl implements SchoolAdministrationService {
 
     private final SchoolAdministrationRepository schoolAdministrationRepository;
-
-    private final SchoolProperties schoolProperties;
 
     @Override
     public SchoolAdministration save(SchoolAdministration schoolAdministration) {
