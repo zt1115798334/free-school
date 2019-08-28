@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Arrays;
 import java.util.List;
@@ -203,7 +205,7 @@ public class LoginController extends AbstractController {
 
     @PostMapping(value = "validateSchoolAdministration")
     @ApiOperation(value = "检验教务处账户操作")
-    public ResultMessage validateSchoolAdministration(@NotBlank(message = "学校不能为空")
+    public ResultMessage validateSchoolAdministration(@NotNull(message = "学校不能为空")
                                                       @RequestParam Short schoolCode,
                                                       @NotBlank(message = "教务处账户不能为空")
                                                       @RequestParam String studentId,
@@ -221,7 +223,7 @@ public class LoginController extends AbstractController {
     public ResultMessage saveSchoolAdministrationFromRegister(@NotBlank(message = "手机号不能为空")
                                                               @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                               @RequestParam String phone,
-                                                              @NotBlank(message = "学校不能为空")
+                                                              @NotNull(message = "学校不能为空")
                                                               @RequestParam Short schoolCode,
                                                               @NotBlank(message = "教务处账户不能为空")
                                                               @RequestParam String studentId,
