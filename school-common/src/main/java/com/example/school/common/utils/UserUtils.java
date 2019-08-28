@@ -80,7 +80,7 @@ public class UserUtils {
 
     public static RoUser getDefaultRoUser() {
         return new RoUser(0L, "时光", "", "未知", "未知", SysConst.Sex.UNKNOWN.getCode(),
-                SysConst.DEFAULT_INTEGRAL,"", SysConst.AccountType.STUDENT.getType(), new RoImagePath(1L));
+                SysConst.DEFAULT_INTEGRAL, SysConst.School.SCHOOL_YJLG.getCode(), SysConst.School.SCHOOL_YJLG.getName(), SysConst.AccountType.STUDENT.getType(), new RoImagePath(1L));
     }
 
     public static User getDefaultUser() {

@@ -16,7 +16,9 @@ import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.FileUtils;
 import com.example.school.common.utils.module.UploadFile;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -29,8 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.school.common.base.service.SearchFilter.Operator;
-import static com.example.school.common.base.service.SearchFilter.bySearchFilter;
+import static com.example.school.common.base.service.SearchFilter.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -225,11 +226,7 @@ public class QuestionBankServiceImpl implements QuestionBankService {
     }
 
     private List<SearchFilter> getQuestionBankFilter(List<SearchFilter> filters, QuestionBank questionBank) {
-        if (questionBank.getStartDateTime() != null && questionBank.getEndDateTime() != null) {
-            filters.add(new SearchFilter("createdTime", questionBank.getStartDateTime(), Operator.GTE));
-            filters.add(new SearchFilter("createdTime", questionBank.getEndDateTime(), Operator.LTE));
-        }
-        return filters;
+        return getTopicFilter(filters, questionBank.getSearchArea(), questionBank.getSearchValue(), questionBank.getStartDateTime(), questionBank.getEndDateTime());
     }
 
 

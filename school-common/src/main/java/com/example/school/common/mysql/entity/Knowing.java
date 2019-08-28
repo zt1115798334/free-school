@@ -70,7 +70,7 @@ public class Knowing extends IdPageEntity {
         this.integral = integral;
     }
 
-    public Knowing(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime);
+    public Knowing(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime, String searchArea, String searchValue) {
+        super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime, searchArea, searchValue);
     }
 }

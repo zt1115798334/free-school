@@ -4,6 +4,7 @@ import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ro.RoInformation;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Information;
 import com.example.school.common.mysql.repo.InformationRepository;
@@ -11,7 +12,9 @@ import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.InformationService;
 import com.example.school.common.mysql.service.TopicService;
 import com.example.school.common.utils.DateUtils;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.school.common.base.service.SearchFilter.*;
 import static com.example.school.common.base.service.SearchFilter.Operator;
 import static com.example.school.common.base.service.SearchFilter.bySearchFilter;
 
@@ -163,11 +167,7 @@ public class InformationServiceImpl implements InformationService {
     }
 
     private List<SearchFilter> getInformationFilter(List<SearchFilter> filters, Information information) {
-        if (information.getStartDateTime() != null && information.getEndDateTime() != null) {
-            filters.add(new SearchFilter("createdTime", information.getStartDateTime(), Operator.GTE));
-            filters.add(new SearchFilter("createdTime", information.getEndDateTime(), Operator.LTE));
-        }
-        return filters;
+        return getTopicFilter(filters, information.getSearchArea(), information.getSearchValue(), information.getStartDateTime(), information.getEndDateTime());
     }
 
 }

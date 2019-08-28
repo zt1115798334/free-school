@@ -61,7 +61,26 @@ public class SysConst {
 
         private String type;
     }
+    /**
+     * 搜索范围
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum SearchArea {
 
+        ALL("all", "全部"),
+        TITLE("title", "标题"),
+        CONTENT("content", "内容");
+
+        private String type;
+        private String name;
+    }
+
+    public static Optional<SearchArea> getSearchAreaByType(String type) {
+        return Arrays.stream(SearchArea.values())
+                .filter(replyType -> StringUtils.equals(type, replyType.getType()))
+                .findFirst();
+    }
     /**
      * 排序
      */
@@ -80,7 +99,28 @@ public class SysConst {
                 .filter(replyType -> StringUtils.equals(code, replyType.getCode()))
                 .findFirst();
     }
+    /**
+     * 学校类型
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum School {
+        SCHOOL_YJLG((short)1,"燕京理工大学"),
+        SCHOOL_FZKJXY((short)2,"防灾科技学院");
 
+        private Short code;
+        private String name;
+    }
+
+    public static Optional<School> getSchoolByCode(Short code) {
+        return Arrays.stream(School.values())
+                .filter(replyType -> Objects.equal(code, replyType.getCode()))
+                .findFirst();
+    }
+
+    public static String getSchoolNameByCode(Short code) {
+        return getSchoolByCode(code).map(School::getName).orElse(StringUtils.EMPTY);
+    }
     /**
      * 时间类型
      */

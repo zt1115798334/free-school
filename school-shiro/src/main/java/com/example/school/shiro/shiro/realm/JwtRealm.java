@@ -3,13 +3,13 @@ package com.example.school.shiro.shiro.realm;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.SystemStatusCode;
+import com.example.school.common.mysql.entity.User;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.common.utils.UserUtils;
 import com.example.school.shiro.shiro.token.JwtToken;
-import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.UserService;
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
 import lombok.Setter;
@@ -87,22 +87,25 @@ public class JwtRealm extends AuthorizingRealm {
         if (StringUtils.isNotBlank(token)) {
             if (userId != null) {
                 Optional<String> accessTokenRedis = stringRedisService.get(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong));
-                if (accessTokenRedis.isPresent()) {
-                    Optional<User> userOptional = userService.findByIdNotDelete(userId);
-                    if (userOptional.isPresent()) {
-                        User user = userOptional.get();
-                        if (jwtUtils.validateToken(token, user)) {
-                            return new SimpleAuthenticationInfo(user, token, getName());
+                if (accessTokenRedis.isPresent() ) {
+                    if (Objects.equal(accessTokenRedis.get(), token)){
+                        Optional<User> userOptional = userService.findByIdNotDelete(userId);
+                        if (userOptional.isPresent()) {
+                            User user = userOptional.get();
+                            if (jwtUtils.validateToken(token, user)) {
+                                return new SimpleAuthenticationInfo(user, token, getName());
+                            } else {
+                                throw new AuthenticationException(SystemStatusCode.ACCESS_TOKEN_EXPIRE.getName());
+                            }
                         } else {
-                            throw new AuthenticationException(SystemStatusCode.ACCESS_TOKEN_EXPIRE.getName());
+                            throw new AuthenticationException(SystemStatusCode.USER_NOT_FOUND.getName());
                         }
-                    } else {
-                        throw new AuthenticationException(SystemStatusCode.USER_NOT_FOUND.getName());
+                    }else{
+                        throw new AuthenticationException(SystemStatusCode.JWT_DIFFERENT_PLACES.getName());
                     }
                 } else {
                     throw new AuthenticationException(SystemStatusCode.ACCESS_TOKEN_EXPIRE.getName());
                 }
-
             } else {
                 throw new AuthenticationException(SystemStatusCode.JWT_NOT_FOUND.getName());
             }

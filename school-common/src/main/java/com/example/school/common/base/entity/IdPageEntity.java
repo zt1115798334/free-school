@@ -99,6 +99,17 @@ public abstract class IdPageEntity implements Serializable {
     @Transient
     protected LocalDateTime endDateTime;
 
+    /**
+     * 搜索范围 all>>全部,title>>标题,content>>内容
+     */
+    @Transient
+    private String searchArea;
+    /**
+     * 搜索关键字
+     */
+    @Transient
+    private String searchValue;
+
     public IdPageEntity(int pageNumber, int pageSize) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
@@ -111,12 +122,14 @@ public abstract class IdPageEntity implements Serializable {
         this.pageSize = pageSize;
     }
 
-    public IdPageEntity(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public IdPageEntity(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime, String searchArea, String searchValue) {
         this.sortName = sortName;
         this.sortOrder = sortOrder;
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.searchArea = searchArea;
+        this.searchValue = searchValue;
     }
 }

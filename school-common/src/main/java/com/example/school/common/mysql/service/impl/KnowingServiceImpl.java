@@ -13,6 +13,7 @@ import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.DateUtils;
 import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.school.common.base.service.SearchFilter.*;
 import static com.example.school.common.base.service.SearchFilter.Operator;
 import static com.example.school.common.base.service.SearchFilter.bySearchFilter;
 
@@ -191,10 +193,6 @@ public class KnowingServiceImpl implements KnowingService {
     }
 
     private List<SearchFilter> getKnowingFilter(List<SearchFilter> filters, Knowing knowing) {
-        if (knowing.getStartDateTime() != null && knowing.getEndDateTime() != null) {
-            filters.add(new SearchFilter("createdTime", knowing.getStartDateTime(), Operator.GTE));
-            filters.add(new SearchFilter("createdTime", knowing.getEndDateTime(), Operator.LTE));
-        }
-        return filters;
+        return getTopicFilter(filters, knowing.getSearchArea(), knowing.getSearchValue(), knowing.getStartDateTime(), knowing.getEndDateTime());
     }
 }

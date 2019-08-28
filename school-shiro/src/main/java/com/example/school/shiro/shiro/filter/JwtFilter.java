@@ -68,6 +68,10 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
                 ResultMessage message = new ResultMessage().ok(SystemStatusCode.JWT_NOT_FOUND.getCode(), SystemStatusCode.JWT_NOT_FOUND.getName());
                 RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);
             }
+            if (Objects.equal(exceptionMsg, SystemStatusCode.JWT_DIFFERENT_PLACES.getName())) { //没有发现账户
+                ResultMessage message = new ResultMessage().ok(SystemStatusCode.JWT_DIFFERENT_PLACES.getCode(), SystemStatusCode.JWT_DIFFERENT_PLACES.getName());
+                RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);
+            }
             if (Objects.equal(exceptionMsg, SystemStatusCode.USER_NOT_FOUND.getName())) { //没有发现账户
                 ResultMessage message = new ResultMessage().ok(SystemStatusCode.USER_NOT_FOUND.getCode(), SystemStatusCode.USER_NOT_FOUND.getName());
                 RequestResponseUtil.responseWrite(JSON.toJSONString(message), response);

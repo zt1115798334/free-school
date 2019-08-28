@@ -60,6 +60,11 @@ public class RoUser implements Serializable {
     @ApiModelProperty(value = "积分")
     private Long integral;
     /**
+     * 学校标识
+     */
+    @ApiModelProperty(value = "学校标识")
+    private Short schoolCode;
+    /**
      * 学校
      */
     @ApiModelProperty(value = "学校")

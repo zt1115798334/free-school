@@ -65,7 +65,7 @@ public class Information extends IdPageEntity {
 		this.describeContent = describeContent;
 	}
 
-	public Information(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-		super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime);
+	public Information(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime, String searchArea, String searchValue) {
+		super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime, searchArea, searchValue);
 	}
 }

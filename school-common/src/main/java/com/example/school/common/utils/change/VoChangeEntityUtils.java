@@ -50,7 +50,9 @@ public class VoChangeEntityUtils {
                 voParams.getPageNumber(),
                 voParams.getPageSize(),
                 dateTimeRange.getStartDateTime(),
-                dateTimeRange.getEndDateTime());
+                dateTimeRange.getEndDateTime(),
+                voParams.getSearchArea(),
+                voParams.getSearchValue());
     }
 
     public static Transaction changeStorageTransaction(VoStorageTransaction storageTransaction) {
@@ -70,7 +72,9 @@ public class VoChangeEntityUtils {
                 voParams.getPageNumber(),
                 voParams.getPageSize(),
                 dateTimeRange.getStartDateTime(),
-                dateTimeRange.getEndDateTime());
+                dateTimeRange.getEndDateTime(),
+                voParams.getSearchArea(),
+                voParams.getSearchValue());
     }
 
     public static RecordTime changeStorageRecordTime(VoStorageRecordTime storageRecordTime) {
@@ -86,7 +90,9 @@ public class VoChangeEntityUtils {
                 voParams.getPageNumber(),
                 voParams.getPageSize(),
                 dateTimeRange.getStartDateTime(),
-                dateTimeRange.getEndDateTime());
+                dateTimeRange.getEndDateTime(),
+                voParams.getSearchArea(),
+                voParams.getSearchValue());
     }
 
     public static Knowing changeStorageKnowing(VoStorageKnowing storageKnowing) {
@@ -104,7 +110,9 @@ public class VoChangeEntityUtils {
                 voParams.getPageNumber(),
                 voParams.getPageSize(),
                 dateTimeRange.getStartDateTime(),
-                dateTimeRange.getEndDateTime());
+                dateTimeRange.getEndDateTime(),
+                voParams.getSearchArea(),
+                voParams.getSearchValue());
     }
 
     public static Information changeStorageInformation(VoStorageInformation storageInformation) {
@@ -120,7 +128,9 @@ public class VoChangeEntityUtils {
                 voParams.getPageNumber(),
                 voParams.getPageSize(),
                 dateTimeRange.getStartDateTime(),
-                dateTimeRange.getEndDateTime());
+                dateTimeRange.getEndDateTime(),
+                voParams.getSearchArea(),
+                voParams.getSearchValue());
     }
 
     public static QuestionBank changeStorageQuestionBank(VoStorageQuestionBank storageQuestionBank) {

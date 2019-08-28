@@ -6,7 +6,6 @@ import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.SchoolAdministrationService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.NetworkUtil;
@@ -32,6 +31,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -184,6 +186,34 @@ public class LoginController extends AbstractController {
         }
     }
 
+
+    @PostMapping(value = "findSchool")
+    @ApiOperation(value = "查询学校")
+    public ResultMessage findSchool() {
+        List<JSONObject> collect = Arrays.stream(SysConst.School.values())
+                .map(school -> {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("schoolCode", school.getCode());
+                    jsonObject.put("schoolName", school.getName());
+                    return jsonObject;
+                }).collect(Collectors.toList());
+        return success(collect);
+
+    }
+
+    @PostMapping(value = "validateSchoolAdministration")
+    @ApiOperation(value = "检验教务处账户操作")
+    public ResultMessage validateSchoolAdministration(@NotBlank(message = "学校不能为空")
+                                                      @RequestParam Short schoolCode,
+                                                      @NotBlank(message = "教务处账户不能为空")
+                                                      @RequestParam String studentId,
+                                                      @NotBlank(message = "教务处密码不能为空")
+                                                      @RequestParam String studentPwd) {
+        userService.validateSchoolAdministration(schoolCode, studentId, studentPwd);
+        return success("验证成功");
+
+    }
+
     @ApiOperation(value = "保存教务信息")
     @PostMapping(value = "saveSchoolAdministrationFromRegister")
     @SaveLog(desc = "保存教务信息")
@@ -192,15 +222,14 @@ public class LoginController extends AbstractController {
                                                               @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
                                                               @RequestParam String phone,
                                                               @NotBlank(message = "学校不能为空")
-                                                              @RequestParam String school,
+                                                              @RequestParam Short schoolCode,
                                                               @NotBlank(message = "教务处账户不能为空")
                                                               @RequestParam String studentId,
                                                               @NotBlank(message = "教务处密码不能为空")
                                                               @RequestParam String studentPwd) {
-        userService.saveSchoolAdministration(phone, school, studentId, studentPwd);
+        userService.saveSchoolAdministration(phone, schoolCode, studentId, studentPwd);
         return success("保存成功");
     }
-
 
     @PostMapping(value = "validatePhoneCodeByForget")
     @ApiOperation(value = "检验手机验证码执行重置密码操作")

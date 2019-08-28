@@ -6,6 +6,10 @@ import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.mysql.entity.AppManage;
 import com.example.school.common.mysql.service.AppManageService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +28,7 @@ import java.io.IOException;
  * date: 2019/7/9 11:05
  * description:
  */
+@Api(tags = "版本信息")
 @RestController
 @RequestMapping(value = "app/appVersion")
 @AllArgsConstructor
@@ -31,6 +36,7 @@ public class AppVersionController extends AbstractController {
 
     private final AppManageService appManageService;
 
+    @ApiOperation(value = "获取版本信息")
     @GetMapping(value = "findAndroidAppInfo")
     public ResultMessage findAndroidAppInfo() {
         AppManage appManage = appManageService.findAppManager(SysConst.AppSystemType.ANDROID.getType());
@@ -53,6 +59,12 @@ public class AppVersionController extends AbstractController {
         }
     }
 
+    @ApiOperation(value = "保存反馈信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", name = "version", dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "versionCode", dataType = "String"),
+            @ApiImplicitParam(paramType = "query", name = "appFile", dataType = "String")
+    })
     @PostMapping(value = "saveAndroidAppFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResultMessage saveAndroidAppFile(HttpServletRequest request) throws IOException {
         appManageService.saveAppManager(request);

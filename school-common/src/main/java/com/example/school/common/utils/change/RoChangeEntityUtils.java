@@ -31,6 +31,7 @@ public class RoChangeEntityUtils {
                 user.getEmail(),
                 user.getSex(),
                 user.getIntegral(),
+                user.getSchoolCode(),
                 user.getSchool(),
                 user.getAccountType(),
                 new RoImagePath(userImgUrl.getImgId()));
@@ -66,7 +67,7 @@ public class RoChangeEntityUtils {
                 comment.getTopicId(),
                 comment.getContent(),
                 DateUtils.formatDate(comment.getCreatedTime()),
-                commentReplyNumMap.getOrDefault(commentId,0L),
+                commentReplyNumMap.getOrDefault(commentId, 0L),
                 roCommentReplyStatusMap.getOrDefault(commentId, Collections.emptyList()));
     }
 

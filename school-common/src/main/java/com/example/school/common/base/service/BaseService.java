@@ -1,12 +1,16 @@
 package com.example.school.common.base.service;
 
 import com.example.school.common.constant.SysConst;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.school.common.base.service.SearchFilter.*;
 import static com.example.school.common.base.service.SearchFilter.Operator;
 
 /**
@@ -73,6 +77,26 @@ public interface BaseService<T, ID> extends ConstantService {
         filters.add(new SearchFilter("state", SysConst.State.IN_RELEASE.getType(), Operator.NEQ));
         filters.add(new SearchFilter("state", SysConst.State.LOWER_SHELF.getType(), Operator.NEQ));
         filters.add(new SearchFilter("deleteState", UN_DELETED, Operator.EQ));
+        return filters;
+    }
+
+    default List<SearchFilter> getTopicFilter(List<SearchFilter> filters, String searchArea, String searchValue, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        if (StringUtils.isNotEmpty(searchValue)) {
+            if (Objects.equal(SysConst.SearchArea.ALL.getType(), searchArea)) {
+                filters.add(new SearchFilter("title", searchValue, Operator.LIKE, Logic.OR));
+                filters.add(new SearchFilter("describeContent", searchValue, Operator.LIKE, Logic.OR));
+            }
+            if (Objects.equal(SysConst.SearchArea.TITLE.getType(), searchArea)) {
+                filters.add(new SearchFilter("title", searchValue, Operator.LIKE, Logic.OR));
+            }
+            if (Objects.equal(SysConst.SearchArea.CONTENT.getType(), searchArea)) {
+                filters.add(new SearchFilter("describeContent", searchValue, Operator.LIKE, Logic.OR));
+            }
+        }
+        if (startDateTime != null && endDateTime != null) {
+            filters.add(new SearchFilter("createdTime", startDateTime, Operator.GTE));
+            filters.add(new SearchFilter("createdTime", endDateTime, Operator.LTE));
+        }
         return filters;
     }
 

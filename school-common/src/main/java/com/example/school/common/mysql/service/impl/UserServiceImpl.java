@@ -5,7 +5,9 @@ import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
+import com.example.school.common.externalService.verification.VerificationService;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.entity.UserImg;
 import com.example.school.common.mysql.repo.UserRepository;
@@ -56,6 +58,8 @@ public class UserServiceImpl implements UserService {
 
     private final SchoolAdministrationService schoolAdministrationService;
 
+    private final VerificationService verificationService;
+
 
     //冻结
     private static final Short FROZEN = AccountState.FROZEN.getCode();
@@ -75,6 +79,7 @@ public class UserServiceImpl implements UserService {
                 userO.setUserName(user.getUserName());
                 userO.setSalt(user.getSalt());
                 userO.setPhone(user.getPhone());
+                userO.setSchoolCode(user.getSchoolCode());
                 userO.setSchool(user.getSchool());
                 userO.setPersonalSignature(user.getPersonalSignature());
                 userO.setAccountState(user.getAccountState());
@@ -169,6 +174,7 @@ public class UserServiceImpl implements UserService {
         User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
         userDB.setUserName(userName);
         userDB.setPhone(user.getPhone());
+        userDB.setSchoolCode(user.getSchoolCode());
         userDB.setSchool(user.getSchool());
         userDB.setEmail(user.getEmail());
         userDB.setPersonalSignature(user.getPersonalSignature());
@@ -185,9 +191,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveSchoolAdministration(String phone, String school, String studentId, String studentPwd) {
+    public void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd) {
+        if (Objects.equal(schoolCode, School.SCHOOL_YJLG.getCode())) {
+            verificationService.verificationSchoolOfYJLG(studentId, studentPwd);
+        } else {
+            throw new OperationException("暂不支持");
+        }
+    }
+
+    @Override
+    public void saveSchoolAdministration(String phone, Short schoolCode, String studentId, String studentPwd) {
         User user = this.findByPhoneUnDelete(phone);
-        user.setSchool(school);
+        user.setSchoolCode(schoolCode);
+        user.setSchool(SysConst.getSchoolNameByCode(schoolCode));
         this.save(user);
         schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
     }

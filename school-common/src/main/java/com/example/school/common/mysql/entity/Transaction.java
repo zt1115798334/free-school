@@ -89,8 +89,8 @@ public class Transaction extends IdPageEntity {
         this.address = address;
     }
 
-    public Transaction(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime);
+    public Transaction(String sortName, String sortOrder, int pageNumber, int pageSize, LocalDateTime startDateTime, LocalDateTime endDateTime, String searchArea, String searchValue) {
+        super(sortName, sortOrder, pageNumber, pageSize, startDateTime, endDateTime, searchArea, searchValue);
     }
 
 }

@@ -67,6 +67,11 @@ public class User extends IdPageEntity {
     private Long integral;
 
     /**
+     * 学校标识
+     */
+    private Short schoolCode;
+
+    /**
      * 学校
      */
     private String school;
@@ -116,7 +121,7 @@ public class User extends IdPageEntity {
         this.accountType = accountType;
     }
 
-    public User(String userName, String personalSignature, String phone, String email, Short sex,String school) {
+    public User(String userName, String personalSignature, String phone, String email, Short sex, String school) {
         this.userName = userName;
         this.personalSignature = personalSignature;
         this.phone = phone;

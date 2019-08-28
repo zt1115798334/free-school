@@ -4,6 +4,7 @@ import com.example.school.common.base.entity.CustomPage;
 import com.example.school.common.base.entity.ro.RoTransaction;
 import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
+import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.Transaction;
 import com.example.school.common.mysql.repo.TransactionRepository;
@@ -11,18 +12,19 @@ import com.example.school.common.mysql.service.CollectionService;
 import com.example.school.common.mysql.service.TopicService;
 import com.example.school.common.mysql.service.TransactionService;
 import com.example.school.common.utils.DateUtils;
+import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.school.common.base.service.SearchFilter.Operator;
+import static com.example.school.common.base.service.SearchFilter.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -157,17 +159,13 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     private PageImpl<RoTransaction> getRoTransactionCustomPage(Transaction transaction, Long userId, List<SearchFilter> filters) {
-        Specification<Transaction> specification = SearchFilter.bySearchFilter(filters);
+        Specification<Transaction> specification = bySearchFilter(filters);
         Pageable pageable = PageUtils.buildPageRequest(transaction);
         Page<Transaction> page = transactionRepository.findAll(specification, pageable);
         return topicService.resultRoTransactionPage(page, userId);
     }
 
     private List<SearchFilter> getTransactionFilter(List<SearchFilter> filters, Transaction transaction) {
-        if (transaction.getStartDateTime() != null && transaction.getEndDateTime() != null) {
-            filters.add(new SearchFilter("createdTime", transaction.getStartDateTime(), Operator.GTE));
-            filters.add(new SearchFilter("createdTime", transaction.getEndDateTime(), Operator.LTE));
-        }
-        return filters;
+        return getTopicFilter(filters, transaction.getSearchArea(), transaction.getSearchValue(), transaction.getStartDateTime(), transaction.getEndDateTime());
     }
 }
