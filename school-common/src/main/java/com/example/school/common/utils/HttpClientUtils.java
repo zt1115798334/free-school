@@ -136,7 +136,7 @@ public class HttpClientUtils {
                     if (entity != null) {
                         result = EntityUtils.toString(entity, charset);
                     }
-//                    log.info("返回结果为：{}", result);
+                    log.info("返回结果为：{}", result);
                 } else if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                     // 302
                     log.error("访问地址已经改变请更新访问地址");

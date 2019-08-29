@@ -48,7 +48,6 @@ public class VoParams extends VoPage {
      * 搜索关键字
      */
     @ApiModelProperty(value = "搜索关键字")
-    @NotEmpty(message = "搜索关键字不能为空")
     @Length(max = 38, message = "搜索关键词长度最大为38个字符")
     private String searchValue;
     /**
