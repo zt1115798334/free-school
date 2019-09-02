@@ -55,5 +55,5 @@ public class VoStorageUser implements Serializable {
      * 学校
      */
     @ApiModelProperty(value = "学校")
-    private String school;
+    private Short schoolCode;
 }

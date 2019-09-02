@@ -24,7 +24,7 @@ public class VoChangeEntityUtils {
                 voStorageUser.getPhone(),
                 voStorageUser.getEmail(),
                 voStorageUser.getSex(),
-                voStorageUser.getSchool());
+                voStorageUser.getSchoolCode());
     }
 
     public static Comment changeComment(VoCommentPage commentPage) {

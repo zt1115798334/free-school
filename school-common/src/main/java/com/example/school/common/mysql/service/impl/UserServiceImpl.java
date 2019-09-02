@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService {
         userDB.setUserName(userName);
         userDB.setPhone(user.getPhone());
         userDB.setSchoolCode(user.getSchoolCode());
-        userDB.setSchool(user.getSchool());
+        userDB.setSchool(SysConst.getSchoolNameByCode(user.getSchoolCode()));
         userDB.setEmail(user.getEmail());
         userDB.setPersonalSignature(user.getPersonalSignature());
         userDB.setUpdatedTime(currentDateTime);
@@ -186,8 +186,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
-        schoolAdministrationService.saveSchoolAdministration(userId, studentId, studentPwd);
+    public void saveSchoolAdministration(Long userId, Short schoolCode, String studentId, String studentPwd) {
+        schoolAdministrationService.saveSchoolAdministration(userId, schoolCode, studentId, studentPwd);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
         user.setSchoolCode(schoolCode);
         user.setSchool(SysConst.getSchoolNameByCode(schoolCode));
         this.save(user);
-        schoolAdministrationService.saveSchoolAdministration(user.getId(), studentId, studentPwd);
+        schoolAdministrationService.saveSchoolAdministration(user.getId(), schoolCode, studentId, studentPwd);
     }
 
     @Override

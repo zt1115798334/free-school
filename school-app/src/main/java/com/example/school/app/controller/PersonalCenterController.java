@@ -130,11 +130,13 @@ public class PersonalCenterController extends AbstractController implements Curr
     @PostMapping(value = "saveSchoolAdministration")
     @SaveLog(desc = "保存教务信息")
     @DistributedLock
-    public ResultMessage saveSchoolAdministration(@NotBlank(message = "教务处账户不能为空")
+    public ResultMessage saveSchoolAdministration(@NotNull(message = "学校不能为空")
+                                                  @RequestParam Short schoolCode,
+                                                  @NotBlank(message = "教务处账户不能为空")
                                                   @RequestParam String studentId,
                                                   @NotBlank(message = "教务处密码不能为空")
                                                   @RequestParam String studentPwd) {
-        userService.saveSchoolAdministration(getCurrentUserId(), studentId, studentPwd);
+        userService.saveSchoolAdministration(getCurrentUserId(), schoolCode, studentId, studentPwd);
         return success("保存成功");
     }
 

@@ -30,6 +30,12 @@ public class SchoolAdministration extends IdEntity {
      * 用户id
      */
     private Long userId;
+
+    /**
+     * 学校标识
+     */
+    private Short schoolCode;
+
     /**
      * 学号
      */
@@ -55,8 +61,9 @@ public class SchoolAdministration extends IdEntity {
      */
     private LocalDateTime updatedTime;
 
-    public SchoolAdministration(Long userId, String studentId, String studentPwd) {
+    public SchoolAdministration(Long userId, Short schoolCode,  String studentId, String studentPwd) {
         this.userId = userId;
+        this.schoolCode = schoolCode;
         this.studentId = studentId;
         this.studentPwd = studentPwd;
     }

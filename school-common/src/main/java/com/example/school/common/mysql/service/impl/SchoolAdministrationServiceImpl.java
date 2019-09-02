@@ -44,11 +44,11 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
     }
 
     @Override
-    public SchoolAdministration saveSchoolAdministration(Long userId, String studentId, String studentPwd) {
+    public SchoolAdministration saveSchoolAdministration(Long userId, Short schoolCode, String studentId, String studentPwd) {
 //        String studentPwd = schoolAdministration.getStudentPwd();
 //        String studentPwdRsa = RSAUtils.encryptBASE64(RSAUtils.encryptByPrivateKey(studentPwd.getBytes(), schoolProperties.getRsa().getPrivateKey()));
 //        schoolAdministration.setStudentPwd(studentPwdRsa);
-        SchoolAdministration schoolAdministration = new SchoolAdministration(userId, studentId, studentPwd);
+        SchoolAdministration schoolAdministration = new SchoolAdministration(userId, schoolCode, studentId, studentPwd);
         return this.save(schoolAdministration);
     }
 

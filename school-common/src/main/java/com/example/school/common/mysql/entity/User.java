@@ -121,12 +121,12 @@ public class User extends IdPageEntity {
         this.accountType = accountType;
     }
 
-    public User(String userName, String personalSignature, String phone, String email, Short sex, String school) {
+    public User(String userName, String personalSignature, String phone, String email, Short sex, Short schoolCode) {
         this.userName = userName;
         this.personalSignature = personalSignature;
         this.phone = phone;
         this.email = email;
         this.sex = sex;
-        this.school = school;
+        this.schoolCode = schoolCode;
     }
 }

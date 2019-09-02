@@ -29,7 +29,7 @@ public interface UserService extends BaseService<User, Long> {
 
     RoUser saveUser(User user);
 
-    void saveSchoolAdministration(Long userId, String studentId, String studentPwd);
+    void saveSchoolAdministration(Long userId, Short schoolCode, String studentId, String studentPwd);
 
     void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd);
 
