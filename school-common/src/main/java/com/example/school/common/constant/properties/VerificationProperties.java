@@ -17,5 +17,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "custom.verification")
 public class VerificationProperties {
-    private String host;
+    private String hostYJLG;
+    private String hostFZKJXY;
 }

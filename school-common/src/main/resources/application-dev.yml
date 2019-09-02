@@ -85,7 +85,8 @@ custom:
     token-head: Bearer
     secret: 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
   verification: #验证
-    host: http://127.0.0.1:8000  #验证
+    hostYJLG: http://127.0.0.1:8000  #验证
+    hostFZKJXY: http://127.0.0.1:8100  #验证
 
 server:
   tomcat:

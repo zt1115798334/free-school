@@ -194,6 +194,8 @@ public class UserServiceImpl implements UserService {
     public void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd) {
         if (Objects.equal(schoolCode, School.SCHOOL_YJLG.getCode())) {
             verificationService.verificationSchoolOfYJLG(studentId, studentPwd);
+        } else if (Objects.equal(schoolCode, School.SCHOOL_FZKJXY.getCode())) {
+            verificationService.verificationSchoolOfFZKJXY(studentId, studentPwd);
         } else {
             throw new OperationException("暂不支持");
         }

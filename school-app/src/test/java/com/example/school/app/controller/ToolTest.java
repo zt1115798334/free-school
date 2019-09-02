@@ -33,7 +33,7 @@ public class ToolTest extends SchoolAppApplicationTests {
 
     @Test
     public void ddd() {
-        verificationService.verificationSchoolOfYJLG("160740061","lixin123");
+        verificationService.verificationSchoolOfFZKJXY("175041141","Zyx0731..");
     }
 
 }

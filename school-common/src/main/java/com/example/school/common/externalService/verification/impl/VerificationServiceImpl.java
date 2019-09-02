@@ -30,10 +30,19 @@ public class VerificationServiceImpl implements VerificationService {
 
     @Override
     public void verificationSchoolOfYJLG(String username, String password) {
+        this.verificationSchool(verificationProperties.getHostYJLG(), username, password);
+    }
+
+    @Override
+    public void verificationSchoolOfFZKJXY(String username, String password) {
+        this.verificationSchool(verificationProperties.getHostFZKJXY(), username, password);
+    }
+
+    private void verificationSchool(String url, String username, String password) {
         JSONObject params = new JSONObject();
         params.put("username", username);
         params.put("password", password);
-        String str = HttpClientUtils.getInstance().httpPostFrom(verificationProperties.getHost(), Collections.emptyMap(), params.getInnerMap());
+        String str = HttpClientUtils.getInstance().httpPostFrom(url, Collections.emptyMap(), params.getInnerMap());
         JSONObject json = JSON.parseObject(str);
         if (Objects.equal(json.getInteger("status"), HttpStatus.SC_BAD_REQUEST)) {
             String data = MStringUtils.unicodeDecode(json.getString("data"));

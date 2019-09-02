@@ -61,6 +61,7 @@ public class SysConst {
 
         private String type;
     }
+
     /**
      * 搜索范围
      */
@@ -81,6 +82,7 @@ public class SysConst {
                 .filter(replyType -> StringUtils.equals(type, replyType.getType()))
                 .findFirst();
     }
+
     /**
      * 排序
      */
@@ -99,14 +101,15 @@ public class SysConst {
                 .filter(replyType -> StringUtils.equals(code, replyType.getCode()))
                 .findFirst();
     }
+
     /**
      * 学校类型
      */
     @Getter
     @AllArgsConstructor
     public enum School {
-        SCHOOL_YJLG((short)1,"燕京理工大学"),
-        SCHOOL_FZKJXY((short)2,"防灾科技学院");
+        SCHOOL_YJLG((short) 1, "燕京理工大学"),
+        SCHOOL_FZKJXY((short) 2, "防灾科技学院");
 
         private Short code;
         private String name;
@@ -121,6 +124,7 @@ public class SysConst {
     public static String getSchoolNameByCode(Short code) {
         return getSchoolByCode(code).map(School::getName).orElse(StringUtils.EMPTY);
     }
+
     /**
      * 时间类型
      */
