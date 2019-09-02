@@ -508,6 +508,18 @@ public class SysConst {
         private short code;
         private String name;
     }
+    /**
+     * 新旧状态
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum FreshState {
+        FRESH((short) 0, "新"),
+        PAST((short) 1, "旧");
+
+        private short code;
+        private String name;
+    }
 
     @Getter
     @AllArgsConstructor

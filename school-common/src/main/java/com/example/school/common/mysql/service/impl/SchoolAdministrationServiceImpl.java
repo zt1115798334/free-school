@@ -37,6 +37,7 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
             return schoolAdministrationRepository.save(dbAdministration);
         } else {
             schoolAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
+            schoolAdministration.setFreshState(SysConst.FreshState.FRESH.getCode());
             schoolAdministration.setCreatedTime(currentDateTime());
             return schoolAdministrationRepository.save(schoolAdministration);
         }

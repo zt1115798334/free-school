@@ -43,6 +43,10 @@ public class SchoolAdministration extends IdEntity {
      */
     private Short usableState;
     /**
+     * 新状态 0 新  1 旧
+     */
+    private Short freshState;
+    /**
      * 创建时间
      */
     private LocalDateTime createdTime;
@@ -51,7 +55,7 @@ public class SchoolAdministration extends IdEntity {
      */
     private LocalDateTime updatedTime;
 
-    public SchoolAdministration(Long userId,String studentId, String studentPwd) {
+    public SchoolAdministration(Long userId, String studentId, String studentPwd) {
         this.userId = userId;
         this.studentId = studentId;
         this.studentPwd = studentPwd;
