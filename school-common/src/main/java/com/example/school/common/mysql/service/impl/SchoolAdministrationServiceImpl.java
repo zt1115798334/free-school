@@ -1,16 +1,26 @@
 package com.example.school.common.mysql.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.SchoolAdministration;
+import com.example.school.common.mysql.entity.SchoolTimetable;
 import com.example.school.common.mysql.repo.SchoolAdministrationRepository;
 import com.example.school.common.mysql.service.SchoolAdministrationService;
+import com.example.school.common.mysql.service.SchoolTimetableService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,19 +35,27 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
 
     private final SchoolAdministrationRepository schoolAdministrationRepository;
 
+    private final SchoolTimetableService schoolTimetableService;
+
     @Override
     @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.READ_UNCOMMITTED)
     public SchoolAdministration save(SchoolAdministration schoolAdministration) {
         Long userId = schoolAdministration.getUserId();
+        String studentId = schoolAdministration.getStudentId();
         Optional<SchoolAdministration> administrationOptional = this.findOptByUserId(userId);
         if (administrationOptional.isPresent()) {
             SchoolAdministration dbAdministration = administrationOptional.get();
-            dbAdministration.setStudentId(schoolAdministration.getStudentId());
+            dbAdministration.setStudentId(studentId);
             dbAdministration.setStudentPwd(schoolAdministration.getStudentPwd());
             dbAdministration.setUpdatedTime(currentDateTime());
             return schoolAdministrationRepository.save(dbAdministration);
         } else {
-            schoolAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
+            long count = schoolTimetableService.count(studentId);
+            if (count > 0) {
+                schoolAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
+            } else {
+                schoolAdministration.setUsableState(SysConst.UsableState.NOT_AVAILABLE.getCode());
+            }
             schoolAdministration.setFreshState(SysConst.FreshState.FRESH.getCode());
             schoolAdministration.setCreatedTime(currentDateTime());
             return schoolAdministrationRepository.save(schoolAdministration);
@@ -70,5 +88,41 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
     @Override
     public SchoolAdministration findSchoolAdministration(Long userId) {
         return this.findOptByUserId(userId).orElseThrow(() -> new OperationException("你还没有绑定呢。。"));
+    }
+
+
+    @Override
+    public JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes) {
+        SchoolAdministration schoolAdministration = this.findSchoolAdministration(userId);
+        List<SchoolTimetable> timetableList = schoolTimetableService.findByStudentIdAndSemesterAndWeeklyTimes(schoolAdministration.getStudentId(), semester, weeklyTimes);
+        Map<String, String> colorMap = SysConst.getColorBySchoolTimetable(timetableList);
+        Map<String, Map<Short, SchoolTimetable>> timetableMap = timetableList.stream()
+                .collect(groupingBy(SchoolTimetable::getWeek, toMap(SchoolTimetable::getClassTimes, Function.identity())));
+        JSONObject weekJSON = new JSONObject();
+        for (String week : SysConst.getAllWeekType()) {
+            Map<Short, SchoolTimetable> weekMap = timetableMap.getOrDefault(week, Collections.emptyMap());
+            JSONObject classTimeJSON = new JSONObject();
+            for (Short classTimes : SysConst.getAllClassTimesCode()) {
+                JSONObject other = new JSONObject();
+                other.put("curriculum", "-");
+                other.put("color", SysConst.Color.PANTONE_GCMI_91.getColorRGB());
+                JSONObject curriculumJSON = Optional.ofNullable(weekMap.get(classTimes))
+                        .map(schoolTimetable -> {
+                            String curriculum = schoolTimetable.getCurriculum();
+                            JSONObject json = new JSONObject();
+                            json.put("curriculum", curriculum);
+                            json.put("color", colorMap.get(curriculum));
+                            return json;
+                        })
+                        .orElse(other);
+                classTimeJSON.put(String.valueOf(classTimes), curriculumJSON);
+            }
+            weekJSON.put(week, classTimeJSON);
+        }
+
+
+        JSONObject result = new JSONObject();
+        result.put("curriculum", weekJSON);
+        return result;
     }
 }

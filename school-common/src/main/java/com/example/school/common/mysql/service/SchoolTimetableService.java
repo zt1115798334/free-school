@@ -16,5 +16,8 @@ import java.util.List;
 public interface SchoolTimetableService extends BaseService<SchoolTimetable, Long> {
 
 
-    JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes);
+    long count(String studentId);
+
+    List<SchoolTimetable> findByStudentIdAndSemesterAndWeeklyTimes(String studentId, String semester, Integer weeklyTimes);
+
 }

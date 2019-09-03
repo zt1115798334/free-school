@@ -159,7 +159,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     @PostMapping(value = "findSchoolTimetable")
     public ResultMessage findSchoolTimetable(@RequestParam String semester,
                                              @RequestParam Integer weeklyTimes) {
-        JSONObject result = schoolTimetableService.findSchoolTimetable(getCurrentUserId(), semester, weeklyTimes);
+        JSONObject result = schoolAdministrationService.findSchoolTimetable(getCurrentUserId(), semester, weeklyTimes);
         return success(result);
     }
 

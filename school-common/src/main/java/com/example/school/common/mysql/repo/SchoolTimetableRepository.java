@@ -14,5 +14,7 @@ import java.util.List;
  */
 public interface SchoolTimetableRepository extends CrudRepository<SchoolTimetable, Long> {
 
+    long countByStudentId(String studentId);
+
     List<SchoolTimetable> findByStudentIdAndSemesterAndWeeklyTimes(String studentId, String semester, Integer weeklyTimes);
 }

@@ -1,5 +1,6 @@
 package com.example.school.common.mysql.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.service.BaseService;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 
@@ -21,5 +22,8 @@ public interface SchoolAdministrationService extends BaseService<SchoolAdministr
     Optional<SchoolAdministration> findOptByUserId(Long userId);
 
     SchoolAdministration findSchoolAdministration(Long userId);
+
+    JSONObject findSchoolTimetable(Long userId, String semester, Integer weeklyTimes);
+
 
 }
