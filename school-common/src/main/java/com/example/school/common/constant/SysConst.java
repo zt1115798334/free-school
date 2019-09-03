@@ -108,7 +108,7 @@ public class SysConst {
     @Getter
     @AllArgsConstructor
     public enum School {
-        SCHOOL_YJLG((short) 1, "燕京理工大学"),
+        SCHOOL_YJLG((short) 1, "燕京理工学院"),
         SCHOOL_FZKJXY((short) 2, "防灾科技学院");
 
         private Short code;

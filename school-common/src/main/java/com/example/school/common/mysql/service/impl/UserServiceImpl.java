@@ -174,6 +174,7 @@ public class UserServiceImpl implements UserService {
         User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
         userDB.setUserName(userName);
         userDB.setPhone(user.getPhone());
+        userDB.setSex(user.getSex());
         userDB.setSchoolCode(user.getSchoolCode());
         userDB.setSchool(SysConst.getSchoolNameByCode(user.getSchoolCode()));
         userDB.setEmail(user.getEmail());

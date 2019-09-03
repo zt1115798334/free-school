@@ -7,8 +7,9 @@ import com.example.school.common.mysql.repo.SchoolAdministrationRepository;
 import com.example.school.common.mysql.service.SchoolAdministrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 /**
@@ -20,12 +21,12 @@ import java.util.Optional;
  */
 @AllArgsConstructor
 @Service
-@Transactional(rollbackOn = RuntimeException.class)
 public class SchoolAdministrationServiceImpl implements SchoolAdministrationService {
 
     private final SchoolAdministrationRepository schoolAdministrationRepository;
 
     @Override
+    @Transactional(rollbackFor = RuntimeException.class, isolation = Isolation.READ_UNCOMMITTED)
     public SchoolAdministration save(SchoolAdministration schoolAdministration) {
         Long userId = schoolAdministration.getUserId();
         Optional<SchoolAdministration> administrationOptional = this.findOptByUserId(userId);
