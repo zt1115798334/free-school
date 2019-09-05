@@ -17,10 +17,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -52,11 +50,12 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
         } else {
             long count = schoolTimetableService.count(studentId);
             if (count > 0) {
-                schoolAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
+                schoolAdministration.setFreshState(SysConst.FreshState.PAST.getCode());
             } else {
-                schoolAdministration.setUsableState(SysConst.UsableState.NOT_AVAILABLE.getCode());
+                schoolAdministration.setFreshState(SysConst.FreshState.FRESH.getCode());
             }
-            schoolAdministration.setFreshState(SysConst.FreshState.FRESH.getCode());
+            schoolAdministration.setAbnormalState(SysConst.AbnormalState.NORMAL.getCode());
+            schoolAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
             schoolAdministration.setCreatedTime(currentDateTime());
             return schoolAdministrationRepository.save(schoolAdministration);
         }
@@ -96,7 +95,7 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
         SchoolAdministration schoolAdministration = this.findSchoolAdministration(userId);
         List<SchoolTimetable> timetableList = schoolTimetableService.findByStudentIdAndSemesterAndWeeklyTimes(schoolAdministration.getStudentId(), semester, weeklyTimes);
         Map<String, String> colorMap = SysConst.getColorBySchoolTimetable(timetableList);
-        Map<String, Map<Short, SchoolTimetable>> timetableMap = timetableList.stream()
+       /* Map<String, Map<Short, SchoolTimetable>> timetableMap = timetableList.stream()
                 .collect(groupingBy(SchoolTimetable::getWeek, toMap(SchoolTimetable::getClassTimes, Function.identity())));
         JSONObject weekJSON = new JSONObject();
         for (String week : SysConst.getAllWeekType()) {
@@ -112,6 +111,35 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
                             JSONObject json = new JSONObject();
                             json.put("curriculum", curriculum);
                             json.put("color", colorMap.get(curriculum));
+                            return json;
+                        })
+                        .orElse(other);
+                classTimeJSON.put(String.valueOf(classTimes), curriculumJSON);
+            }
+            weekJSON.put(week, classTimeJSON);
+        }*/
+
+        Map<String, Map<Short, List<SchoolTimetable>>> timetableMap = timetableList.stream()
+                .collect(groupingBy(SchoolTimetable::getWeek, groupingBy(SchoolTimetable::getClassTimes)));
+        JSONObject weekJSON = new JSONObject();
+        for (String week : SysConst.getAllWeekType()) {
+            Map<Short, List<SchoolTimetable>> weekMap = timetableMap.getOrDefault(week, Collections.emptyMap());
+            JSONObject classTimeJSON = new JSONObject();
+            for (Short classTimes : SysConst.getAllClassTimesCode()) {
+                JSONObject other = new JSONObject();
+                other.put("curriculum", "-");
+                other.put("color", SysConst.Color.PANTONE_GCMI_91.getColorRGB());
+                JSONObject curriculumJSON = Optional.ofNullable(weekMap.get(classTimes))
+                        .map(schoolTimetable -> {
+                            JSONObject json = new JSONObject();
+                            if (schoolTimetable.size() != 0) {
+                                String curriculum = schoolTimetable.get(0).getCurriculum();
+                                json.put("curriculum", curriculum);
+                                json.put("color", colorMap.get(curriculum));
+                            } else {
+                                json.put("curriculum", "-");
+                                json.put("color", SysConst.Color.PANTONE_GCMI_91.getColorRGB());
+                            }
                             return json;
                         })
                         .orElse(other);

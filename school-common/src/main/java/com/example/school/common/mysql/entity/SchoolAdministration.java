@@ -53,6 +53,10 @@ public class SchoolAdministration extends IdEntity {
      */
     private Short freshState;
     /**
+     * 异常状态 0 正常 1 异常
+     */
+    private Short abnormalState;
+    /**
      * 创建时间
      */
     private LocalDateTime createdTime;

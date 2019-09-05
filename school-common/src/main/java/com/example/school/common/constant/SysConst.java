@@ -520,6 +520,18 @@ public class SysConst {
         private short code;
         private String name;
     }
+    /**
+     * 异常状态
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum AbnormalState {
+        NORMAL((short) 0, "正常"),
+        ABNORMAL((short) 1, "异常");
+
+        private short code;
+        private String name;
+    }
 
     @Getter
     @AllArgsConstructor
