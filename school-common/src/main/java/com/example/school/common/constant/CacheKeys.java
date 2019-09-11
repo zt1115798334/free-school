@@ -111,8 +111,12 @@ public class CacheKeys {
         return PREFIX_JWT_REFRESH_TOKEN + deviceInfo + ":" + userId + ":" + ipLong;
     }
 
+    public static String getJpushTokenKey(Long userId) {
+        return PREFIX_JPUSH_TOKEN + userId;
+    }
+
     public static String getJpushTokenKey(Long userId, String registrationId) {
-        return PREFIX_JPUSH_TOKEN + ":" + userId + ":" + registrationId;
+        return PREFIX_JPUSH_TOKEN + userId + ":" + registrationId;
     }
 
     /**

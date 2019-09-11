@@ -537,8 +537,8 @@ public class SysConst {
     @AllArgsConstructor
     public enum Color {
 
-        PANTONE_Yellow_U("#FFE800"),
-        PANTONE_Yellow_012_U("#FFE000"),
+        PANTONE_Yellow_U("#1D1D1F"),
+        PANTONE_Yellow_012_U("#F80DA1"),
         PANTONE_Orange_021_U("#FF6C2F"),
         PANTONE_Bright_Red_U("#FE5442"),
         PANTONE_2388_U("#3F5EA9"),
@@ -557,7 +557,7 @@ public class SysConst {
         PANTONE_Green_U("#00AC8C"),
         PANTONE_2070_U("#944B96"),
         PANTONE_Black_U("#615D59"),
-        PANTONE_Yellow_0131_U("#FBF59B"),
+        PANTONE_Yellow_0131_U("#D6DE2C"),
         PANTONE_Red_0331_U("#FFB1BE"),
         PANTONE_Magenta_0521_U("#F8AADD"),
         PANTONE_Violet_0631_U("#BA93DF"),

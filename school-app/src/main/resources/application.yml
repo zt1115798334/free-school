@@ -18,3 +18,9 @@ spring:
     expose-session-attributes: false
     request-context-attribute: request
     suffix: .ftl
+management:
+  health:
+    mail:
+      enabled: false
+  server:
+    port: 54001

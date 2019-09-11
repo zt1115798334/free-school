@@ -25,6 +25,7 @@ public interface InformationRepository extends CrudRepository<Information, Long>
 
     @Modifying
     @Query(value = "update Information set state =:afterState where userId in :userId and state = :beforeState and deleteState =:deleteState ")
+    @Transactional(rollbackFor = RuntimeException.class)
     void updateState(List<Long> userId, String beforeState, String afterState, Short deleteState);
 
     @Modifying

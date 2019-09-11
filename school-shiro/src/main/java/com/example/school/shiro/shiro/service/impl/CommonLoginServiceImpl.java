@@ -66,6 +66,7 @@ public class CommonLoginServiceImpl implements CommonLoginService {
         stringRedisService.saveAccessToken(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong), accessToken, rememberMe);
         stringRedisService.saveRefreshToken(CacheKeys.getJwtRefreshTokenKey(deviceInfo, userId, ipLong), refreshToken, rememberMe);
         if (StringUtils.isNotBlank(registrationId)) {
+            stringRedisService.deleteByLike(CacheKeys.getJpushTokenKey(userId));
             stringRedisService.saveRefreshToken(CacheKeys.getJpushTokenKey(userId, registrationId), registrationId, rememberMe);
         }
         if (StringUtils.equals(deviceInfo, SysConst.DeviceInfo.MOBILE.getType())) {

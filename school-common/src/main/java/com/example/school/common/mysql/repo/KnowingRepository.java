@@ -25,6 +25,7 @@ public interface KnowingRepository extends CrudRepository<Knowing, Long>,
 
     @Modifying
     @Query(value = "update Knowing set state =:afterState where userId in :userId and state = :beforeState and deleteState =:deleteState ")
+    @Transactional(rollbackFor = RuntimeException.class)
     void updateState(List<Long> userId, String beforeState, String afterState, Short deleteState);
 
     @Modifying

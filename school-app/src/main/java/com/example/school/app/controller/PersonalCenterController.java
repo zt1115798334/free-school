@@ -55,8 +55,6 @@ public class PersonalCenterController extends AbstractController implements Curr
 
     private final SchoolAdministrationService schoolAdministrationService;
 
-    private final SchoolTimetableService schoolTimetableService;
-
     @ApiOperation(value = "显示用户信息")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),

@@ -237,7 +237,7 @@ public class LoginController extends AbstractController {
     @ApiOperation(value = "检验手机验证码执行重置密码操作")
     public ResultMessage validatePhoneCodeByForget(@NotBlank(message = "手机号不能为空")
                                                    @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
-                                                   @RequestParam String phone) {
+                                                    @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         return success();
 

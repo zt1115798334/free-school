@@ -26,6 +26,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
     @Modifying
     @Query(value = "update Transaction set state =:afterState where userId in :userId and state = :beforeState and deleteState =:deleteState ")
+    @Transactional(rollbackFor = RuntimeException.class)
     void updateState(List<Long> userId, String beforeState, String afterState, Short deleteState);
 
     @Modifying

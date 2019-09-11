@@ -41,14 +41,21 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
         Long userId = schoolAdministration.getUserId();
         String studentId = schoolAdministration.getStudentId();
         Optional<SchoolAdministration> administrationOptional = this.findOptByUserId(userId);
+        long count = schoolTimetableService.count(studentId);
         if (administrationOptional.isPresent()) {
             SchoolAdministration dbAdministration = administrationOptional.get();
             dbAdministration.setStudentId(studentId);
             dbAdministration.setStudentPwd(schoolAdministration.getStudentPwd());
             dbAdministration.setUpdatedTime(currentDateTime());
+            if (count > 0) {
+                schoolAdministration.setFreshState(SysConst.FreshState.PAST.getCode());
+            } else {
+                schoolAdministration.setFreshState(SysConst.FreshState.FRESH.getCode());
+            }
+            dbAdministration.setAbnormalState(SysConst.AbnormalState.NORMAL.getCode());
+            dbAdministration.setUsableState(SysConst.UsableState.AVAILABLE.getCode());
             return schoolAdministrationRepository.save(dbAdministration);
         } else {
-            long count = schoolTimetableService.count(studentId);
             if (count > 0) {
                 schoolAdministration.setFreshState(SysConst.FreshState.PAST.getCode());
             } else {

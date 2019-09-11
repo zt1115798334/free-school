@@ -35,4 +35,10 @@ public class RoSchoolAdministration implements Serializable {
      */
     @ApiModelProperty(value = "可用状态  0 可用  1 不可用")
     private Short usableState;
+
+    /**
+     * 异常状态 0 正常 1 异常
+     */
+    @ApiModelProperty(value = "异常状态 0 正常 1 异常")
+    private Short abnormalState;
 }

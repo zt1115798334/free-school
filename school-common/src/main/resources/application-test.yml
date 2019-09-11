@@ -93,9 +93,4 @@ custom:
 server:
   tomcat:
     basedir: /home/file/temp
-management:
-  health:
-    mail:
-      enabled: false
-  server:
-    port: 54001
+

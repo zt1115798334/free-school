@@ -83,4 +83,13 @@ public class LoginControllerTest extends BaseTest {
         params.put("password", "15600663638");
         postParams(url, params);
     }
+
+    @Test
+    public void validateSchoolAdministration() {
+        url += "validateSchoolAdministration";
+        params.put("schoolCode", "2");
+        params.put("studentId", "19013122");
+        params.put("studentPwd", "Wy17637987113.");
+        postParams(url, params);
+    }
 }

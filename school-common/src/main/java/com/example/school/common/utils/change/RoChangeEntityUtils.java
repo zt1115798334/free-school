@@ -47,7 +47,8 @@ public class RoChangeEntityUtils {
     public static RoSchoolAdministration resultRoSchoolAdministration(SchoolAdministration schoolAdministration) {
         return new RoSchoolAdministration(schoolAdministration.getStudentId(),
                 schoolAdministration.getStudentPwd(),
-                schoolAdministration.getUsableState());
+                schoolAdministration.getUsableState(),
+                schoolAdministration.getAbnormalState());
     }
 
     public static RoCommentStatus resultRoCommentStatus(Comment comment,

@@ -101,6 +101,7 @@ public class JwtRealm extends AuthorizingRealm {
                             throw new AuthenticationException(SystemStatusCode.USER_NOT_FOUND.getName());
                         }
                     }else{
+
                         throw new AuthenticationException(SystemStatusCode.JWT_DIFFERENT_PLACES.getName());
                     }
                 } else {

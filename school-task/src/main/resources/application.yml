@@ -34,4 +34,9 @@ spring:
   thymeleaf:
     mode: HTML
     cache: false
-
+management:
+  health:
+    mail:
+      enabled: false
+  server:
+    port: 54002
