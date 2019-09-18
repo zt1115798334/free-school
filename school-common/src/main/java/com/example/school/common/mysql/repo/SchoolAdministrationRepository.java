@@ -1,7 +1,9 @@
 package com.example.school.common.mysql.repo;
 
 import com.example.school.common.mysql.entity.SchoolAdministration;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,4 +17,8 @@ import java.util.Optional;
 public interface SchoolAdministrationRepository extends CrudRepository<SchoolAdministration, Long> {
 
     Optional<SchoolAdministration> findByUserId(Long userId);
+
+    @Modifying
+    @Transactional(rollbackFor = RuntimeException.class)
+    void deleteByUserId(Long userId);
 }

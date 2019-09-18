@@ -1,16 +1,20 @@
 package com.example.school.shiro.shiro.filter;
 
 import com.example.school.common.constant.SystemStatusCode;
+import com.example.school.common.mysql.entity.Permission;
+import com.example.school.common.mysql.service.PermissionService;
 import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.google.common.collect.Maps;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.cache.CacheManager;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +34,8 @@ public class ShiroFilterChainManager {
     private StringRedisService stringRedisService;
 
     private final JwtUtils jwtUtils;
+
+    private final PermissionService permissionService;
 
     // 初始化获取过滤链
     public Map<String, Filter> initGetFilters(CacheManager cacheManager) {
@@ -60,10 +66,20 @@ public class ShiroFilterChainManager {
         filterChain.put("/api/logout/logout", "JwtFilter");
         filterChain.put("/app/logout/logout", "JwtFilter");
 
+
+        List<Permission> permissionList = permissionService.findAll();
+        for (Permission permission : permissionList) {
+            if (StringUtils.isNotEmpty(permission.getPermission())) {
+                filterChain.put(permission.getUrl(), "JwtFilter,perms[" + permission.getPermission() + "]");
+            }
+        }
+
         filterChain.put("/app/**", "JwtFilter,perms[" + SystemStatusCode.USER_NORMAL.getName() + "]");
 
         filterChain.put("/api/**", "JwtFilter,perms[" + SystemStatusCode.USER_NORMAL.getName() + "]");
         //   过滤链定义，从上向下顺序执行，一般将 /**放在最为下边
+
+
         return filterChain;
     }
 }

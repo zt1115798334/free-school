@@ -1,6 +1,7 @@
 package com.example.school.shiro.shiro.realm;
 
 import com.example.school.common.constant.properties.AccountProperties;
+import com.example.school.common.mysql.service.PermissionService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.JwtUtils;
@@ -36,6 +37,7 @@ public class RealmManager {
 
     private final JwtUtils jwtUtils;
 
+    private final PermissionService permissionService;
 
     public List<Realm> initGetRealm() {
         List<Realm> realmList = Lists.newArrayList();
@@ -52,6 +54,7 @@ public class RealmManager {
         jwtRealm.setUserService(userService);
         jwtRealm.setJwtUtils(jwtUtils);
         jwtRealm.setStringRedisService(stringRedisService);
+        jwtRealm.setPermissionService(permissionService);
         jwtRealm.setAuthenticationTokenClass(JwtToken.class);
         realmList.add(jwtRealm);
 

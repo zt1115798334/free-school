@@ -9,7 +9,10 @@ import com.example.school.common.base.service.ConstantService;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.mysql.entity.SchoolAdministration;
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.*;
+import com.example.school.common.mysql.service.SchoolAdministrationService;
+import com.example.school.common.mysql.service.SignRecordService;
+import com.example.school.common.mysql.service.UserImgService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.RegularMatchUtils;
 import com.example.school.common.utils.change.RoChangeEntityUtils;
@@ -217,5 +220,20 @@ public class PersonalCenterController extends AbstractController implements Curr
     public ResultMessage normalStudentUser(@NotNull(message = "用户id不能为空") @RequestParam Long userId) {
         userService.normalUser(userId);
         return success("冻结成功");
+    }
+
+    @ApiOperation(value = "解除教务信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "header", name = "authorization", dataType = "String"),
+            @ApiImplicitParam(paramType = "header", name = "deviceInfo", dataType = "String", defaultValue = "mobile")
+    })
+    @PostMapping(value = "relieveSchoolAdministration")
+    @SaveLog(desc = "解除教务信息")
+    @DistributedLock
+    public ResultMessage relieveSchoolAdministration(@NotBlank(message = "手机号不能为空")
+                                                     @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
+                                                     @RequestParam String phone) {
+        userService.relieveSchoolAdministration(phone);
+        return success("解除成功");
     }
 }

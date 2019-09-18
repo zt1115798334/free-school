@@ -31,6 +31,8 @@ public interface UserService extends BaseService<User, Long> {
 
     void saveSchoolAdministration(Long userId, Short schoolCode, String studentId, String studentPwd);
 
+    void relieveSchoolAdministration(String account);
+
     void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd);
 
     void saveSchoolAdministration(String phone, Short schoolCode, String studentId, String studentPwd);

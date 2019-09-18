@@ -58,4 +58,12 @@ public class PersonalCenterControllerTest extends BaseAutoLoginTest {
         url += "findSchoolTimetable";
         postParams(url, params);
     }
+
+    @Test
+    public void relieveSchoolAdministration() {
+        Map<String, Object> params = Maps.newHashMap();
+        params.put("phone", "15600663638");
+        url += "relieveSchoolAdministration";
+        postParams(url, params);
+    }
 }

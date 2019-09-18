@@ -78,6 +78,11 @@ public class SchoolAdministrationServiceImpl implements SchoolAdministrationServ
     }
 
     @Override
+    public void deleteSchoolAdministration(Long userId) {
+        schoolAdministrationRepository.deleteByUserId(userId);
+    }
+
+    @Override
     public void modifySchoolAdministrationUsableStateToNotAvailable(Long userId) {
         Optional<SchoolAdministration> administrationOptional = this.findOptByUserId(userId);
         administrationOptional.ifPresent(schoolAdministration -> {

@@ -29,7 +29,7 @@ spring:
     database: MYSQL
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     open-in-view: false
   servlet:
     multipart:

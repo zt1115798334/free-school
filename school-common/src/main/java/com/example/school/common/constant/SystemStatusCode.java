@@ -22,6 +22,8 @@ public enum SystemStatusCode {
     USER_EXPIRE(1002, "userExpire", "用户状态:到期"),
     USER_DELETE(1003, "userDelete", "用户状态:已删除"),
     USER_NOT_FOUND(1004, "userNotFound", "用户状态:未找到"),
+    USER_TYPE_ADMIN(10001, "admin", "用户状态:管理员"),
+    USER_TYPE_STUDENT_PRESIDENT(10002, "studentPresident", "用户状态:学生会用户"),
 
     ISSUED_JWT_SUCCESS(2000, "issuedJwtSuccess", "jwt 签发成功"),
     ISSUED_JWT_FAILED(2001, "issuedJwtFailed", "jwt 签发失败"),

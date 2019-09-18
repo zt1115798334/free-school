@@ -192,6 +192,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void relieveSchoolAdministration(String account) {
+        User user = this.findByPhoneUnDelete(account);
+        schoolAdministrationService.deleteSchoolAdministration(user.getId());
+    }
+
+    @Override
     public void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd) {
         if (Objects.equal(schoolCode, School.SCHOOL_YJLG.getCode())) {
             verificationService.verificationSchoolOfYJLG(studentId, studentPwd);
