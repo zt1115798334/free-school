@@ -178,7 +178,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     @SaveLog(desc = "保存学生会用户")
     @DistributedLock
     public ResultMessage saveUserStudentPresident(@NotBlank(message = "手机号不能为空")
-                                                  @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
+                                                  @Pattern(regexp = "^1([3456789])\\d{9}$", message = "手机号码格式错误")
                                                   @RequestParam String phone,
                                                   @NotBlank(message = "密码不能为空") @RequestParam String password) {
         userService.saveUserStudentPresident(phone, password);
@@ -231,7 +231,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     @SaveLog(desc = "解除教务信息")
     @DistributedLock
     public ResultMessage relieveSchoolAdministration(@NotBlank(message = "手机号不能为空")
-                                                     @Pattern(regexp = "^1([345789])\\d{9}$", message = "手机号码格式错误")
+                                                     @Pattern(regexp = "^1([3456789])\\d{9}$", message = "手机号码格式错误")
                                                      @RequestParam String phone) {
         userService.relieveSchoolAdministration(phone);
         return success("解除成功");

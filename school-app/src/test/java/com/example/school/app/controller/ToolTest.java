@@ -4,12 +4,12 @@ import com.example.school.app.SchoolAppApplicationTests;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.externalService.verification.VerificationService;
-import com.example.school.common.mysql.service.UserRegistrationService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.tools.ShortMessageTool;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,7 +33,19 @@ public class ToolTest extends SchoolAppApplicationTests {
 
     @Test
     public void ddd() {
-        verificationService.verificationSchoolOfFZKJXY("175041141","Zyx0731..");
+        verificationService.verificationSchoolOfFZKJXY("175041141", "Zyx0731..");
+    }
+
+    @Autowired
+    private UserService userService;
+
+    @Test
+    public void addStudent() {
+        String phone = "1513009759";
+        IntStream.rangeClosed(0, 9).forEach(s -> {
+            userService.saveUserStudent(phone + s, "123456");
+
+        });
     }
 
 }

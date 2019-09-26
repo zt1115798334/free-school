@@ -22,7 +22,7 @@ public abstract class AbsHttpAspect {
 
     private static String methodName;      // 方法名
     private static String paramVal;        //参数信息
-    private static long startTime;         // 开始时间
+    private static ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     protected abstract void aopPointCut();
 
@@ -36,12 +36,12 @@ public abstract class AbsHttpAspect {
         String[] parameterNames = methodSignature.getParameterNames();
 
         paramVal = MStringUtils.parseParams(parameterNames, parameterValues);
-        startTime = System.currentTimeMillis();
+        startTime.set(System.currentTimeMillis());
     }
 
     @After("aopPointCut()")
     private void doAfter() {
-        long E_time = System.currentTimeMillis() - startTime;
+        long E_time = System.currentTimeMillis() - startTime.get();
         log.info("执行 " + methodName + " 耗时为：" + E_time + "ms");
         if (paramVal.length() < 1000) {
             log.info("参数信息：" + paramVal);
