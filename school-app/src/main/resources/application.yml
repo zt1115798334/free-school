@@ -3,11 +3,11 @@ server:
 spring:
   profiles:
     #开发环境
-    active: dev
+#    active: dev
     #测试环境
     #    active: test
     #生产环境
-  #    active: prod
+    active: prod
   freemarker:
     template-loader-path:  classpath:/templates/
     cache: false
