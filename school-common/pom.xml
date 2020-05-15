@@ -15,7 +15,7 @@
     <description>Demo project for Spring Boot</description>
 
     <properties>
-        <jackson.version>2.9.8</jackson.version>
+        <jackson.version>2.11.0</jackson.version>
     </properties>
 
     <dependencies>
