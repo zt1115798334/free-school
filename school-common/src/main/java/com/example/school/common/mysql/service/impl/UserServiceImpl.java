@@ -7,7 +7,6 @@ import com.example.school.common.base.service.PageUtils;
 import com.example.school.common.base.service.SearchFilter;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
-import com.example.school.common.externalService.verification.VerificationService;
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.entity.UserImg;
 import com.example.school.common.mysql.repo.UserRepository;
@@ -57,9 +56,6 @@ public class UserServiceImpl implements UserService {
     private final PermissionService permissionService;
 
     private final SchoolAdministrationService schoolAdministrationService;
-
-    private final VerificationService verificationService;
-
 
     //冻结
     private static final Short FROZEN = AccountState.FROZEN.getCode();
@@ -171,17 +167,17 @@ public class UserServiceImpl implements UserService {
             }
         }
         Optional<User> userOptional = userRepository.findByIdAndDeleteState(userId, UN_DELETED);
-        User userDB = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
-        userDB.setUserName(userName);
-        userDB.setPhone(user.getPhone());
-        userDB.setSex(user.getSex());
-        userDB.setSchoolCode(user.getSchoolCode());
-        userDB.setSchool(SysConst.getSchoolNameByCode(user.getSchoolCode()));
-        userDB.setEmail(user.getEmail());
-        userDB.setPersonalSignature(user.getPersonalSignature());
-        userDB.setUpdatedTime(currentDateTime);
-        userDB.setDeleteState(ConstantService.UN_DELETED);
-        user = userRepository.save(userDB);
+        User userBase = userOptional.orElseThrow(() -> new OperationException("用户已被删除"));
+        userBase.setUserName(userName);
+        userBase.setPhone(user.getPhone());
+        userBase.setSex(user.getSex());
+        userBase.setSchoolCode(user.getSchoolCode());
+        userBase.setSchool(SysConst.getSchoolNameByCode(user.getSchoolCode()));
+        userBase.setEmail(user.getEmail());
+        userBase.setPersonalSignature(user.getPersonalSignature());
+        userBase.setUpdatedTime(currentDateTime);
+        userBase.setDeleteState(ConstantService.UN_DELETED);
+        user = userRepository.save(userBase);
         UserImg userImg = userImgService.findUserImgUrlByOn(user.getId());
         return RoChangeEntityUtils.resultRoUser(user, userImg);
     }
@@ -199,13 +195,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void validateSchoolAdministration(Short schoolCode, String studentId, String studentPwd) {
-        if (Objects.equal(schoolCode, School.SCHOOL_YJLG.getCode())) {
-            verificationService.verificationSchoolOfYJLG(studentId, studentPwd);
-        } else if (Objects.equal(schoolCode, School.SCHOOL_FZKJXY.getCode())) {
-            verificationService.verificationSchoolOfFZKJXY(studentId, studentPwd);
-        } else {
-            throw new OperationException("暂不支持");
-        }
+        throw new OperationException("暂不支持");
     }
 
     @Override

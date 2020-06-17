@@ -38,13 +38,14 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    jedis:
+    password: zkdjredis!
+    timeout: 300s
+    lettuce:
       pool:
         max-active: 8
         max-idle: 8
         max-wait: 10s
         min-idle: 0
-    timeout: 300s
 
 #自定义配置信息
 custom:
@@ -84,10 +85,6 @@ custom:
     remember-me-refresh-expiration: 40 #记住我-刷新时间 单位 天
     token-head: Bearer
     secret: 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
-  verification: #验证
-    hostYJLG: http://127.0.0.1:8000  #验证
-    hostFZKJXY: http://127.0.0.1:8000  #验证
-
 server:
   tomcat:
     basedir: /home/file/temp

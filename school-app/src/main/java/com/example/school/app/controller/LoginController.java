@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.apache.shiro.SecurityUtils;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Arrays;
@@ -75,7 +75,9 @@ public class LoginController extends AbstractController {
             @ApiImplicitParam(paramType = "query", name = "password", dataType = "String", defaultValue = "15130097582"),
             @ApiImplicitParam(paramType = "query", name = "registrationId", dataType = "String")
     })
-    @PostMapping(value = "login")
+    @PostMapping(value = "login",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @SaveLog(desc = "app登录")
     @DistributedLock
     public ResultMessage login(HttpServletRequest request,
@@ -84,8 +86,8 @@ public class LoginController extends AbstractController {
                                @NotBlank(message = "用户设备标识不能为空") @RequestParam String registrationId) {
         try {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
-            String LoginType = SysConst.LoginType.AJAX.getType();
-            PasswordToken token = new PasswordToken(username, password, LoginType);
+            String loginType = SysConst.LoginType.AJAX.getType();
+            PasswordToken token = new PasswordToken(username, password, loginType);
             String accessToken = commonLoginService.login(token, Boolean.TRUE, ip, deviceInfo, registrationId);
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             JSONObject result = new JSONObject();
@@ -116,8 +118,8 @@ public class LoginController extends AbstractController {
                                                @NoticeType @NotBlank(message = "验证类型不能为空") @RequestParam(value = "noticeType") String noticeType) {
         try {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
-            String LoginType = SysConst.LoginType.VERIFICATION_CODE.getType();
-            PasswordToken token = new PasswordToken(noticeContent, "888888", true, verificationCode, noticeType, LoginType);
+            String loginType = SysConst.LoginType.VERIFICATION_CODE.getType();
+            PasswordToken token = new PasswordToken(noticeContent, "888888", true, verificationCode, noticeType, loginType);
             String accessToken = commonLoginService.login(token, true, ip, deviceInfo);
             JSONObject result = new JSONObject();
             result.put("accessToken", accessToken);
@@ -134,7 +136,7 @@ public class LoginController extends AbstractController {
                                                      @NotBlank(message = "手机号或者邮件不能为空") @RequestParam(value = "noticeContent") String noticeContent,
                                                      @NoticeType @NotBlank(message = "验证类型不能为空") @RequestParam(value = "noticeType") String noticeType) {
         if (Objects.equal(SysConst.NoticeType.PHONE.getType(), noticeType)) {
-            userService.findByPhoneUnDelete(noticeContent);  //验证手机号的合法性
+            userService.findByPhoneUnDelete(noticeContent);
         } else {
             throw new OperationException("暂时只支持短信验证码登录");
         }
@@ -237,7 +239,7 @@ public class LoginController extends AbstractController {
     @ApiOperation(value = "检验手机验证码执行重置密码操作")
     public ResultMessage validatePhoneCodeByForget(@NotBlank(message = "手机号不能为空")
                                                    @Pattern(regexp = "^1([3456789])\\d{9}$", message = "手机号码格式错误")
-                                                    @RequestParam String phone) {
+                                                   @RequestParam String phone) {
         userService.validatePhoneByForget(phone);
         return success();
 
