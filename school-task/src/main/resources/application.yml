@@ -1,13 +1,8 @@
 server:
-  port: 8082
+  port: 8092
 spring:
   profiles:
-    #开发环境
     active: dev
-    #测试环境
-#    active: devtools,common-test,database-test,redis-test,rabbitmq-test
-    #生产环境
-#    active: devtools,common-prod,database-prod,redis-prod,rabbitmq-prod
   quartz:
     properties:
       org:

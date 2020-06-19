@@ -1,8 +1,8 @@
 spring:
   datasource:
     primary:
-      jdbc-url: jdbc:mysql://152.136.145.193:3306/free_school?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
+      jdbc-url: jdbc:mysql://81.68.74.244:3306/free_school?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+      username: school
       password: School@2018
       minimum-idle: 5
       maximum-pool-size: 15
@@ -13,8 +13,8 @@ spring:
       connection-timeout: 30000
       connection-test-query: SELECT 1
     quartz-data:
-      jdbc-url: jdbc:mysql://152.136.145.193:3306/free_school_quartz?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-      username: root
+      jdbc-url: jdbc:mysql://81.68.74.244:3306/free_school_quartz?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+      username: school
       password: School@2018
       minimum-idle: 5
       maximum-pool-size: 15

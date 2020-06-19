@@ -1,13 +1,9 @@
 server:
-  port: 8093
+  port: 8091
 spring:
   profiles:
     #开发环境
     active: dev
-    #测试环境
-    #    active: test
-    #生产环境
-#    active: prod
   freemarker:
     template-loader-path:  classpath:/templates/
     cache: false

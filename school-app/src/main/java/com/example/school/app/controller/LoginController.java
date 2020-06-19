@@ -59,7 +59,7 @@ public class LoginController extends AbstractController {
 
     private final VerificationCodeService verificationCodeService;
 
-    private static final String deviceInfo = SysConst.DeviceInfo.MOBILE.getType();
+    private static final String DEVICE_INFO = SysConst.DeviceInfo.MOBILE.getType();
 
     /**
      * 登录
@@ -88,7 +88,7 @@ public class LoginController extends AbstractController {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
             String loginType = SysConst.LoginType.AJAX.getType();
             PasswordToken token = new PasswordToken(username, password, loginType);
-            String accessToken = commonLoginService.login(token, Boolean.TRUE, ip, deviceInfo, registrationId);
+            String accessToken = commonLoginService.login(token, Boolean.TRUE, ip, DEVICE_INFO, registrationId);
             User user = (User) SecurityUtils.getSubject().getPrincipal();
             JSONObject result = new JSONObject();
             result.put("accessToken", accessToken);
@@ -120,7 +120,7 @@ public class LoginController extends AbstractController {
             String ip = NetworkUtil.getLocalIp(RequestResponseUtil.getRequest(request));
             String loginType = SysConst.LoginType.VERIFICATION_CODE.getType();
             PasswordToken token = new PasswordToken(noticeContent, "888888", true, verificationCode, noticeType, loginType);
-            String accessToken = commonLoginService.login(token, true, ip, deviceInfo);
+            String accessToken = commonLoginService.login(token, true, ip, DEVICE_INFO);
             JSONObject result = new JSONObject();
             result.put("accessToken", accessToken);
             return success("登录成功", result);
