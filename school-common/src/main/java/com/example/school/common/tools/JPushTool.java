@@ -15,12 +15,9 @@ import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.report.ReceivedsResult;
-import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.properties.JPushProperties;
-import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.UserRegistrationService;
-import com.example.school.common.mysql.service.UserService;
-import com.example.school.common.redis.StringRedisService;
+import com.example.school.common.mysql.service.UserRegistration;
+import com.example.school.common.mysql.service.User;
 import com.example.school.common.utils.UserUtils;
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.http.HttpMethod;
@@ -34,7 +31,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,9 +46,9 @@ public class JPushTool {
 
     private final JPushProperties jPushProperties;
 
-    private final UserService userService;
+    private final User userService;
 
-    private final UserRegistrationService userRegistrationService;
+    private final UserRegistration userRegistrationService;
 
     /**
      * 发送自定义推送，由APP端拦截信息后再决定是否创建通知(目前APP用此种方式)
@@ -239,7 +235,7 @@ public class JPushTool {
 
     public boolean pushZanInfo(Long topicId, Short topicType, Short zanType, Long toUserId, Long fromUserId) {
         List<String> registrationIdList = userRegistrationService.findRegistrationIdByUserId(fromUserId);
-        User toUser = userService.findOptByUserId(toUserId).orElse(UserUtils.getDefaultUser());
+        com.example.school.common.mysql.entity.User toUser = userService.findOptByUserId(toUserId).orElse(UserUtils.getDefaultUser());
         String title = "你收到来自@" + toUser.getUserName() + "点赞";
         Map<String, String> extrasMap = Maps.newHashMap();
         extrasMap.put("topicId", String.valueOf(topicId));
@@ -250,7 +246,7 @@ public class JPushTool {
 
     public boolean pushCommentInfo(Long topicId, Short topicType, String commentContent, Long toUserId, Long fromUserId) {
         List<String> registrationIdList = userRegistrationService.findRegistrationIdByUserId(fromUserId);
-        User toUser = userService.findOptByUserId(toUserId).orElse(UserUtils.getDefaultUser());
+        com.example.school.common.mysql.entity.User toUser = userService.findOptByUserId(toUserId).orElse(UserUtils.getDefaultUser());
         String title = "你收到来自@" + toUser.getUserName() + "的消息";
         String content = "评论内容：" + commentContent;
         Map<String, String> extrasMap = Maps.newHashMap();

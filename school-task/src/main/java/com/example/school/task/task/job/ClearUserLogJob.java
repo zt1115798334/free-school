@@ -1,7 +1,7 @@
 package com.example.school.task.task.job;
 
-import com.example.school.common.mysql.service.UserLogService;
-import com.example.school.common.mysql.service.VerificationCodeLogService;
+import com.example.school.common.mysql.service.UserLog;
+import com.example.school.common.mysql.service.VerificationCodeLog;
 import com.example.school.common.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
@@ -23,10 +23,10 @@ import java.time.LocalDateTime;
 public class ClearUserLogJob implements Job {
 
     @Resource
-    private UserLogService userLogService;
+    private UserLog userLogService;
 
     @Resource
-    private VerificationCodeLogService verificationCodeLogService;
+    private VerificationCodeLog verificationCodeLogService;
 
 
     /**

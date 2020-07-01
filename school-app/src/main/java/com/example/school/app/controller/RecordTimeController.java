@@ -10,11 +10,8 @@ import com.example.school.common.base.entity.vo.VoCommentPage;
 import com.example.school.common.base.entity.vo.VoPage;
 import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageRecordTime;
-import com.example.school.common.base.service.ConstantService;
+import com.example.school.common.base.service.Constant;
 import com.example.school.common.base.web.AbstractController;
-import com.example.school.common.mysql.entity.Comment;
-import com.example.school.common.mysql.entity.CommentReply;
-import com.example.school.common.mysql.entity.RecordTime;
 import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.shiro.aop.DistributedLock;
@@ -49,19 +46,19 @@ import static com.example.school.common.constant.SysConst.TopicType;
 @AllArgsConstructor
 @RestController
 @RequestMapping("app/recordTime")
-public class RecordTimeController extends AbstractController implements CurrentUser, ConstantService {
+public class RecordTimeController extends AbstractController implements CurrentUser, Constant {
 
-    private final RecordTimeService recordTimeService;
+    private final RecordTime recordTimeService;
 
-    private final TopicImgService topicImgService;
+    private final TopicImg topicImgService;
 
-    private final CommentService commentService;
+    private final Comment commentService;
 
-    private final CommentReplyService commentReplyService;
+    private final CommentReply commentReplyService;
 
-    private final ZanService zanService;
+    private final Zan zanService;
 
-    private final CollectionService collectionService;
+    private final Collection collectionService;
 
     ///////////////////////////////////////////////////////////////////////////
     // 发布
@@ -75,7 +72,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     @SaveLog(desc = "保存时光信息")
     @DistributedLock
     public ResultMessage saveRecordTime(@Valid @RequestBody VoStorageRecordTime storageRecordTime) {
-        RecordTime recordTime = VoChangeEntityUtils.changeStorageRecordTime(storageRecordTime);
+        com.example.school.common.mysql.entity.RecordTime recordTime = VoChangeEntityUtils.changeStorageRecordTime(storageRecordTime);
         recordTime.setUserId(getCurrentUserId());
         RoRecordTime roRecordTime = recordTimeService.saveRecordTime(recordTime);
         return success("保存成功", roRecordTime);
@@ -135,7 +132,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     })
     @PostMapping(value = "findRecordTimeEffective")
     public ResultMessage findRecordTimeEffective(@Valid @RequestBody VoParams params) {
-        RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
+        com.example.school.common.mysql.entity.RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
         PageImpl<RoRecordTime> page = recordTimeService.findRecordTimeEffectivePage(recordTime, getCurrentUserId());
         return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
@@ -147,7 +144,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     })
     @PostMapping(value = "findRecordTimeUser")
     public ResultMessage findRecordTimeUser(@Valid @RequestBody VoParams params) {
-        RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
+        com.example.school.common.mysql.entity.RecordTime recordTime = VoChangeEntityUtils.changeRecordTime(params);
         Long currentUserId = getCurrentUserId();
         recordTime.setUserId(currentUserId);
         PageImpl<RoRecordTime> page = recordTimeService.findRecordTimeUserPage(recordTime, currentUserId);
@@ -237,7 +234,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     })
     @PostMapping(value = "findRecordTimeComment")
     public ResultMessage findRecordTimeComment(@RequestBody VoCommentPage voCommentPage) {
-        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_5.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -272,7 +269,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     })
     @PostMapping(value = "findRecordTimeCommentAndReply")
     public ResultMessage findRecordTimeCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
-        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_5.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -292,7 +289,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
     public ResultMessage saveRecordTimeComment(@NotNull(message = "topicId不能为空") @RequestParam Long topicId,
                                                @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_5, content, getCurrentUserId(), fromUserId);
+        com.example.school.common.mysql.entity.Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_5, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
     }
 
@@ -308,7 +305,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
                                                              @NotNull(message = "commentId不能为空") @RequestParam Long commentId,
                                                              @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                              @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_5, commentId, commentId, content, getCurrentUserId(), fromUserId);
+        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_5, commentId, commentId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 
@@ -325,7 +322,7 @@ public class RecordTimeController extends AbstractController implements CurrentU
                                                            @NotNull(message = "replyId不能为空") @RequestParam Long replyId,
                                                            @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                            @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_5, commentId, replyId, content, getCurrentUserId(), fromUserId);
+        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_5, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 

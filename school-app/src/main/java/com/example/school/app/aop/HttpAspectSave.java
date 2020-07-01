@@ -1,6 +1,6 @@
 package com.example.school.app.aop;
 
-import com.example.school.common.mysql.service.UserLogService;
+import com.example.school.common.mysql.service.UserLog;
 import com.example.school.shiro.aop.AbsHttpAspectSave;
 import com.example.school.shiro.aop.SaveLog;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 public class HttpAspectSave extends AbsHttpAspectSave {
 
 
-    public HttpAspectSave(UserLogService userLogService) {
+    public HttpAspectSave(UserLog userLogService) {
         super(userLogService);
     }
 

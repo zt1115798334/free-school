@@ -5,12 +5,11 @@ import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.SystemStatusCode;
-import com.example.school.common.mysql.entity.User;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.shiro.shiro.token.JwtToken;
-import com.example.school.common.mysql.service.UserService;
+import com.example.school.common.mysql.service.User;
 import com.example.school.shiro.shiro.utils.RequestResponseUtil;
 import com.google.common.base.Objects;
 import lombok.Setter;
@@ -36,7 +35,7 @@ import java.util.Optional;
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     @Setter
-    private UserService userService;
+    private User userService;
     @Setter
     private StringRedisService stringRedisService;
     @Setter
@@ -113,9 +112,9 @@ public class JwtFilter extends BasicHttpAuthenticationFilter {
         Optional<String> refreshTokenOption = stringRedisService.get(jwtMobileRefreshTokenKey);
         if (refreshTokenOption.isPresent()) {
 
-            Optional<User> userOptional = userService.findByIdNotDelete(userId);
+            Optional<com.example.school.common.mysql.entity.User> userOptional = userService.findByIdNotDelete(userId);
             if (userOptional.isPresent()) {
-                User user = userOptional.get();
+                com.example.school.common.mysql.entity.User user = userOptional.get();
                 String accessToken = jwtUtils.generateAccessToken(user);
                 String refreshToken = jwtUtils.generateRefreshToken(user);
                 //token 存储redis

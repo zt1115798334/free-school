@@ -3,10 +3,8 @@ package com.example.school.shiro.shiro.realm;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.SystemStatusCode;
-import com.example.school.common.mysql.entity.Permission;
-import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.PermissionService;
-import com.example.school.common.mysql.service.UserService;
+import com.example.school.common.mysql.service.Permission;
+import com.example.school.common.mysql.service.User;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
@@ -44,11 +42,11 @@ public class JwtRealm extends AuthorizingRealm {
     @Setter
     private JwtUtils jwtUtils;
     @Setter
-    private UserService userService;
+    private User userService;
     @Setter
     private StringRedisService stringRedisService;
     @Setter
-    private PermissionService permissionService;
+    private Permission permissionService;
 
     public Class<?> getAuthenticationTokenClass() {
         // 此realm只支持jwtToken
@@ -58,7 +56,7 @@ public class JwtRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 //        log.info("开始执行权限认证...");
-        User user = (User) principalCollection.getPrimaryPrincipal();
+        com.example.school.common.mysql.entity.User user = (com.example.school.common.mysql.entity.User) principalCollection.getPrimaryPrincipal();
         Set<String> permissionSet = Sets.newHashSet();
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
         if (user != null) {
@@ -69,9 +67,9 @@ public class JwtRealm extends AuthorizingRealm {
             } else {
                 permissionSet.add(SystemStatusCode.USER_NORMAL.getName()); //用户正常
                 //添加系统权限
-                List<Permission> permissionList = permissionService.findByUserId(user.getId());
+                List<com.example.school.common.mysql.entity.Permission> permissionList = permissionService.findByUserId(user.getId());
                 Set<String> collect = permissionList.stream()
-                        .map(Permission::getPermission)
+                        .map(com.example.school.common.mysql.entity.Permission::getPermission)
                         .filter(StringUtils::isNotEmpty)
                         .collect(Collectors.toSet());
                 permissionSet.addAll(collect);
@@ -101,9 +99,9 @@ public class JwtRealm extends AuthorizingRealm {
                 Optional<String> accessTokenRedis = stringRedisService.get(CacheKeys.getJwtAccessTokenKey(deviceInfo, userId, ipLong));
                 if (accessTokenRedis.isPresent()) {
                     if (Objects.equal(accessTokenRedis.get(), token)) {
-                        Optional<User> userOptional = userService.findByIdNotDelete(userId);
+                        Optional<com.example.school.common.mysql.entity.User> userOptional = userService.findByIdNotDelete(userId);
                         if (userOptional.isPresent()) {
-                            User user = userOptional.get();
+                            com.example.school.common.mysql.entity.User user = userOptional.get();
                             if (jwtUtils.validateToken(token, user)) {
                                 return new SimpleAuthenticationInfo(user, token, getName());
                             } else {

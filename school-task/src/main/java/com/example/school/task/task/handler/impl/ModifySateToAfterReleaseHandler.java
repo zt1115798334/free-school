@@ -22,15 +22,15 @@ import java.util.stream.Collectors;
 @Component("modifySateToAfterReleaseHandler")
 public class ModifySateToAfterReleaseHandler extends UserPageHandler {
 
-    private final TransactionService transactionService;
+    private final Transaction transactionService;
 
-    private final RecordTimeService recordTimeService;
+    private final RecordTime recordTimeService;
 
-    private final KnowingService knowingService;
+    private final Knowing knowingService;
 
-    private final InformationService informationService;
+    private final Information informationService;
 
-    private final QuestionBankService questionBankService;
+    private final QuestionBank questionBankService;
 
     @Override
     protected int handleDataOfPerPage(List<User> list, int pageNumber) {

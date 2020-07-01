@@ -3,7 +3,7 @@ package com.example.school.app.controller;
 import com.example.school.app.SchoolAppApplicationTests;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
-import com.example.school.common.mysql.service.UserService;
+import com.example.school.common.mysql.service.User;
 import com.example.school.common.tools.ShortMessageTool;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class ToolTest extends SchoolAppApplicationTests {
     }
 
     @Autowired
-    private UserService userService;
+    private User userService;
 
     @Test
     public void addStudent() {

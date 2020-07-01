@@ -3,8 +3,7 @@ package com.example.school.shiro.shiro.realm;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.properties.AccountProperties;
-import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.UserService;
+import com.example.school.common.mysql.service.User;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.MD5Utils;
@@ -33,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class PasswordRealm extends AuthorizingRealm {
 
     @Setter
-    private UserService userService;
+    private User userService;
 
     @Setter
     private AccountProperties accountProperties;
@@ -77,13 +76,13 @@ public class PasswordRealm extends AuthorizingRealm {
             }
 
             //密码进行加密处理  明文为  password+name
-            Optional<User> userOptional = userService.findOptByAccount(name);
+            Optional<com.example.school.common.mysql.entity.User> userOptional = userService.findOptByAccount(name);
             if (!userOptional.isPresent()) {
                 //登录错误开始计数
                 increment(shiroLoginCountKey, shiroIsLockKey);
                 throw new AccountException("账户不存在！");
             }
-            User sysUser = userOptional.get();
+            com.example.school.common.mysql.entity.User sysUser = userOptional.get();
             String userState = UserUtils.checkUserState(sysUser);
             if (StringUtils.isNotBlank(userState)) {
                 //登录错误开始计数
@@ -111,11 +110,11 @@ public class PasswordRealm extends AuthorizingRealm {
         if (Objects.equal(SysConst.LoginType.TOKEN.getType(), loginType)) {    //token登陆
             String apiToken = token.getToken();
             String apiTime = token.getTime();
-            Optional<User> userOptional = userService.findOptByAccount(name);
+            Optional<com.example.school.common.mysql.entity.User> userOptional = userService.findOptByAccount(name);
             if (!userOptional.isPresent()) {
                 throw new AccountException("账户不存在！");
             }
-            User sysUser = userOptional.get();
+            com.example.school.common.mysql.entity.User sysUser = userOptional.get();
             String userState = UserUtils.checkUserState(sysUser);
             if (StringUtils.isNotBlank(userState)) {
                 throw new AccountException(userState);
@@ -139,7 +138,7 @@ public class PasswordRealm extends AuthorizingRealm {
                 }
             }
 
-            Optional<User> userOptional = Optional.empty();
+            Optional<com.example.school.common.mysql.entity.User> userOptional = Optional.empty();
             if (Objects.equal(noticeType, SysConst.NoticeType.PHONE.getType())) {
                 userOptional = userService.findOptByPhone(name);
             }
@@ -147,7 +146,7 @@ public class PasswordRealm extends AuthorizingRealm {
                 increment(shiroLoginCountKey, shiroIsLockKey);
                 throw new AccountException("手机号不存在！");
             }
-            User sysUser = userOptional.get();
+            com.example.school.common.mysql.entity.User sysUser = userOptional.get();
             String userState = UserUtils.checkUserState(userOptional.get());
             if (StringUtils.isNotBlank(userState)) {
                 increment(shiroLoginCountKey, shiroIsLockKey);

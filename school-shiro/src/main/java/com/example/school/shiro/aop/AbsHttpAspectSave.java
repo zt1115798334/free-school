@@ -3,8 +3,7 @@ package com.example.school.shiro.aop;
 import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.entity.UserLog;
-import com.example.school.common.mysql.service.UserLogService;
+import com.example.school.common.mysql.service.UserLog;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.MStringUtils;
 import com.example.school.common.utils.NetworkUtil;
@@ -37,7 +36,7 @@ public abstract class AbsHttpAspectSave implements CurrentUser {
     private static String paramVal;        //参数信息
     private static String ip;              //ip地址
 
-    private final UserLogService userLogService;
+    private final UserLog userLogService;
 
     protected abstract void aopPointCut(SaveLog logs);
 
@@ -68,7 +67,7 @@ public abstract class AbsHttpAspectSave implements CurrentUser {
             userId = currentUser.getId();
             username = currentUser.getUserName();
         }
-        UserLog userLog = new UserLog(userId, username, desc, paramVal, ip, DateUtils.currentDateTime(), className, methodName, response);
+        com.example.school.common.mysql.entity.UserLog userLog = new com.example.school.common.mysql.entity.UserLog(userId, username, desc, paramVal, ip, DateUtils.currentDateTime(), className, methodName, response);
         userLogService.save(userLog);
     }
 }
