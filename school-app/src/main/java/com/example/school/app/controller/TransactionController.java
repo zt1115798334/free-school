@@ -12,6 +12,9 @@ import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageTransaction;
 import com.example.school.common.base.service.Constant;
 import com.example.school.common.base.web.AbstractController;
+import com.example.school.common.mysql.entity.Comment;
+import com.example.school.common.mysql.entity.CommentReply;
+import com.example.school.common.mysql.entity.Transaction;
 import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.shiro.aop.DistributedLock;
@@ -48,17 +51,17 @@ import static com.example.school.common.constant.SysConst.TopicType;
 @RequestMapping("app/transaction")
 public class TransactionController extends AbstractController implements CurrentUser, Constant {
 
-    private final Transaction transactionService;
+    private final TransactionService transactionService;
 
-    private final TopicImg topicImgService;
+    private final TopicImgService topicImgService;
 
-    private final Comment commentService;
+    private final CommentService commentService;
 
-    private final CommentReply commentReplyService;
+    private final CommentReplyService commentReplyService;
 
-    private final Zan zanService;
+    private final ZanService zanService;
 
-    private final Collection collectionService;
+    private final CollectionService collectionService;
 
     ///////////////////////////////////////////////////////////////////////////
     // 发布
@@ -72,7 +75,7 @@ public class TransactionController extends AbstractController implements Current
     @SaveLog(desc = "保存交易信息")
     @DistributedLock
     public ResultMessage saveTransaction(@Valid @RequestBody VoStorageTransaction storageTransaction) {
-        com.example.school.common.mysql.entity.Transaction transaction = VoChangeEntityUtils.changeStorageTransaction(storageTransaction);
+        Transaction transaction = VoChangeEntityUtils.changeStorageTransaction(storageTransaction);
         transaction.setUserId(getCurrentUserId());
         RoTransaction roTransaction = transactionService.saveTransaction(transaction);
         return success("保存成功", roTransaction);
@@ -132,7 +135,7 @@ public class TransactionController extends AbstractController implements Current
     })
     @PostMapping(value = "findTransactionEffective")
     public ResultMessage findTransactionEffective(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
+        Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
         PageImpl<RoTransaction> page = transactionService.findTransactionEffectivePage(transaction, getCurrentUserId());
         return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
@@ -144,7 +147,7 @@ public class TransactionController extends AbstractController implements Current
     })
     @PostMapping(value = "findTransactionUser")
     public ResultMessage findTransactionUser(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
+        Transaction transaction = VoChangeEntityUtils.changeTransaction(params);
         Long currentUserId = getCurrentUserId();
         transaction.setUserId(currentUserId);
         PageImpl<RoTransaction> page = transactionService.findTransactionUserPage(transaction, currentUserId);
@@ -234,7 +237,7 @@ public class TransactionController extends AbstractController implements Current
     })
     @PostMapping(value = "findTransactionComment")
     public ResultMessage findTransactionComment(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_1.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -269,7 +272,7 @@ public class TransactionController extends AbstractController implements Current
     })
     @PostMapping(value = "findTransactionCommentAndReply")
     public ResultMessage findTransactionCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_1.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -289,7 +292,7 @@ public class TransactionController extends AbstractController implements Current
     public ResultMessage saveTransactionComment(@NotNull(message = "topicId不能为空") @RequestParam Long topicId,
                                                 @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                 @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_1, content, getCurrentUserId(), fromUserId);
+        Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_1, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
     }
 
@@ -305,7 +308,7 @@ public class TransactionController extends AbstractController implements Current
                                                               @NotNull(message = "commentId不能为空") @RequestParam Long commentId,
                                                               @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                               @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_1, commentId, commentId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_1, commentId, commentId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 
@@ -322,7 +325,7 @@ public class TransactionController extends AbstractController implements Current
                                                             @NotNull(message = "replyId不能为空") @RequestParam Long replyId,
                                                             @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                             @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_1, commentId, replyId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_1, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 

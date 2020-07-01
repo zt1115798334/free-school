@@ -12,6 +12,9 @@ import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageInformation;
 import com.example.school.common.base.service.Constant;
 import com.example.school.common.base.web.AbstractController;
+import com.example.school.common.mysql.entity.Comment;
+import com.example.school.common.mysql.entity.CommentReply;
+import com.example.school.common.mysql.entity.Information;
 import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.shiro.aop.DistributedLock;
@@ -48,17 +51,17 @@ import static com.example.school.common.constant.SysConst.TopicType;
 @RequestMapping("app/information")
 public class InformationController extends AbstractController implements CurrentUser, Constant {
 
-    private final Information informationService;
+    private final InformationService informationService;
 
-    private final TopicImg topicImgService;
+    private final TopicImgService topicImgService;
 
-    private final Comment commentService;
+    private final CommentService commentService;
 
-    private final CommentReply commentReplyService;
+    private final CommentReplyService commentReplyService;
 
-    private final Zan zanService;
+    private final ZanService zanService;
 
-    private final Collection collectionService;
+    private final CollectionService collectionService;
 
     ///////////////////////////////////////////////////////////////////////////
     // 发布
@@ -72,7 +75,7 @@ public class InformationController extends AbstractController implements Current
     @SaveLog(desc = "保存资讯信息")
     @DistributedLock
     public ResultMessage saveInformation(@Valid @RequestBody VoStorageInformation storageInformation) {
-        com.example.school.common.mysql.entity.Information information = VoChangeEntityUtils.changeStorageInformation(storageInformation);
+        Information information = VoChangeEntityUtils.changeStorageInformation(storageInformation);
         information.setUserId(getCurrentUserId());
         RoInformation roInformation = informationService.saveInformation(information);
         return success("保存成功", roInformation);
@@ -132,7 +135,7 @@ public class InformationController extends AbstractController implements Current
     })
     @PostMapping(value = "findInformationEffective")
     public ResultMessage findInformationEffective(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.Information information = VoChangeEntityUtils.changeInformation(params);
+        Information information = VoChangeEntityUtils.changeInformation(params);
         PageImpl<RoInformation> page = informationService.findInformationEffectivePage(information, getCurrentUserId());
         return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
@@ -144,7 +147,7 @@ public class InformationController extends AbstractController implements Current
     })
     @PostMapping(value = "findInformationUser")
     public ResultMessage findInformationUser(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.Information information = VoChangeEntityUtils.changeInformation(params);
+        Information information = VoChangeEntityUtils.changeInformation(params);
         Long currentUserId = getCurrentUserId();
         information.setUserId(currentUserId);
         PageImpl<RoInformation> page = informationService.findInformationUserPage(information, currentUserId);
@@ -235,7 +238,7 @@ public class InformationController extends AbstractController implements Current
     })
     @PostMapping(value = "findInformationComment")
     public ResultMessage findInformationComment(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_2.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -270,7 +273,7 @@ public class InformationController extends AbstractController implements Current
     })
     @PostMapping(value = "findInformationCommentAndReply")
     public ResultMessage findInformationCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_2.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -290,7 +293,7 @@ public class InformationController extends AbstractController implements Current
     public ResultMessage saveInformationComment(@NotNull(message = "topicId不能为空") @RequestParam Long topicId,
                                                 @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                 @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_2, content, getCurrentUserId(), fromUserId);
+        Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_2, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
     }
 
@@ -306,7 +309,7 @@ public class InformationController extends AbstractController implements Current
                                                               @NotNull(message = "commentId不能为空") @RequestParam Long commentId,
                                                               @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                               @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_2, commentId, commentId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_2, commentId, commentId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 
@@ -323,7 +326,7 @@ public class InformationController extends AbstractController implements Current
                                                             @NotNull(message = "replyId不能为空") @RequestParam Long replyId,
                                                             @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                             @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_2, commentId, replyId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_2, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 

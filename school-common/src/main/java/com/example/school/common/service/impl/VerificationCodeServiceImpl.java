@@ -4,7 +4,8 @@ import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.properties.VerificationCodeProperties;
 import com.example.school.common.exception.custom.OperationException;
-import com.example.school.common.mysql.service.VerificationCodeLog;
+import com.example.school.common.mysql.entity.VerificationCodeLog;
+import com.example.school.common.mysql.service.VerificationCodeLogService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.tools.ShortMessageTool;
@@ -35,7 +36,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
     private final StringRedisService stringRedisService;
 
-    private final VerificationCodeLog verificationCodeLogService;
+    private final VerificationCodeLogService verificationCodeLogService;
 
     @Override
     public void sendCode(String ip, String noticeContent, String noticeType, String codeType) {
@@ -84,7 +85,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
             stringRedisService.setContainExpire(codeKey, code, verificationCodeProperties.getCodeExpires(), TimeUnit.MINUTES);
             throw new OperationException("暂不支持");
         }
-        com.example.school.common.mysql.entity.VerificationCodeLog verificationCodeLog = new com.example.school.common.mysql.entity.VerificationCodeLog(noticeContent, noticeType, code, codeType, ip, DateUtils.currentDateTime());
+        VerificationCodeLog verificationCodeLog = new VerificationCodeLog(noticeContent, noticeType, code, codeType, ip, DateUtils.currentDateTime());
         verificationCodeLogService.save(verificationCodeLog);
     }
 

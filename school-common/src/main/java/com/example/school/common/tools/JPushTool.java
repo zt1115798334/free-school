@@ -16,8 +16,8 @@ import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import cn.jpush.api.report.ReceivedsResult;
 import com.example.school.common.constant.properties.JPushProperties;
-import com.example.school.common.mysql.service.UserRegistration;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.service.UserRegistrationService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.UserUtils;
 import com.google.common.collect.Maps;
 import io.netty.handler.codec.http.HttpMethod;
@@ -46,9 +46,9 @@ public class JPushTool {
 
     private final JPushProperties jPushProperties;
 
-    private final User userService;
+    private final UserService userService;
 
-    private final UserRegistration userRegistrationService;
+    private final UserRegistrationService userRegistrationService;
 
     /**
      * 发送自定义推送，由APP端拦截信息后再决定是否创建通知(目前APP用此种方式)

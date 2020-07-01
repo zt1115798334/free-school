@@ -1,8 +1,9 @@
 package com.example.school.shiro.shiro.filter;
 
 import com.example.school.common.constant.SystemStatusCode;
-import com.example.school.common.mysql.service.Permission;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.entity.Permission;
+import com.example.school.common.mysql.service.PermissionService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.google.common.collect.Maps;
@@ -28,15 +29,17 @@ import java.util.Map;
 @AllArgsConstructor
 public class ShiroFilterChainManager {
 
-    private final User userService;
+    private final UserService userService;
 
     private StringRedisService stringRedisService;
 
     private final JwtUtils jwtUtils;
 
-    private final Permission permissionService;
+    private final PermissionService permissionService;
 
-    // 初始化获取过滤链
+    /**
+     * 初始化获取过滤链
+     */
     public Map<String, Filter> initGetFilters(CacheManager cacheManager) {
         Map<String, Filter> filters = Maps.newLinkedHashMap();
         JwtFilter jwtFilter = new JwtFilter();
@@ -66,8 +69,8 @@ public class ShiroFilterChainManager {
         filterChain.put("/app/logout/logout", "JwtFilter");
 
 
-        List<com.example.school.common.mysql.entity.Permission> permissionList = permissionService.findAll();
-        for (com.example.school.common.mysql.entity.Permission permission : permissionList) {
+        List<Permission> permissionList = permissionService.findAll();
+        for (Permission permission : permissionList) {
             if (StringUtils.isNotEmpty(permission.getPermission())) {
                 filterChain.put(permission.getUrl(), "JwtFilter,perms[" + permission.getPermission() + "]");
             }

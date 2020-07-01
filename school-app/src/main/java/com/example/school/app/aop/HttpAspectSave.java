@@ -1,6 +1,6 @@
 package com.example.school.app.aop;
 
-import com.example.school.common.mysql.service.UserLog;
+import com.example.school.common.mysql.service.UserLogService;
 import com.example.school.shiro.aop.AbsHttpAspectSave;
 import com.example.school.shiro.aop.SaveLog;
 import org.aspectj.lang.annotation.Aspect;
@@ -19,13 +19,14 @@ import org.springframework.stereotype.Component;
 public class HttpAspectSave extends AbsHttpAspectSave {
 
 
-    public HttpAspectSave(UserLog userLogService) {
+    public HttpAspectSave(UserLogService userLogService) {
         super(userLogService);
     }
 
     /**
      * 切入点
      */
+    @Override
     @Pointcut("execution( * com.example.school.app.controller..*.*(..)) && @annotation(logs)")
     public void aopPointCut(SaveLog logs) {
 

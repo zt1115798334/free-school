@@ -1,10 +1,9 @@
 package com.example.school.task.task.job;
 
-import com.example.school.task.task.handler.UserPageHandler;
+import com.example.school.task.task.handler.BaseUserPageHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,7 +20,7 @@ import javax.annotation.Resource;
 public class ModifySateToAfterReleaseJob implements Job {
 
     @Resource(name = "modifySateToAfterReleaseHandler")
-    private UserPageHandler modifySateToAfterReleaseHandler;
+    private BaseUserPageHandler modifySateToAfterReleaseHandler;
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {

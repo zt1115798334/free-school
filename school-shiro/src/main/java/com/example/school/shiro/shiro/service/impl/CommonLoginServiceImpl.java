@@ -4,7 +4,8 @@ import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.exception.custom.OperationException;
 import com.example.school.common.mysql.entity.User;
-import com.example.school.common.mysql.service.UserRegistration;
+import com.example.school.common.mysql.entity.UserRegistration;
+import com.example.school.common.mysql.service.UserRegistrationService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
@@ -34,7 +35,7 @@ public class CommonLoginServiceImpl implements CommonLoginService {
 
     private final StringRedisService stringRedisService;
 
-    private final UserRegistration userRegistrationService;
+    private final UserRegistrationService userRegistrationService;
 
     @Override
     public String login(PasswordToken token, String ip, String deviceInfo) throws OperationException {
@@ -69,7 +70,7 @@ public class CommonLoginServiceImpl implements CommonLoginService {
             stringRedisService.saveRefreshToken(CacheKeys.getJpushTokenKey(userId, registrationId), registrationId, rememberMe);
         }
         if (StringUtils.equals(deviceInfo, SysConst.DeviceInfo.MOBILE.getType())) {
-            com.example.school.common.mysql.entity.UserRegistration userRegistration = new com.example.school.common.mysql.entity.UserRegistration(userId, registrationId, accessToken);
+            UserRegistration userRegistration = new UserRegistration(userId, registrationId, accessToken);
             userRegistrationService.save(userRegistration);
         }
 

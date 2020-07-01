@@ -3,7 +3,7 @@ package com.example.school.shiro.shiro.realm;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.properties.AccountProperties;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.MD5Utils;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class PasswordRealm extends AuthorizingRealm {
 
     @Setter
-    private User userService;
+    private UserService userService;
 
     @Setter
     private AccountProperties accountProperties;

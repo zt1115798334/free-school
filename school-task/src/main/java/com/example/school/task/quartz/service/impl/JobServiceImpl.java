@@ -30,6 +30,7 @@ public class JobServiceImpl implements JobService {
     /**
      * 所有任务列表
      */
+    @Override
     public List<QuartzEntity> list() throws SchedulerException {
         List<QuartzEntity> list = Lists.newArrayList();
         for (String groupJob : scheduler.getJobGroupNames()) {
@@ -68,6 +69,7 @@ public class JobServiceImpl implements JobService {
      *
      * @param info info
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void addJob(QuartzEntity info) throws SchedulerException, ClassNotFoundException {
         String jobName = info.getJobName(),
@@ -84,8 +86,8 @@ public class JobServiceImpl implements JobService {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         JobKey jobKey = JobKey.jobKey(jobName, jobGroup);
 
-        CronScheduleBuilder schedBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
-        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withDescription(createTime).withSchedule(schedBuilder).build();
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(cronExpression).withMisfireHandlingInstructionDoNothing();
+        CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withDescription(createTime).withSchedule(scheduleBuilder).build();
 
 
         Class<? extends Job> clazz = (Class<? extends Job>) Class.forName(jobClassName);
@@ -99,6 +101,7 @@ public class JobServiceImpl implements JobService {
      *
      * @param info info
      */
+    @Override
     public void edit(QuartzEntity info) throws SchedulerException {
         String jobName = info.getJobName(),
                 jobGroup = info.getJobGroup(),
@@ -129,6 +132,7 @@ public class JobServiceImpl implements JobService {
      * @param jobName  jobName
      * @param jobGroup jobGroup
      */
+    @Override
     public void delete(String jobName, String jobGroup) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
 
@@ -148,6 +152,7 @@ public class JobServiceImpl implements JobService {
      * @param jobName  jobName
      * @param jobGroup jobGroup
      */
+    @Override
     public void pause(String jobName, String jobGroup) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         if (checkExists(jobName, jobGroup)) {
@@ -163,6 +168,7 @@ public class JobServiceImpl implements JobService {
      * @param jobName  jobName
      * @param jobGroup jobGroup
      */
+    @Override
     public void resume(String jobName, String jobGroup) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
         if (checkExists(jobName, jobGroup)) {
@@ -179,6 +185,7 @@ public class JobServiceImpl implements JobService {
      * @param jobGroup jobGroup
      * @throws SchedulerException 自定义异常
      */
+    @Override
     public boolean checkExists(String jobName, String jobGroup) throws SchedulerException {
         TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroup);
 

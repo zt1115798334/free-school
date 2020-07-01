@@ -1,6 +1,6 @@
 package com.example.school;
 
-import com.example.school.task.task.handler.UserPageHandler;
+import com.example.school.task.task.handler.BaseUserPageHandler;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.Scheduler;
@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 public class SchoolTaskApplicationTests {
 
     @Resource(name = "modifySateToAfterReleaseHandler")
-    private UserPageHandler modifySateToAfterReleaseHandler;
+    private BaseUserPageHandler modifySateToAfterReleaseHandler;
 
     @Test
     public void contextLoads() {

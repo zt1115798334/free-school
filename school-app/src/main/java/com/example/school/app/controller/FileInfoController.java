@@ -1,6 +1,7 @@
 package com.example.school.app.controller;
 
-import com.example.school.common.mysql.service.FileInfo;
+import com.example.school.common.mysql.entity.FileInfo;
+import com.example.school.common.mysql.service.FileInfoService;
 import com.example.school.common.utils.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,13 +29,13 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class FileInfoController {
 
-    private final FileInfo fileInfoService;
+    private final FileInfoService fileInfoService;
 
     @ApiOperation(value = "展示原始图片信息")
     @GetMapping(value = "findOriginalImg")
     public void findOriginalImg(HttpServletRequest request, HttpServletResponse response,
                                 @NotNull(message = "id不能为空") @RequestParam Long topicImgId) throws Exception {
-        com.example.school.common.mysql.entity.FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
+        FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
         FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getOriginalFileName());
     }
 
@@ -42,7 +43,7 @@ public class FileInfoController {
     @GetMapping(value = "findCompressImg")
     public void findCompressImg(HttpServletRequest request, HttpServletResponse response,
                                 @NotNull(message = "id不能为空") @RequestParam Long topicImgId) throws Exception {
-        com.example.school.common.mysql.entity.FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
+        FileInfo fileInfo = fileInfoService.findFileInfo(topicImgId);
         FileUtils.showFile(request, response, fileInfo.getCompressFilePath(), fileInfo.getOriginalFileName());
     }
 
@@ -50,7 +51,7 @@ public class FileInfoController {
     @GetMapping(value = "findQuestionBankPdf")
     public void findQuestionBankPdf(HttpServletRequest request, HttpServletResponse response,
                                     @NotNull(message = "id不能为空") @RequestParam Long topicFileId) throws Exception {
-        com.example.school.common.mysql.entity.FileInfo fileInfo = fileInfoService.findFileInfo(topicFileId);
+        FileInfo fileInfo = fileInfoService.findFileInfo(topicFileId);
         FileUtils.showFile(request, response, fileInfo.getFilePath(), fileInfo.getOriginalFileName());
     }
 

@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.school.common.base.entity.ResultMessage;
 import com.example.school.common.base.web.AbstractController;
 import com.example.school.common.constant.SysConst;
-import com.example.school.common.mysql.service.AppManage;
+import com.example.school.common.mysql.entity.AppManage;
+import com.example.school.common.mysql.service.AppManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -33,12 +34,12 @@ import java.io.IOException;
 @AllArgsConstructor
 public class AppVersionController extends AbstractController {
 
-    private final AppManage appManageService;
+    private final AppManageService appManageService;
 
     @ApiOperation(value = "获取版本信息")
     @GetMapping(value = "findAndroidAppInfo")
     public ResultMessage findAndroidAppInfo() {
-        com.example.school.common.mysql.entity.AppManage appManage = appManageService.findAppManager(SysConst.AppSystemType.ANDROID.getType());
+        AppManage appManage = appManageService.findAppManager(SysConst.AppSystemType.ANDROID.getType());
         JSONObject result = new JSONObject();
         result.put("version", appManage.getVersion());
         result.put("versionCode", appManage.getVersionCode());

@@ -7,10 +7,12 @@ import com.example.school.common.base.entity.vo.VoStorageUser;
 import com.example.school.common.base.entity.vo.VoUser;
 import com.example.school.common.base.service.Constant;
 import com.example.school.common.base.web.AbstractController;
-import com.example.school.common.mysql.service.SchoolAdministration;
-import com.example.school.common.mysql.service.SignRecord;
-import com.example.school.common.mysql.service.UserImg;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.entity.SchoolAdministration;
+import com.example.school.common.mysql.entity.User;
+import com.example.school.common.mysql.service.SchoolAdministrationService;
+import com.example.school.common.mysql.service.SignRecordService;
+import com.example.school.common.mysql.service.UserImgService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.utils.DateUtils;
 import com.example.school.common.utils.RegularMatchUtils;
 import com.example.school.common.utils.change.RoChangeEntityUtils;
@@ -48,13 +50,13 @@ import java.util.List;
 @RequestMapping("app/personalCenter")
 public class PersonalCenterController extends AbstractController implements CurrentUser, Constant {
 
-    private final User userService;
+    private final UserService userService;
 
-    private final UserImg userImgService;
+    private final UserImgService userImgService;
 
-    private final SignRecord signRecordService;
+    private final SignRecordService signRecordService;
 
-    private final SchoolAdministration schoolAdministrationService;
+    private final SchoolAdministrationService schoolAdministrationService;
 
     @ApiOperation(value = "显示用户信息")
     @ApiImplicitParams({
@@ -76,7 +78,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     @SaveLog(desc = "保存用户信息")
     @DistributedLock
     public ResultMessage saveUserInfo(@RequestBody VoStorageUser voStorageUser) {
-        com.example.school.common.mysql.entity.User user = VoChangeEntityUtils.changeUser(voStorageUser);
+        User user = VoChangeEntityUtils.changeUser(voStorageUser);
         user.setId(getCurrentUserId());
         RoUser roUser = userService.saveUser(user);
         return success(roUser);
@@ -146,7 +148,7 @@ public class PersonalCenterController extends AbstractController implements Curr
     })
     @PostMapping(value = "findSchoolAdministration")
     public ResultMessage findSchoolAdministration() {
-        com.example.school.common.mysql.entity.SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(getCurrentUserId());
+        SchoolAdministration schoolAdministration = schoolAdministrationService.findSchoolAdministration(getCurrentUserId());
         return success(RoChangeEntityUtils.resultRoSchoolAdministration(schoolAdministration));
     }
 

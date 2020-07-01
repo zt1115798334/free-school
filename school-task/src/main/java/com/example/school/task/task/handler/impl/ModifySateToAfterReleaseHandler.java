@@ -2,7 +2,7 @@ package com.example.school.task.task.handler.impl;
 
 import com.example.school.common.mysql.entity.User;
 import com.example.school.common.mysql.service.*;
-import com.example.school.task.task.handler.UserPageHandler;
+import com.example.school.task.task.handler.BaseUserPageHandler;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,17 +20,17 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 @Component("modifySateToAfterReleaseHandler")
-public class ModifySateToAfterReleaseHandler extends UserPageHandler {
+public class ModifySateToAfterReleaseHandler extends BaseUserPageHandler {
 
-    private final Transaction transactionService;
+    private final TransactionService transactionService;
 
-    private final RecordTime recordTimeService;
+    private final RecordTimeService recordTimeService;
 
-    private final Knowing knowingService;
+    private final KnowingService knowingService;
 
-    private final Information informationService;
+    private final InformationService informationService;
 
-    private final QuestionBank questionBankService;
+    private final QuestionBankService questionBankService;
 
     @Override
     protected int handleDataOfPerPage(List<User> list, int pageNumber) {

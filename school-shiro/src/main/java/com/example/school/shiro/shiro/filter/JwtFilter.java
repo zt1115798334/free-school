@@ -9,7 +9,7 @@ import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
 import com.example.school.shiro.shiro.token.JwtToken;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.shiro.shiro.utils.RequestResponseUtil;
 import com.google.common.base.Objects;
 import lombok.Setter;
@@ -35,7 +35,7 @@ import java.util.Optional;
 public class JwtFilter extends BasicHttpAuthenticationFilter {
 
     @Setter
-    private User userService;
+    private UserService userService;
     @Setter
     private StringRedisService stringRedisService;
     @Setter

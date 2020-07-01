@@ -12,6 +12,9 @@ import com.example.school.common.base.entity.vo.VoParams;
 import com.example.school.common.base.entity.vo.VoStorageQuestionBank;
 import com.example.school.common.base.service.Constant;
 import com.example.school.common.base.web.AbstractController;
+import com.example.school.common.mysql.entity.Comment;
+import com.example.school.common.mysql.entity.CommentReply;
+import com.example.school.common.mysql.entity.QuestionBank;
 import com.example.school.common.mysql.service.*;
 import com.example.school.common.utils.change.VoChangeEntityUtils;
 import com.example.school.shiro.aop.DistributedLock;
@@ -47,17 +50,17 @@ import static com.example.school.common.constant.SysConst.TopicType;
 @RestController
 @RequestMapping("app/questionBank")
 public class QuestionBankController extends AbstractController implements CurrentUser, Constant {
-    private final QuestionBank questionBankService;
+    private final QuestionBankService questionBankService;
 
-    private final TopicImg topicImgService;
+    private final TopicImgService topicImgService;
 
-    private final Comment commentService;
+    private final CommentService commentService;
 
-    private final CommentReply commentReplyService;
+    private final CommentReplyService commentReplyService;
 
-    private final Zan zanService;
+    private final ZanService zanService;
 
-    private final Collection collectionService;
+    private final CollectionService collectionService;
 
     ///////////////////////////////////////////////////////////////////////////
     // 发布
@@ -71,7 +74,7 @@ public class QuestionBankController extends AbstractController implements Curren
     @SaveLog(desc = "保存题库信息")
     @DistributedLock
     public ResultMessage saveQuestionBank(@Valid @RequestBody VoStorageQuestionBank storageQuestionBank) {
-        com.example.school.common.mysql.entity.QuestionBank questionBank = VoChangeEntityUtils.changeStorageQuestionBank(storageQuestionBank);
+        QuestionBank questionBank = VoChangeEntityUtils.changeStorageQuestionBank(storageQuestionBank);
         questionBank.setUserId(getCurrentUserId());
         RoQuestionBank roQuestionBank = questionBankService.saveQuestionBank(questionBank);
         return success("保存成功", roQuestionBank);
@@ -147,7 +150,7 @@ public class QuestionBankController extends AbstractController implements Curren
     })
     @PostMapping(value = "findQuestionBankEffective")
     public ResultMessage findQuestionBankEffective(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.QuestionBank questionBank = VoChangeEntityUtils.changeQuestionBank(params);
+        QuestionBank questionBank = VoChangeEntityUtils.changeQuestionBank(params);
         PageImpl<RoQuestionBank> page = questionBankService.findQuestionBankEffectivePage(questionBank, getCurrentUserId());
         return success(page.getPageable().getPageNumber(), page.getPageable().getPageSize(), page.getTotalElements(), page.getContent());
     }
@@ -159,7 +162,7 @@ public class QuestionBankController extends AbstractController implements Curren
     })
     @PostMapping(value = "findQuestionBankUser")
     public ResultMessage findQuestionBankUser(@Valid @RequestBody VoParams params) {
-        com.example.school.common.mysql.entity.QuestionBank questionBank = VoChangeEntityUtils.changeQuestionBank(params);
+        QuestionBank questionBank = VoChangeEntityUtils.changeQuestionBank(params);
         Long currentUserId = getCurrentUserId();
         questionBank.setUserId(currentUserId);
         PageImpl<RoQuestionBank> page = questionBankService.findQuestionBankUserPage(questionBank, currentUserId);
@@ -271,7 +274,7 @@ public class QuestionBankController extends AbstractController implements Curren
     })
     @PostMapping(value = "findQuestionBankComment")
     public ResultMessage findQuestionBankComment(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_4.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -306,7 +309,7 @@ public class QuestionBankController extends AbstractController implements Curren
     })
     @PostMapping(value = "findQuestionBankCommentAndReply")
     public ResultMessage findQuestionBankCommentAndReply(@RequestBody VoCommentPage voCommentPage) {
-        com.example.school.common.mysql.entity.Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
+        Comment comment = VoChangeEntityUtils.changeComment(voCommentPage);
         comment.setTopicType(TopicType.TOPIC_TYPE_4.getCode());
         PageImpl<RoCommentStatus> roCommentStatusPage = commentService.findRoCommentAndReplyStatusPage(comment, getCurrentUserId());
         return success(roCommentStatusPage.getPageable().getPageNumber(), roCommentStatusPage.getPageable().getPageSize(), roCommentStatusPage.getTotalElements(), roCommentStatusPage.getContent());
@@ -326,7 +329,7 @@ public class QuestionBankController extends AbstractController implements Curren
     public ResultMessage saveQuestionBankComment(@NotNull(message = "topicId不能为空") @RequestParam Long topicId,
                                                  @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                  @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_4, content, getCurrentUserId(), fromUserId);
+        Comment comment = commentService.saveComment(topicId, TOPIC_TYPE_4, content, getCurrentUserId(), fromUserId);
         return success("保存成功", comment);
     }
 
@@ -342,7 +345,7 @@ public class QuestionBankController extends AbstractController implements Curren
                                                                @NotNull(message = "commentId不能为空") @RequestParam Long commentId,
                                                                @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                                @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_4, commentId, commentId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToComment(topicId, TOPIC_TYPE_4, commentId, commentId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 
@@ -359,7 +362,7 @@ public class QuestionBankController extends AbstractController implements Curren
                                                              @NotNull(message = "replyId不能为空") @RequestParam Long replyId,
                                                              @NotEmpty(message = "content不能为空") @RequestParam String content,
                                                              @NotNull(message = "fromUserId不能为空") @RequestParam Long fromUserId) {
-        com.example.school.common.mysql.entity.CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_4, commentId, replyId, content, getCurrentUserId(), fromUserId);
+        CommentReply commentReply = commentReplyService.saveCommentReplyToReply(topicId, TOPIC_TYPE_4, commentId, replyId, content, getCurrentUserId(), fromUserId);
         return success("保存成功", commentReply);
     }
 

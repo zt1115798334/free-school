@@ -1,12 +1,12 @@
 package com.example.school.shiro.shiro.realm;
 
 import com.example.school.common.constant.properties.AccountProperties;
-import com.example.school.common.mysql.service.Permission;
+import com.example.school.common.mysql.service.PermissionService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.service.VerificationCodeService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.shiro.shiro.token.JwtToken;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.shiro.shiro.token.PasswordToken;
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.List;
 @Component
 public class RealmManager {
 
-    private final User userService;
+    private final UserService userService;
 
     private final AccountProperties accountProperties;
 
@@ -37,7 +37,7 @@ public class RealmManager {
 
     private final JwtUtils jwtUtils;
 
-    private final Permission permissionService;
+    private final PermissionService permissionService;
 
     public List<Realm> initGetRealm() {
         List<Realm> realmList = Lists.newArrayList();

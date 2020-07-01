@@ -3,8 +3,8 @@ package com.example.school.shiro.shiro.realm;
 import com.example.school.common.constant.CacheKeys;
 import com.example.school.common.constant.SysConst;
 import com.example.school.common.constant.SystemStatusCode;
-import com.example.school.common.mysql.service.Permission;
-import com.example.school.common.mysql.service.User;
+import com.example.school.common.mysql.service.PermissionService;
+import com.example.school.common.mysql.service.UserService;
 import com.example.school.common.redis.StringRedisService;
 import com.example.school.common.utils.JwtUtils;
 import com.example.school.common.utils.NetworkUtil;
@@ -42,12 +42,13 @@ public class JwtRealm extends AuthorizingRealm {
     @Setter
     private JwtUtils jwtUtils;
     @Setter
-    private User userService;
+    private UserService userService;
     @Setter
     private StringRedisService stringRedisService;
     @Setter
-    private Permission permissionService;
+    private PermissionService permissionService;
 
+    @Override
     public Class<?> getAuthenticationTokenClass() {
         // 此realm只支持jwtToken
         return JwtToken.class;
@@ -85,7 +86,9 @@ public class JwtRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
 //        开始验证token值的正确...
-        if (!(authenticationToken instanceof JwtToken)) return null;
+        if (!(authenticationToken instanceof JwtToken)) {
+            return null;
+        }
         JwtToken jwtToken = (JwtToken) authenticationToken;
 
         String token = (String) jwtToken.getCredentials();

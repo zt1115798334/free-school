@@ -18,6 +18,7 @@ public class HttpAspect extends AbsHttpAspect {
     /**
      * 切入点
      */
+    @Override
     @Pointcut("execution( * com.example.school.app.controller..*.*(..))")
     public void aopPointCut() {
 
